@@ -1,0 +1,991 @@
+KBA-160511044137
+Camera persist使用手册
+基于MSM8996平台PL1.0
+Contents
+一. Log部分... 9
+1. persist.camera.global.debug. 9
+2. persist.camera.mct.debug. 9
+3. persist.camera.sensor.debug. 9
+4. persist.camera.iface.logs. 10
+5. persist.camera.isp.debug. 10
+6. persist.camera.stats.debug. 10
+7. persist.camera.stats.af.debug. 10
+8. persist.camera.stats.aec.debug. 10
+9. persist.camera.stats.awb.debug. 10
+10. persist.camera.stats.asd.debug. 11
+11. persist.camera.stats.afd.debug. 11
+12. persist.camera.stats.q3a.debug. 11
+13. persist.camera.stats.is.debug. 11
+14. persist.camera.stats.haf.debug. 11
+15. persist.camera.pproc.debug.mask. 11
+16. persist.camera.cpp.debug.mask. 12
+17. persist.camera.c2d.debug.mask. 12
+18. persist.camera.imglib.logs. 12
+19. persist.camera.hal.debug. 1220. persist.camera.mmstill.logs. 12
+二. Module部分... 13
+1. SENSOR模块... 13
+1) persist.camera.sensor.gain. 13
+2) persist.camera.sensor.linecount. 13
+3) persist.dual.gain_tune. 13
+4) persist.dual.line_tune. 13
+5) persist.camera.fastaec. 13
+6) persist.camera.iso100. 14
+7) persist.camera.csid.payload. 14
+8) persist.camera.sensorliveconnect. 14
+9) persist.partial.skip. 14
+10) persist.camera.led.rerdbg. 14
+11) persist.camera.cal.af. 14
+12) persist.camera.cal.awb. 15
+13) persist.camera.cal.lsc. 15
+14) persist.camera.cal.dp. 15
+15) persist.camera.cal.dual 15
+16) persist.camera.dumpmetadata. 15
+2. IFACE2模块... 16
+1) persist.camera.isp.testgen. 16
+2) persist.camera.isp.dump. 16
+3) persist.camera.isp.dump_cnt. 164) persist.camera.isp.ppbypass. 16
+5) persist.camera.isp.buf_cnt. 16
+6) persist.camera.hvx_lib_1. 17
+7) persist.camera.hvx_lib_2. 17
+3. ISP2模块... 18
+1) persist.camera.isp.turbo. 18
+2) persist.camera.isp.dualisp. 18
+3) persist.camera.dumpmetadata. 18
+4) persist.camera.tintless.skip. 18
+5) persist.camera.saturationext. 18
+6) persist.camera.isp.regdump. 19
+7) persist.camera.isp.offregdump. 19
+8) persist.camera.isp.cac_disable. 19
+9) persist.camera.isp.ltm_disable. 19
+10) persist.camera.ltm.sw.. 19
+11) persist.camera.ltm.filteroff. 19
+12) persist.camera.ltm.out. 19
+13) persist.camera.ltm.overlap. 20
+4. STATS模块... 21
+1) persist.camera.ledcalib.enabled. 21
+2) persist.camera.mobicat. 21
+5. PPROC-NEW模块... 22
+1) persist.enable.max.pending.buf. 22
+2) persist.camera.c2d.disable. 223) persist.camera.tnr.force_enable. 22
+4) persist.camera.enable_vpu. 22
+5) persist.camera.dumpmetadata. 22
+6. IMGLIB模块... 23
+1) persist.camera.imglib.hdr.dump. 23
+2) persist.camera.imglib.cac.dump. 23
+3) persist.camera.mobicat. 23
+4) persist.camera.imglib.cf.ver. 23
+5) persist.imglib.cf.tune. 23
+6) persist.imglib.cf.deghost. 24
+7) persist.imglib.cf.flash_weight. 24
+8) persist.camera.imglib.dump. 24
+9) persist.camera.fd.dump. 24
+10) persist.camera.imglib.face_sw.. 24
+11) persist.camera.imglib.face_all 24
+12) persist.camera.fd_region_filter. 25
+13) persist.camera.imglib.bsgc. 25
+14) persist.camera.imglib.fd_arm.. 25
+15) persist.camera.imglib.tp.mask. 25
+16) persist.camera.imglib.tp.effect. 25
+17) persist.camera.imglib.tp.power. 26
+18) persist.camera.imglib.fddsp. 26
+19) persist.camera.imglib.cds. 2620) persist.camera.dumpmetadata. 26
+7. MCT模块... 27
+1) persist.camera.max_prev.enable. 27
+2) persist.camera.max.snapshot. 27
+3) persist.camera.logsync. 27
+4) persist.camera.logsync.interval 27
+5) persist.camera.debugfs_root. 27
+6) persist.camera.debug.exit. 27
+8. MM-STILL模块... 28
+1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable. 28
+2) persist.camera.kpi.debug. 28
+9. QCAMERA2模块... 29
+1) persist.camera.longshot.save. 29
+2) persist.camera.jpeg_burst. 29
+3) persist.camera.tn.disable. 29
+4) persist.camera.zsl_raw.. 29
+5) persist.camera.zsl_yuv. 29
+6) persist.camera.zsl_matching. 29
+7) persist.camera.nonzsl.yuv. 30
+8) persist.camera.preview_raw.. 30
+9) persist.camera. video_raw.. 30
+10) persist.camera.snapshot_raw.. 30
+11) persist.camera.dumpimg. 30
+12) persist.camera.preview_yuv. 3013) persist.camera.raw_yuv. 31
+14) persist.camera.mem.usepool 31
+15) persist.camera.imglib.stillmore. 31
+16) persist.camera.raw.format. 31
+17) persist.camera.feature.cac. 31
+18) persist.camera.feature.restart. 31
+19) persist.sys.exif.make. 32
+20) ro.product.manufacturer. 32
+21) persist.sys.exif.model 32
+22) ro.product.model 32
+23) persist.sys.exif.model 32
+24) persist.camera.feature.shutter. 32
+25) persist.camera.kpi.debug. 33
+26) persist.debug.sf.showfps. 33
+27) persist.camera.thermal.mode. 33
+28) persist.camera.ltmforseemore. 33
+29) persist.camera.batchcount. 33
+30) persist.camera.aux.preview.size. 33
+31) persist.camera.aux.picture.size. 34
+32) persist.camera.opt.livepic. 34
+33) persist.camera.liveshot.size. 34
+34) persist.camera.preview.ubwc. 34
+35) persist.camera.led.on.period. 3436) persist.camera.retro.number. 34
+37) persist.camera.effect. 35
+38) persist.camera.stats.af.paaf. 35
+39) persist.camera.continuous.iso. 35
+40) persist.camera.auto.hdr.enable. 35
+41) persist.capture.burst.exposures. 35
+42) persist.camera.no-display. 35
+43) persist.camera.tnr_cds. 36
+44) persist.camera.tnr.video. 36
+45) persist.camera.tnr.preview.. 36
+46) persist.camera.tnr.snapshot. 36
+47) persist.camera.rdi.mode. 36
+48) persist.camera.secure.mode. 36
+49) persist.camera.zsl.interval 36
+50) persist.camera.zsl.backlookcnt. 37
+51) persist.camera.zsl.queuedepth. 37
+52) persist.camera.snapshot.number. 37
+53) persist.camera.snapshot.fd. 37
+54) persist.camera.mobicat. 37
+55) persist.capture.burst.exposures. 37
+56) persist.camera.hdr.outcrop. 38
+57) persist.camera.zsl.mode. 38
+58) persist.debug.set.fixedfps. 38
+59) persist.camera.zzhdr.enable. 3860) persist.camera.zzhdr.video. 38
+61) persist.camera.tintless. 38
+62) persist.camera.video.CDS. 39
+63) persist.camera.CDS. 39
+64) persist.camera.ois.disable. 39
+65) persist.camera.set.afd. 39
+66) persist.camera.mem.usecache. 39
+67) persist.denoise.process.plates. 39
+68) persist.camera.snap.format. 40
+69) persist.camera.video.ubwc. 40
+70) persist.camera.exif.rotation. 40
+71) persist.camera.dcrf.enable. 40
+72) persist.camera.eztune.enable. 40
+73) persist.camera.is_type. 40
+74) persist.camera.preview.seemore. 41
+75) persist.camera.offlineraw.. 41
+76) persist.camera.multi_pass. 41
+77) persist.camera.pp_scaling. 41
+78) persist.camera.llnoise. 41
+79) persist.camera.video.batchsize. 41
+80) persist.camera.longshot.stages. 42
+81) persist.camera.llc. 42
+82) persist.camera.fdvideo. 4283) persist.camera.dual.camera.dump. 42
+84) persist.camera.dual.camera.mpo. 42
+85) persist.camera.aux.camera. 42
+86) persist.camera.dc.frame.sync. 43
+87) persist.camera.HAL3.enabled. 43
+88) persist.camera.dual.camera. 43
+89) persist.camera.perflock.enable. 43
+90) persist.camera.perflock.enable. 43
+91) persist.camera.disp.num_vsync. 43
+92) persist.camera.disp.ms_to_vsync. 44
+93) persist.camera.disp.filter_max. 44
+94) persist.camera.disp.filter_min. 44
+95) persist.camera.disp.fps. 44
+96) persist.camera.dumpmetadata. 44
+一. Log部分
+8996 重新定义了自己的log规则,使用起来更加方便简洁,相关代码的主要实现部分在
+camera_dbg.c文件中。框架定义了如下6个log级别:
+名称 数值
+NONE 0
+ERROR 1
+WARN 2HIGH 3
+DBG 4
+LOW 5
+INFO 6
+注:INFO级别不可控,是一定会打印的。
+查看当前系统使能了哪些级别的log,可以使用参考命令:
+adb shell getprop | grep "camera"
+下面是开启各个模块log级别的简单描述。
+1. persist.camera.global.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性是总的log级别开关。
+注意: 若子模块的log级别小于该属性设置值,则以该属性为准;若子模块的log
+级别大于该属性设置值,则以子模块设置的log级别为准。
+示例:adb shell setprop persist.camera.global.debug 5
+2. persist.camera.mct.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制MCT模块的log级别。
+示例:adb shell setprop persist.camera.mct.debug 5
+3. persist.camera.sensor.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制SENSOR模块的log级别。示例:adb shell setprop persist.camera.sensor.debug 5
+4. persist.camera.iface.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IFACE模块的log级别。
+示例:adb shell setprop persist.camera.iface.logs 5
+5. persist.camera.isp.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ISP模块的log级别。
+示例:adb shell setprop persist.camera.isp.debug 5
+6. persist.camera.stats.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制STATS模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.debug 5
+7. persist.camera.stats.af.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AF模块的log级别。
+示例:adb shell setprop persist.camera.stats.af.debug 5
+8. persist.camera.stats.aec.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AEC模块的log级别。
+示例:adb shell setprop persist.camera.stats.aec.debug 59. persist.camera.stats.awb.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AWB模块的log级别。
+示例:adb shell setprop persist.camera.stats.awb.debug 5
+10. persist.camera.stats.asd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ASD模块的log级别。
+示例:adb shell setprop persist.camera.stats.asd.debug 5
+11. persist.camera.stats.afd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AFD模块的log级别。
+示例:adb shell setprop persist.camera.stats.afd.debug 5
+12. persist.camera.stats.q3a.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制Q3A模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.q3a.debug 5
+13. persist.camera.stats.is.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IS模块的log级别。
+示例:adb shell setprop persist.camera.stats.is.debug 5
+14. persist.camera.stats.haf.debug数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制HAF模块的log级别。
+示例:adb shell setprop persist.camera.stats.haf.debug 5
+15. persist.camera.pproc.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制PPROC模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.pproc.debug.mask 5
+16. persist.camera.cpp.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制CPP模块的log级别。
+示例:adb shell setprop persist.camera.cpp.debug.mask 5
+17. persist.camera.c2d.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制C2D的log级别。
+示例:adb shell setprop persist.camera.c2d.debug.mask 5
+18. persist.camera.imglib.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IMGLIB模块的log级别。
+示例:adb shell setprop persist.camera.imglib.logs 5
+19. persist.camera.hal.debug
+数值:0-5功能: 设置不同的数值,将打印对应级别的log。该属性控制HAL的log级别。
+示例:adb shell setprop persist.camera.hal.debug 5
+20. persist.camera.mmstill.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制mm-still的log级别。
+示例:adb shell setprop persist.camera.mmstill.logs 5
+二. Module部分
+以module为单位,简述各个module中persist使用方法。
+1. SENSOR模块
+1) persist.camera.sensor.gain
+数值: 非负数
+功能: 手动设置real gain到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.gain 1
+2) persist.camera.sensor.linecount
+数值: 非负数
+功能: 手动设置line count到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.linecount 1024
+3) persist.dual.gain_tune
+数值: 非负数
+功能: 手动设置双摄像头gain factor。注意: 该属性在双摄像头使用场景中生效。
+示例:
+4) persist.dual.line_tune
+数值: 非负数
+功能: 手动设置双摄像头line count factor。
+注意: 该属性在双摄像头使用场景中生效。
+示例:
+5) persist.camera.fastaec
+数值: 非负整数
+功能:fast aec模式下,手动设置frame skip数目。
+示例:adb shell setprop persist.camera.fastaec 2
+6) persist.camera.iso100
+数值: 非负数
+功能: 手动设置iso100的gain数值。
+示例:adb shell setprop persist.camera.iso100 1
+7) persist.camera.csid.payload
+数值:0或4
+功能: test模式下,将csid设置为0或4模式,以便产生相应的测试pattern。
+示例:adb shell setprop persist.camera.csid.payload 4
+8) persist.camera.sensorliveconnect
+数值:0或1
+功能: 设置为1,则在代码中开启sensor live connect线程,方便调试工具实时控制AF。
+示例:adb shell setprop persist.camera.sensorliveconnect 19) persist.partial.skip
+数值:0或1
+功能: 设置为1,则使能闪光灯下的frame skip模式。
+示例:adb shell setprop persist.partial.skip 1
+10) persist.camera.led.rerdbg
+数值:0或1
+功能: 开启闪光灯去红眼功能后,若将该属性设置为1,则会打印预闪电流、持续时间、
+脉冲数目等调试信息。
+示例:adb shell setprop persist.camera.led.rerdbg 1
+11) persist.camera.cal.af
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中af校准数据。
+示例:adb shell setprop persist.camera.cal.af 1
+12) persist.camera.cal.awb
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中awb校准数据。
+示例:adb shell setprop persist.camera.cal.awb 1
+13) persist.camera.cal.lsc
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中lsc校准数据。
+示例:adb shell setprop persist.camera.cal.lsc 1
+14) persist.camera.cal.dp
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中dp校准数据。示例:adb shell setprop persist.camera.cal.dp 1
+15) persist.camera.cal.dual
+数值:0或1
+功能: 如果设置为0,则不做dual camera校准。
+示例:adb shell setprop persist.camera.cal.dual 1
+16) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,则将sensor中的meta数据发送到MCT BUS,然后通过
+mct_stream_fill_metadata_v1接口将信息传递给HAL。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+2. IFACE2模块
+1) persist.camera.isp.testgen
+数值:0或1
+功能: 若设置为1,折预览将呈现七彩条纹图像。
+示例:adb shell setprop persist.camera.isp.testgen 1
+2) persist.camera.isp.dump
+数值: 需要dump的stream type所对应的enum数值。
+功能: 使能后,会根据设置的stream type去dump相应的帧数据。路径:/data/misc/camera/
+示例:adb shell setprop persist.camera.isp.dump 2
+3) persist.camera.isp.dump_cnt
+数值: 非负整数功能: 该属性定义persist.camera.isp.dump需要dump的帧数。
+示例:adb shell setprop persist.camera.isp.dump_cnt 10
+4) persist.camera.isp.ppbypass
+数值:0或1
+功能: 使能该属性后,isp不再自己申请native buffer,而是使用从HAL map过来的buffer,并且
+buffer将不做pproc处理。
+注意: 生效前提是HAL已经申请过足够数量的buffer。
+示例:adb shell setprop persist.camera.isp.ppbypass 1
+5) persist.camera.isp.buf_cnt
+数值: 非零正整数
+功能:stream on后,会request image buffer,有两种方式,一是map HAL的buffer,
+二是自己在本地申请native buffer。如果选择方式二,则该属性将定义native buffer的数量。
+注意: 生效前提是ISP自己在本地申请native buffer。
+示例:adb shell setprop persist.camera.isp.buf_cnt 4
+6) persist.camera.hvx_lib_1
+数值:external chromatix lib名称
+功能: 手动指定加载的后置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_1 libchromatix_xxx.so
+7) persist.camera.hvx_lib_2
+数值:external chromatix lib名称
+功能: 手动指定加载的前置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_2 libchromatix_xxx.so3. ISP2模块
+1) persist.camera.isp.turbo
+数值:0或1
+功能: 若设置为1,则将turbo clk设置为ISP默认工作clk。
+注意: 设置完成后,需要重启手机才会生效。
+示例:adb shell setprop persist.camera.isp.turbo 1
+2) persist.camera.isp.dualisp
+数值:0或1
+功能: 若设置为1,将强制使用两个VFE工作。若设置为0,则将根据默认clk与user请求clk
+的大小关系来决定使用VFE数量。
+注意: 若channel中有raw stream存在,该属性将失效。
+示例:adb shell setprop persist.camera.isp.dualisp 1
+3) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,将分配meta dump的资源。同时,将打印mesh_roll、tintless_algo等sub isp
+module中的调试信息或在/data/misc/camera/路径下生成相关调试信息文件。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+4) persist.camera.tintless.skip
+数值: 非负整数
+功能: 设置tintless所需要skip的frame数目,默认是skip 2帧。
+示例:adb shell setprop persist.camera.tintless.skip 2
+5) persist.camera.saturationext数值:true或false
+功能:
+示例:
+6) persist.camera.isp.regdump
+数值: 非负整数
+功能:isp online process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.regdump 30
+7) persist.camera.isp.offregdump
+数值: 非负整数
+功能:isp offline process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.offregdump 30
+8) persist.camera.isp.cac_disable
+数值:0或1
+功能: 手动开/关CAC功能。
+示例:adb shell setprop persist.camera.isp.cac_disable 1
+9) persist.camera.isp.ltm_disable
+数值:0或1
+功能: 手动开/关LTM功能。
+示例:adb shell setprop persist.camera.isp.ltm_disable 1
+10) persist.camera.ltm.sw
+数值:
+功能:
+示例:11) persist.camera.ltm.filteroff
+数值:0或1
+功能:
+示例:
+12) persist.camera.ltm.out
+数值:
+功能:
+示例:
+13) persist.camera.ltm.overlap
+数值:0-50
+功能: 手动定义cell overlap factor的大小。
+示例:adb shell setprop persist.camera.isp.ltm_disable 10
+4. STATS模块
+1) persist.camera.ledcalib.enabled
+数值:0或1
+功能: 手动开/关双色温LED校准功能。
+示例:adb shell setprop persist.camera.ledcalib.enabled 1
+2) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat。
+示例:adb shell setprop persist.camera.mobicat 1
+5. PPROC-NEW模块
+1) persist.enable.max.pending.buf数值:1或2
+功能: 定义cpp硬件一次操作所处理的buffer数量。
+示例:adb shell setprop persist.enable.max.pending.buf 1
+2) persist.camera.c2d.disable
+数值:0或1
+功能: 手动开/关C2D。
+示例:adb shell setprop persist.camera.c2d.disable 1
+3) persist.camera.tnr.force_enable
+数值:0或1
+功能: 手动开/关TNR。
+示例:adb shell setprop persist.camera.tnr.force_enable 1
+4) persist.camera.enable_vpu
+数值:0或1
+功能: 手动开/关VPU。
+示例:adb shell setprop persist.camera.enable_vpu 1
+5) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump PPROC的Metadata到/data/misc/camera/路径下。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+6. IMGLIB模块
+1) persist.camera.imglib.hdr.dump
+数值:no/in/out/in out功能: 设置为no,关闭HDR dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.hdr.dump in
+2) persist.camera.imglib.cac.dump
+数值:no/in/out/inout
+功能: 设置为no,关闭CAC dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.cac.dump no
+3) persist.camera.mobicat
+数值:0与非0
+功能: 设置为0,关闭这个功能;设置为其他值,将在返回给HAL的meta信息中添加mobicat
+相关的调试信息。
+注意: 该属性需要配合HAL中的同名属性使用。
+示例:adb shell setprop persist.camera.mobicat 0
+4) persist.camera.imglib.cf.ver
+数值: chroma flash 库的版本号
+功能: 返回使用的chroma flash 库版本号给chroma flash初始化提供版本信息。
+注意: 该属性一般有系统设置,此处仅做读取操作。
+示例:adb shell getprop persist.camera.imglib.cf.ver
+5) persist.imglib.cf.tune
+数值:0或1
+功能: "手动设置chroma flash参数"的总开关,使能后,才能通过其他属性手动修改相应参数。
+示例:adb shell setprop persist.imglib.cf.tune 1
+6) persist.imglib.cf.deghost数值:0或1
+功能: 手动开/关deghost功能。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.deghost 1
+7) persist.imglib.cf.flash_weight
+数值:1-15
+功能: 手动设置chroma flash 亮度等级。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.flash_weight 1
+8) persist.camera.imglib.dump
+数值:0或1
+功能: imglib模块frame dump总开关。
+示例:adb shell setprop persist.camera.imglib.dump 1
+9) persist.camera.fd.dump
+数值:0-4
+功能: 设置为0,将关闭face frame dump功能;设置为1,将dump non-tracked faces帧数据;
+设置为2,将dump tracked faces帧数据;设置为3,将dump non-detected faces帧数据;设置为4,
+将dump所有的帧数据。
+注意: 该属性只有在persist.camera.imglib.dump为1的前提下才能生效。
+示例:adb shell setprop persist.camera.fd.dump 1
+10) persist.camera.imglib.face_sw
+数值:0或1
+功能: 手动开/关软件辅助人脸识别功能。
+示例:adb shell setprop persist.camera.imglib.face_sw 111) persist.camera.imglib.face_all
+数值:0或1
+功能: 手动开/关全角度搜寻人脸功能。使能该功能后,在识别人脸时,将不考虑手机的方向。
+示例:adb shell setprop persist.camera.imglib.face_all 1
+12) persist.camera.fd_region_filter
+数值:0或1
+功能: 使能后,将根据region来执行相应的滤波设定。相应region参数,由chromatix加载进来。
+示例:adb shell setprop persist.camera.fd_region_filter 1
+13) persist.camera.imglib.bsgc
+数值:0或1
+功能: 设置为1,将Enable blink, smile, gaze, contour detection。
+示例:adb shell setprop persist.camera.imglib.bsgc 1
+14) persist.camera.imglib.fd_arm
+数值:0或1
+功能: 设置为0,将优先申请HW FD资源。设置为1,将不优先使用HW FD资源,将会优先去申请
+DSP FD资源。
+示例:adb shell setprop persist.camera.imglib.fd_arm 1
+15) persist.camera.imglib.tp.mask
+数值:0或1
+功能: 在TruePortrait模式下,设置为1,将使能bodymask。
+示例:adb shell setprop persist.camera.imglib.tp.mask 1
+16) persist.camera.imglib.tp.effect
+数值:0-2功能: 在TruePortrait模式下,手动设置effect,0代表boke effect,1代表halo effect,2代表notion
+blur effect。
+示例:adb shell setprop persist.camera.imglib.tp.effect 1
+17) persist.camera.imglib.tp.power
+数值: 正整数
+功能: 在TruePortrait模式下,手动设置effect的强度,数值越大,强度越大。
+示例:adb shell setprop persist.camera.imglib.tp.power 1
+18) persist.camera.imglib.fddsp
+数值:0或1
+功能: 设置为1,将强制使用FD DSP资源。
+示例:adb shell setprop persist.camera.imglib.fddsp 1
+19) persist.camera.imglib.cds
+数值:0-5
+功能: 手动选择CDS的运行模式:C、NEON、NENO_ASM、DSP、GPU、FCV。
+示例:adb shell setprop persist.camera.imglib.cds 1
+20) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将meta中填充CAC相关调试信息。并且,可以dump WNR相关参数到/data/misc/
+camera/路径下
+示例:adb shell setprop persist.camera.dumpmetadata 1
+7. MCT模块
+1) persist.camera.max_prev.enable
+数值:0或1功能: 使能后,将使用符合条件的最大尺寸来做preview。
+示例:adb shell setprop persist.camera.max_prev.enable 1
+2) persist.camera.max.snapshot
+数值:0或1
+功能: 使能后,将使用符合条件的最大尺寸来做sanpshot。
+示例:adb shell setprop persist.camera.max.snapshot 1
+3) persist.camera.logsync
+数值:0或1
+功能:
+示例:
+4) persist.camera.logsync.interval
+数值:
+功能:
+示例:
+5) persist.camera.debugfs_root
+数值:
+功能:
+示例:
+6) persist.camera.debug.exit
+数值:
+功能:
+示例:
+8. MM-STILL模块1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable
+数值:0或1
+功能: 开启后,将打印jpeg的quality table调试信息。
+示例:adb shell setprop persist.camera.jpeg.dumpqtable 1
+2) persist.camera.kpi.debug
+数值:1或2
+功能: 设置KPI调试信息的级别,设置为1表示KPI_APT,设置为2表示KPI_DBG级别。
+示例:adb shell setprop persist.camera.kpi.debug 1
+9. QCAMERA2模块
+1) persist.camera.longshot.save
+数值:0或1
+功能: 是否启动在HAL存储连拍照片的routine。
+示例:adb shell setprop persist.camera.longshot.save 1
+2) persist.camera.jpeg_burst
+数值:0或1
+功能: 手动开/关jpeg burst模式。
+注意: 若有设置persist.camera.longshot.save,该属性将失效。
+示例:adb shell setprop persist.camera.jpeg_burst 1
+3) persist.camera.tn.disable
+数值:0或1
+功能: 手动开/关jpeg thumbnail编码功能。
+示例:adb shell setprop persist.camera.tn.disable 1
+4) persist.camera.zsl_raw数值:0或1
+功能: 使能后,将dump zsl channel 中的raw stream到文件。
+示例:adb shell setprop persist.camera.zsl_raw 1
+5) persist.camera.zsl_yuv
+数值:0或1
+功能: 使能后,将dump zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.zsl_yuv 1
+6) persist.camera.zsl_matching
+数值:0或1
+功能: 开启后,将打印ZSL super buffer里面每块子buffer的编号、对应的frame_idx、属于的stream
+类型、时间戳等信息。
+示例:adb shell setprop persist.camera.zsl_matching 1
+7) persist.camera.nonzsl.yuv
+数值:0或1
+功能: 使能后,将dump non-zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.nonzsl.yuv 1
+8) persist.camera.preview_raw
+数值:0-63
+功能: 开启后,将dump preview raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera.preview_raw 5
+9) persist.camera. video_raw
+数值:0-63功能: 开启后,将dump video raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera. video_raw 5
+10) persist.camera.snapshot_raw
+数值:0或1
+功能: 开启后,将dump snapshot raw stream到文件。
+示例:adb shell setprop persist.camera.snapshot_raw 1
+11) persist.camera.dumpimg
+数值:0或1
+功能: 开启后,将dump jpeg编码之前的YUV数据和编码之后的jpeg图像到文件。
+示例:adb shell setprop persist.camera.dumpimg 1
+12) persist.camera.preview_yuv
+数值:0-63
+功能: 手动定义preview stream中的buffer数量。
+示例:adb shell setprop persist.camera.preview_yuv 5
+13) persist.camera.raw_yuv
+数值:0或1
+功能: 开启后,将在preview/zsl/capture channel中强制添加raw stream。
+示例:adb shell setprop persist.camera.raw_yuv 1
+14) persist.camera.mem.usepool
+数值:0或1
+功能: 开启后,在申请分配stream buffer的时候,优先从内存池中分配。
+示例:adb shell setprop persist.camera.mem.usepool 115) persist.camera.imglib.stillmore
+数值: 非负整数
+功能: 手动设置stillmore功能所需要的buffer数量。
+注意: 设置的数值要在stillmore 这个功能做支持的min与max buffer cnt之间时,才能生效。
+示例:adb shell setprop persist.camera.imglib.stillmore 1
+16) persist.camera.raw.format
+数值: 根据宏
+功能:设置raw stream的图像格式,例如,设置为宏格式CAM_FORMAT_BAYER_QCOM
+_RAW_10BPP_GBRG。
+示例:adb shell setprop persist.camera.raw.format 1
+17) persist.camera.feature.cac
+数值:0或1
+功能: 手动开/关CAC。
+示例:adb shell setprop persist.camera.feature.cac 1
+18) persist.camera.feature.restart
+数值:0或1
+功能:定义image capture期间,是否需要重启preview。
+示例:adb shell setprop persist.camera.feature.restart 1
+19) persist.sys.exif.make
+数值: null或任意str
+功能: 手动定制写的exif信息(manufacturer)内容的开关。
+示例:adb shell setprop persist.sys.exif.make null
+20) ro.product.manufacturer数值:str
+功能: 手动定制写的exif信息(manufacturer)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.manufacturer qcom
+21) persist.sys.exif.model
+数值: null或任意str
+功能: 手动定制写的exif信息(model)内容的开关。
+示例:adb shell setprop persist.sys.exif.model null
+22) ro.product.model
+数值:str
+功能: 手动定制写的exif信息(model)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.model qcom
+23) persist.sys.exif.model
+数值:str
+功能: 手动定制写的exif信息(description)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop persist.sys.exif.model qcom
+24) persist.camera.feature.shutter
+数值:0或1
+功能: 开启后,将在capture结束后立刻播放快门声音。
+示例:adb shell setprop persist.camera.feature.shutter 1
+25) persist.camera.kpi.debug数值:1或2
+功能: 设置1,则打印KPI log级别为KPI_ONLY;设置2,则打印KPI log级别为KPI_DBG。
+示例:adb shell setprop persist.camera.kpi.debug 1
+26) persist.debug.sf.showfps
+数值:0或1
+功能: 开启后,将在log中实时打印preview的帧率。
+示例:adb shell setprop persist.debug.sf.showfps 1
+27) persist.camera.thermal.mode
+数值: frameskip或fps
+功能: 若设置为frameskip模式,则thermal将按照指定的frame skip pattern来丢帧;若设置为fps(
+默认模式),则thermal将按照默认设定来动态调整帧率。
+示例:adb shell setprop persist.camera.thermal.mode fps
+28) persist.camera.ltmforseemore
+数值:0或1
+功能: 在seeemore功能下开启/关闭LTM。
+示例:adb shell setprop persist.camera.ltmforseemore 1
+29) persist.camera.batchcount
+数值: 非0整数
+功能: 手动定义KEY_QC_VIDEO_BATCH_SIZE的数值。
+示例:adb shell setprop persist.camera.batchcount 1
+30) persist.camera.aux.preview.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的预览size。
+示例:adb shell setprop persist.camera.aux.preview.size 320x4031) persist.camera.aux.picture.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的照片size。
+示例:adb shell setprop persist.camera.aux.picture.size 320x240
+32) persist.camera.opt.livepic
+数值:0或1
+功能: 使能后,live snapshot时将自动选用最优的照片尺寸。
+示例:adb shell setprop persist.camera.opt.livepic 1
+33) persist.camera.liveshot.size
+数值: widthxheight,例如320x240
+功能: 手动设置live snapshot的照片尺寸。
+示例:adb shell setprop persist.camera.liveshot.size 320x240
+34) persist.camera.preview.ubwc
+数值:0或1
+功能: 开启后,将preview format强制设置为CAM_FORMAT_YUV_420_NV12_UBWC格式。
+示例:adb shell setprop persist.camera.preview.ubwc 1
+35) persist.camera.led.on.period
+数值:0-800
+功能:设置 burst LED on的持续时间,如果设置数值为小于0,则使用默认值(300)。
+示例:adb shell setprop persist.camera.led.on.period 300
+36) persist.camera.retro.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_NUM_RETRO_BURST_PER_SHUTTER。示例:adb shell setprop persist.camera.retro.number 1
+37) persist.camera.effect
+数值:"none"/ "mono"/ "negative"/ "solarize"/ "sepia"/ "posterize"/ "whiteboard"/ "blackboard"/ "aqua
+"
+功能: 手动设置effect。
+示例:adb shell setprop persist.camera.effect none
+38) persist.camera.stats.af.paaf
+数值:0或1
+功能: 手动开/关PAAF。
+示例:adb shell setprop persist.camera.stats.af.paaf 1
+39) persist.camera.continuous.iso
+数值: 非0正整数
+功能: 手动设置KEY_QC_CONTINUOUS_ISO。
+示例:adb shell setprop persist.camera.continuous.iso 100
+40) persist.camera.auto.hdr.enable
+数值:0或1
+功能: 手动开/关Auto HDR。
+示例:adb shell setprop persist.camera.auto.hdr.enable 1
+41) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 10
+42) persist.camera.no-display数值:0或1
+功能: 手动开/关No Display Preview功能。
+示例:adb shell setprop persist.camera.no-display 1
+43) persist.camera.tnr_cds
+数值:0或1
+功能: 手动开/关TNR with CDS功能。
+示例:adb shell setprop persist.camera.tnr_cds 1
+44) persist.camera.tnr.video
+数值:0或1
+功能: 手动开/关TNR Video功能。
+示例:adb shell setprop persist.camera.tnr.video 1
+45) persist.camera.tnr.preview
+数值:0或1
+功能: 手动开/关TNR Preview功能。
+示例:adb shell setprop persist.camera.tnr.preview 1
+46) persist.camera.tnr.snapshot
+数值:0或1
+功能: 手动开/关TNR Sanpshot功能。
+示例:adb shell setprop persist.camera.tnr.snapshot 1
+47) persist.camera.rdi.mode
+数值:0或1
+功能: 手动开/关ISP的RDI接口。
+示例:adb shell setprop persist.camera.rdi.mode 148) persist.camera.secure.mode
+数值:0或1
+功能: 手动开/关Secure模式。
+示例:adb shell setprop persist.camera.secure.mode 1
+49) persist.camera.zsl.interval
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_INTERVAL。
+示例:adb shell setprop persist.camera.zsl.interval 1
+50) persist.camera.zsl.backlookcnt
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_LOOKBACK。
+示例:adb shell setprop persist.camera.zsl.backlookcnt 1
+51) persist.camera.zsl.queuedepth
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_QUEUE_DEPTH。
+示例:adb shell setprop persist.camera.zsl.queuedepth 1
+52) persist.camera.snapshot.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_BURST_NUM。
+示例:adb shell setprop persist.camera.snapshot.number 1
+53) persist.camera.snapshot.fd
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_FD_DATA。示例:adb shell setprop persist.camera.snapshot.fd 1
+54) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat功能。
+示例:adb shell setprop persist.camera.mobicat 1
+55) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 1
+56) persist.camera.hdr.outcrop
+数值:0或1
+功能: 手动开/关HDR Output Crop功能。
+示例:adb shell setprop persist.camera.hdr.outcrop 1
+57) persist.camera.zsl.mode
+数值:0或1
+功能: 手动开/关ZSL模式。
+示例:adb shell setprop persist.camera.zsl.mode 1
+58) persist.debug.set.fixedfps
+数值:0-30
+功能: 手动设置相机预览的固定帧率数值。
+示例:adb shell setprop persist.debug.set.fixedfps 15
+59) persist.camera.zzhdr.enable
+数值:0或1功能: 手动开/关Sensor Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.enable 1
+60) persist.camera.zzhdr.video
+数值:0或1
+功能: 手动开/关Video Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.video 1
+61) persist.camera.tintless
+数值:enable/disable
+功能: 手动开/关tintless功能。
+示例:adb shell setprop persist.camera.tintless enable
+62) persist.camera.video.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_VIDEO_CDS_MODE。
+示例:adb shell setprop persist.camera.video.CDS on
+63) persist.camera.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_CDS_MODE。
+示例:adb shell setprop persist.camera.CDS on
+64) persist.camera.ois.disable
+数值:0或1
+功能: 手动开/关ois。
+示例:adb shell setprop persist.camera.ois.disable 1
+65) persist.camera.set.afd数值:0-5
+功能: 手动设置Antibanding模式:OFF、60HZ、50HZ、AUTO、AUTO_50HZ、AUTO_60HZ。
+示例:adb shell setprop persist.camera.set.afd 1
+66) persist.camera.mem.usecache
+数值: 特定str
+功能: 手动设置KEY_QC_CACHE_VIDEO_BUFFERS。
+示例:adb shell setprop persist.camera.mem.usecache str
+67) persist.denoise.process.plates
+数值:0-3
+功能: 手动设置降噪类型:YCBCR_PLANE、CBCR_ONLY、STREAMLINE_YCBCR、
+STREAMLINED_CBCR。
+示例:adb shell setprop persist.denoise.process.plates 1
+68) persist.camera.snap.format
+数值:1或非1
+功能: 手动设置snapshot stream的YUV类型,若设置为1,则使用CAM_FORMAT
+_YUV_422_NV61,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV21格式。
+示例:adb shell setprop persist.camera.snap.format 1
+69) persist.camera.video.ubwc
+数值:1或非1
+功能: 手动设置video stream的YUV类型,若设置为1,则使用CAM_FORMAT_YUV_420_
+NV12_UBWC,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV12_VENUS格式。
+示例:adb shell setprop persist.camera.video.ubwc 1
+70) persist.camera.exif.rotation
+数值:on/off功能: 手动开/关exif rotation。
+示例:adb shell setprop persist.camera.exif.rotation on
+71) persist.camera.dcrf.enable
+数值:0或1
+功能: 手动开/关DCRF(dual-camera-range-finding)功能。
+示例:adb shell setprop persist.camera.dcrf.enable 1
+72) persist.camera.eztune.enable
+数值:0或1
+功能: 手动开/关Eztune功能。
+示例:adb shell setprop persist.camera.eztune.enable 1
+73) persist.camera.is_type
+数值:0-4
+功能: 手动设置IS的类型:NONE、DIS、EIS_1_0、EIS_2_0。
+示例:adb shell setprop persist.camera.is_type 1
+74) persist.camera.preview.seemore
+数值:0或1
+功能: 手动开/关Preview SeeMore功能。
+示例:adb shell setprop persist.camera.preview.seemore 1
+75) persist.camera.offlineraw
+数值:0或1
+功能: 手动开/关Offline RAW功能。
+示例:adb shell setprop persist.camera.offlineraw 1
+76) persist.camera.multi_pass数值:0或非0
+功能: 设置为0将生效,其余数值为无效数值。开启后,在Zoom触发后,将不会进行两次PP
+通道的数据处理。
+示例:adb shell setprop persist.camera.multi_pass 0
+77) persist.camera.pp_scaling
+数值:0或1
+功能: 返回为1,表示使用的是CPP scaling。否则,使用VFE scaling。
+示例:adb shell getprop persist.camera.pp_scaling
+78) persist.camera.llnoise
+数值:0或1
+功能: 返回为1,表示low light noise被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.llnoise
+79) persist.camera.video.batchsize
+数值:0-16
+功能: 手动设置KEY_QC_VIDEO_BATCH_SIZE。
+示例:adb shell setprop persist.camera.video.batchsize 1
+80) persist.camera.longshot.stages
+数值:0-4
+功能: 手动设置连拍需要的buffer数目。
+示例:adb shell setprop persist.camera.longshot.stages 2
+81) persist.camera.llc
+数值:0或1
+功能: 手动开/关low light capture功能。
+示例:adb shell setprop persist.camera.llc 182) persist.camera.fdvideo
+数值:0或1
+功能: 返回为1,表示Face Detection in Video被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.fdvideo
+83) persist.camera.dual.camera.dump
+数值:0或1
+功能: 开启后,将dump双摄像头的图片数据到/data/misc/camera/路径下。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.dump 1
+84) persist.camera.dual.camera.mpo
+数值:0或1
+功能: 是否使能双摄像头拍照图片合成。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.mpo 1
+85) persist.camera.aux.camera
+数值:0或1
+功能: 使能后,AUX摄像头将在"逻辑"上面可见,即对用户可见。若不使能,则物理上是两个摄像头
+,但对用户来说相当于只有一个摄像头。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.aux.camera 1
+86) persist.camera.dc.frame.sync
+数值:0或1
+功能: 手动开/关双摄像头帧同步功能。注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dc.frame.sync 1
+87) persist.camera.HAL3.enabled
+数值:0或1
+功能: 开启后,将使用HAL3。
+示例:adb shell setprop persist.camera.HAL3.enabled 1
+88) persist.camera.dual.camera
+数值:0或1
+功能: 手动开/关双摄像头模式。
+示例:adb shell setprop persist.camera.dual.camera 1
+89) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+90) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+91) persist.camera.disp.num_vsync
+数值:
+功能:display tuning相关。
+示例:
+92) persist.camera.disp.ms_to_vsync数值:
+功能:display tuning相关。
+示例:
+93) persist.camera.disp.filter_max
+数值:
+功能:display tuning相关。
+示例:
+94) persist.camera.disp.filter_min
+数值:
+功能:display tuning相关。
+示例:
+95) persist.camera.disp.fps
+数值:
+功能:display tuning相关。
+示例:
+96) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump ZSL/Capture/Snapshot channel中的Metadata到/data/misc/camera/路径下
+。
+示例:adb shell setprop persist.camera.dumpmetadata 1

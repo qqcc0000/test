@@ -1,0 +1,214 @@
+diff --git a/proprietary/custom/mt6735/hal/D1/imgsensor/tw9992_mipi_yuv/config.ftbl.tw9992_mipi_yuv.h b/proprietary/custom/mt6735/hal/D1/imgsensor/tw9992_mipi_yuv/config.ftbl.tw9992_mipi_yuv.h
+index 9c63d15..9445274 100644
+--- a/proprietary/custom/mt6735/hal/D1/imgsensor/tw9992_mipi_yuv/config.ftbl.tw9992_mipi_yuv.h
++++ b/proprietary/custom/mt6735/hal/D1/imgsensor/tw9992_mipi_yuv/config.ftbl.tw9992_mipi_yuv.h
+@@ -319,7 +319,7 @@ FTABLE_SCENE_DEP()
+         )
+     #endif
+         //......................................................................
+-    //#if 1  //  SCENE NORMAL
++    #if 1  //  SCENE NORMAL
+     SCENE_AS_(MtkCameraParameters::SCENE_MODE_NORMAL,
+         ITEM_AS_DEFAULT_("auto"),
+         ITEM_AS_VALUES_(
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkDefault/MtkDefaultCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkDefault/MtkDefaultCamParameter.cpp
+index ba18249..57c69cb 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkDefault/MtkDefaultCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkDefault/MtkDefaultCamParameter.cpp
+@@ -212,11 +212,15 @@ setParameters()
+     {
+         CamManager* pCamMgr = CamManager::getInstance();
+         String8 const s = mpParamsMgr->getStr(MtkCameraParameters::KEY_DYNAMIC_FRAME_RATE);
+-        MBOOL const isDynamicFps = ( ! s.isEmpty() && s == CameraParameters::TRUE ) ? MTRUE : MFALSE; 
+-        MUINT32 const previewFps = mpParamsMgr->getInt(CameraParameters::KEY_PREVIEW_FRAME_RATE);
+-        MUINT32 const fixedFps   = ( !mpParamsMgr->getRecordingHint() && (previewFps > 30) ) ? 30 : previewFps;
++        //MBOOL const isDynamicFps = ( ! s.isEmpty() && s == CameraParameters::TRUE ) ? MTRUE : MFALSE; 
++        MBOOL const isDynamicFps = MFALSE; 
++        //MUINT32 const previewFps = mpParamsMgr->getInt(CameraParameters::KEY_PREVIEW_FRAME_RATE);
++        MUINT32 const previewFps = 32;
++        //MUINT32 const fixedFps   = ( !mpParamsMgr->getRecordingHint() && (previewFps > 30) ) ? 30 : previewFps;
++        MUINT32 const fixedFps   = 32;
+         MBOOL const isSlowMotion = ( mpParamsMgr->getRecordingHint() && (previewFps > 30) ) ? MTRUE : MFALSE;
+         
++MY_LOGD("qiancheng ===============================================");
+         MBOOL isEisWithDfr;
+         if(GetEisLinkWithDfr() && mpParamsMgr->getVHdr() != NSCam::SENSOR_VHDR_MODE_MVHDR)
+         {
+@@ -230,19 +234,21 @@ setParameters()
+         if ( isDynamicFps && !pCamMgr->isMultiDevice() && !isSlowMotion && isEisWithDfr)
+         {
+             mbFixFps = false;
+-            cam3aParam.i4MinFps   = 5000;
++            cam3aParam.i4MinFps   = 28000;
+             if(mPreviewMaxFps == 0)
+             {
+-                cam3aParam.i4MaxFps = mpParamsMgr->getInt(CameraParameters::KEY_PREVIEW_FRAME_RATE)*1000;
++                //cam3aParam.i4MaxFps = mpParamsMgr->getInt(CameraParameters::KEY_PREVIEW_FRAME_RATE)*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+             else
+             if(mPreviewMaxFps <= previewFps)
+             {
+-                cam3aParam.i4MaxFps = mPreviewMaxFps*1000;
++                //cam3aParam.i4MaxFps = mPreviewMaxFps*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+             else
+             {
+-                cam3aParam.i4MaxFps = previewFps*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+         }
+         else
+@@ -250,22 +256,24 @@ setParameters()
+             mbFixFps = true;
+             if(mPreviewMaxFps == 0)
+             {
+-                cam3aParam.i4MinFps = fixedFps*1000;
+-                cam3aParam.i4MaxFps = fixedFps*1000;
++                cam3aParam.i4MinFps = 32*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+             else
+             if(mPreviewMaxFps <= fixedFps)
+             {
+-                cam3aParam.i4MinFps = mPreviewMaxFps*1000;
+-                cam3aParam.i4MaxFps = mPreviewMaxFps*1000;
++                cam3aParam.i4MinFps = 32*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+             else
+             {
+-                cam3aParam.i4MinFps = fixedFps*1000;
+-                cam3aParam.i4MaxFps = fixedFps*1000;
++                cam3aParam.i4MinFps = 32*1000;
++                cam3aParam.i4MaxFps = 32*1000;
+             }
+         }
+-        MY_LOGD("FPS:RH(%d),isDynamicFps(%d),isSlowMotion(%d),bFixFps(%d),mPreviewMaxFps(%d),previewFps(%d),Min(%d),Max(%d)",
++MY_LOGD("======== qiancheng %d", 32);
++MY_LOGD("qiancheng %d,%d", mbFixFps, mPreviewMaxFps);
++        MY_LOGD("qiancheng=== FPS:RH(%d),isDynamicFps(%d),isSlowMotion(%d),bFixFps(%d),mPreviewMaxFps(%d),previewFps(%d),Min(%d),Max(%d)",
+                 mpParamsMgr->getRecordingHint(),
+                 isDynamicFps,
+                 isSlowMotion,
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkEng/MtkEngCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkEng/MtkEngCamParameter.cpp
+index 1886848..d81b30d 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkEng/MtkEngCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/MtkEng/MtkEngCamParameter.cpp
+@@ -216,7 +216,8 @@ setParameters()
+     {
+         CamManager* pCamMgr = CamManager::getInstance();
+         String8 const s = mpParamsMgr->getStr(MtkCameraParameters::KEY_DYNAMIC_FRAME_RATE);
+-        MBOOL const isDynamicFps = ( ! s.isEmpty() && s == CameraParameters::TRUE ) ? MTRUE : MFALSE; 
++        //MBOOL const isDynamicFps = ( ! s.isEmpty() && s == CameraParameters::TRUE ) ? MTRUE : MFALSE; 
++        MBOOL const isDynamicFps = MFALSE; 
+         MUINT32 const previewFps = mpParamsMgr->getInt(CameraParameters::KEY_PREVIEW_FRAME_RATE);
+         MUINT32 const fixedFps   = ( !mpParamsMgr->getRecordingHint() && (previewFps > 30) ) ? 30 : previewFps;
+         MBOOL const isSlowMotion = ( mpParamsMgr->getRecordingHint() && (previewFps > 30) ) ? MTRUE : MFALSE;
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/ThermalMonitor/ThermalMonitor.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/ThermalMonitor/ThermalMonitor.cpp
+index d64d2f0..0c5e3f3 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/ThermalMonitor/ThermalMonitor.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D1/v1/adapter/ThermalMonitor/ThermalMonitor.cpp
+@@ -196,8 +196,10 @@ threadLoop()
+                 NS3A::Param_T cam3aParam;
+                 if(mpHal3a->getParams(cam3aParam))
+                 {
+-                    cam3aParam.i4MinFps = mOrigFps*1000;
+-                    cam3aParam.i4MaxFps = mOrigFps*1000;
++                    //cam3aParam.i4MinFps = mOrigFps*1000;
++                    //cam3aParam.i4MaxFps = mOrigFps*1000;
++                    cam3aParam.i4MinFps = 60*1000;
++                    cam3aParam.i4MaxFps = 60*1000;
+                     if(!mpHal3a->setParams(cam3aParam))
+                     {
+                         MY_LOGE("setParams fail");
+@@ -265,8 +267,11 @@ threadLoop()
+                 NS3A::Param_T cam3aParam;
+                 if(mpHal3a->getParams(cam3aParam))
+                 {
+-                    cam3aParam.i4MinFps = wantFps*1000;
+-                    cam3aParam.i4MaxFps = wantFps*1000;
++                    //cam3aParam.i4MinFps = wantFps*1000;
++                    //cam3aParam.i4MaxFps = wantFps*1000;
++                    cam3aParam.i4MinFps = 60*1000;
++                    cam3aParam.i4MaxFps = 60*1000;
++		    ALOGD("qiancheng cam3aParam.i4MaxFps 60 =========================");
+                     if(mpHal3a->setParams(cam3aParam))
+                     {
+                         mCurFps = wantFps;
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkDefault/MtkDefaultCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkDefault/MtkDefaultCamParameter.cpp
+index 1c4d785..85b1fb5 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkDefault/MtkDefaultCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkDefault/MtkDefaultCamParameter.cpp
+@@ -133,8 +133,8 @@ setParameters()
+     }
+     else
+     {
+-        cam3aParam.i4MinFps   = 5000;
+-        cam3aParam.i4MaxFps   = 60000;
++        cam3aParam.i4MinFps   = 35000;
++        cam3aParam.i4MaxFps   = 35000;
+     }
+     MY_LOGD("FPS:RH(%d),Min(%d),Max(%d)",mpParamsMgr->getRecordingHint(),cam3aParam.i4MinFps,cam3aParam.i4MaxFps);
+     //
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkEng/MtkEngCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkEng/MtkEngCamParameter.cpp
+index 728157e..57912b7 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkEng/MtkEngCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkEng/MtkEngCamParameter.cpp
+@@ -150,8 +150,8 @@ setParameters()
+     } while (0)
+ 
+     // DEFAULT DEFINITION CATEGORY
+-    cam3aParam.i4MinFps   = 5000;
+-    cam3aParam.i4MaxFps   = 60000;
++    cam3aParam.i4MinFps   = 36000;
++    cam3aParam.i4MaxFps   = 36000;
+     MY_LOGD("Fps:Min(%d),Max(%d)",cam3aParam.i4MinFps,cam3aParam.i4MaxFps);
+     //
+     UPDATE_PARAMS(cam3aParam.u4AfMode, eMapFocusMode, CameraParameters::KEY_FOCUS_MODE);
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkPhoto/MtkPhotoCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkPhoto/MtkPhotoCamParameter.cpp
+index d694362..309b9ef 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkPhoto/MtkPhotoCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkPhoto/MtkPhotoCamParameter.cpp
+@@ -126,8 +126,8 @@ setParameters()
+     } while (0)
+ 
+     // DEFAULT DEFINITION CATEGORY
+-    cam3aParam.i4MinFps   = 5000;
+-    cam3aParam.i4MaxFps   = 60000;
++    cam3aParam.i4MinFps   = 29000;
++    cam3aParam.i4MaxFps   = 29000;
+     //
+     UPDATE_PARAMS(cam3aParam.u4AfMode, eMapFocusMode, CameraParameters::KEY_FOCUS_MODE);
+     UPDATE_PARAMS(cam3aParam.u4AwbMode, eMapWhiteBalance, CameraParameters::KEY_WHITE_BALANCE);
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdCc/MtkZsdCcCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdCc/MtkZsdCcCamParameter.cpp
+index a10117d..6b55e43 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdCc/MtkZsdCcCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdCc/MtkZsdCcCamParameter.cpp
+@@ -126,8 +126,8 @@ setParameters()
+     } while (0)
+ 
+     // DEFAULT DEFINITION CATEGORY
+-    cam3aParam.i4MinFps   = 5000;
+-    cam3aParam.i4MaxFps   = 60000;
++    cam3aParam.i4MinFps   = 37000;
++    cam3aParam.i4MaxFps   = 37000;
+     //
+     UPDATE_PARAMS(cam3aParam.u4AfMode, eMapFocusMode, CameraParameters::KEY_FOCUS_MODE);
+     UPDATE_PARAMS(cam3aParam.u4AwbMode, eMapWhiteBalance, CameraParameters::KEY_WHITE_BALANCE);
+diff --git a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdNcc/MtkZsdNccCamParameter.cpp b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdNcc/MtkZsdNccCamParameter.cpp
+index c5557f7..1b16a05 100644
+--- a/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdNcc/MtkZsdNccCamParameter.cpp
++++ b/proprietary/platform/mt6735/hardware/mtkcam/D2/v1/hal/adapter/MtkZsd/MtkZsdNcc/MtkZsdNccCamParameter.cpp
+@@ -126,8 +126,8 @@ setParameters()
+     } while (0)
+ 
+     // DEFAULT DEFINITION CATEGORY
+-    cam3aParam.i4MinFps   = 5000;
+-    cam3aParam.i4MaxFps   = 60000;
++    cam3aParam.i4MinFps   = 38000;
++    cam3aParam.i4MaxFps   = 38000;
+     //
+     UPDATE_PARAMS(cam3aParam.u4AfMode, eMapFocusMode, CameraParameters::KEY_FOCUS_MODE);
+     UPDATE_PARAMS(cam3aParam.u4AwbMode, eMapWhiteBalance, CameraParameters::KEY_WHITE_BALANCE);

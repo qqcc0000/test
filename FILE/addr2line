@@ -1,0 +1,159 @@
+
+Debugging tombstones with ndk-stack and addr2line
+Posted on April 19, 2013	
+
+I really like to work with several components in a system including linux kernel or keep my emotions on userspace.
+
+If you work with android and your are a real engineer, it is very difficult to resist the native support using Android NDK. If your software requires performance using graphic API like in OpenGL or if you need to access some specific information provided by some native library, the NDK fits for you.
+
+However, bugs in native side sometimes takes time and usually it is not an easy and fast task. If you have the device and an easy way to reproduce the issue, it is ok but suppose you need to collect logs from remote users and the scenario is very difficult to reproduce. Some cases the users even see the crash visually but the system contains the logs blocking the approval of your software that must be completed to some costumer.. at this point the program/project managers team are “talking” in your ears… “fix it!”.
+
+Working with Android, every time a process that runs on native side crashes, we have some small pieces of your stack in files called tombstones.
+
+The tombstones are located at /data/tombstones as isolated files (one files represents one crash) or you can see them in your logcat Take a look in the adb shell:
+
+root@android:/ # find . |grep tombs
+
+./data/tombstones
+./data/tombstones/tombstone_00
+./data/tombstones/tombstone_01
+root@android:/ #
+
+The tombstone inform you about:
+
+    Build fingerprint
+    Crashed process and PIDs
+    Terminated signal and fault address
+    CPU registers
+    Call stack
+    Stack content of each call
+
+I will not post a full tombstone here. Check the /data on your device and you will observe the 7 sessions mentioned above . Let’s go straight to the point.. how to debug the stack in tombstones files!
+
+Debugging the stack…  easier way
+
+But sometimes looking to raw tombstones it is a little difficult to realize where and what the problem really is.
+
+The intention of this post is to introduce two tools that comes with android NDK that really helps: ndk-stack and addr2line
+
+Follow the steps below:
+
+1) Install the NDK (if you do not have yet)
+
+If you do not have the android ndk package you need to install in order to have access to the tool chains. Please download the package from this link and install on your computer.
+
+I recommend you include your NDK directory in your path. If you are using linux here goes an example that you need to include in your .bashrc:
+
+export ANDROID_NDK_PATH=/home/bytesthink/tools/android-ndk-r8d/
+
+PATH= $ANDROID_NDK_PATH:$PATH
+
+2) Execute ndk-stack tool
+
+If you install everything, you should be able to run the tool ndk-stack
+
+ndk-stack -sym <path> [-dump <path>]
+
+   -sym  Contains full path to the root directory for symbols.
+   -dump Contains full path to the file containing the crash dump.
+         This is an optional parameter. If ommited, ndk-stack will
+         read input data from stdin
+
+See docs/NDK-STACK.html in your NDK installation tree for more details.
+
+Very simple right ? Let’s run an example.. considering I pull a tombstone file from my system.
+
+bytesthink@ubuntu:~/tools/android-ndk-r8d$ ./ndk-stack -sym ~/myrelease/symbols -dump ~/win/bytesthink/Documents/test/perform_releases/tombstone_01
+********** Crash dump: **********
+Build fingerprint: 'version1239210121'
+pid: 19135, tid: 19135, name: erviceinterface >>> com.test.powermeterserver.serviceinterface <<<
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr deadd00d
+Stack frame #00 pc 00072c9a /system/lib/libdvm.so (dvmAbort+170)
+Stack frame #01 pc 00050f6b /system/lib/libdvm.so (ScopedCheck::checkInstanceFieldID(_jobject*, _jfieldID*)+379)
+Stack frame #02 pc 0005db56 /system/lib/libdvm.so (Check_SetBooleanField(_JNIEnv*, _jobject*, _jfieldID*, unsigned char)+150)
+Stack frame #03 pc 00003a93 /system/lib/libmytestt.so (Java_com_test_jni_MyLibWrapper_getMonitorSample+259)
+Stack frame #04 pc 0002d850 /system/lib/libdvm.so (dvmPlatformInvoke+80)
+Stack frame #05 pc 00085b48 /system/lib/libdvm.so (dvmCallJNIMethod(unsigned int const*, JValue*, Method const*, Thread*)+648)
+Stack frame #06 pc 000505db /system/lib/libdvm.so (dvmCheckCallJNIMethod(unsigned int const*, JValue*, Method const*, Thread*)+59)
+Stack frame #07 pc 0008b96d /system/lib/libdvm.so (dvmResolveNativeMethod(unsigned int const*, JValue*, Method const*, Thread*)+317)
+Stack frame #08 pc 00170ff1 /system/lib/libdvm.so
+Stack frame #09 pc 000402a6 /system/lib/libdvm.so (dvmMterpStd(Thread*)+70)
+Stack frame #10 pc 0003dc14 /system/lib/libdvm.so (dvmInterpret(Thread*, Method const*, JValue*)+212)
+Stack frame #11 pc 000b69db /system/lib/libdvm.so (dvmInvokeMethod(Object*, Method const*, ArrayObject*, ArrayObject*, ClassObject*, bool)+2011)
+Stack frame #12 pc 000c9f07 /system/lib/libdvm.so (Dalvik_java_lang_reflect_Method_invokeNative(unsigned int const*, JValue*)+295)
+Stack frame #13 pc 00170ff1 /system/lib/libdvm.so
+Stack frame #14 pc 000402a6 /system/lib/libdvm.so (dvmMterpStd(Thread*)+70)
+Stack frame #15 pc 0003dc14 /system/lib/libdvm.so (dvmInterpret(Thread*, Method const*, JValue*)+212)
+Stack frame #16 pc 000b575c /system/lib/libdvm.so (dvmCallMethodV(Thread*, Method const*, Object*, bool, JValue*, char*)+700)
+Stack frame #17 pc 00079b8e /system/lib/libdvm.so (CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, char*)+78)
+Stack frame #18 pc 0005a020 /system/lib/libdvm.so (Check_CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, char*)+432)
+Stack frame #19 pc 00057c5a /system/lib/libandroid_runtime.so (_JNIEnv::CallStaticVoidMethod(_jclass*, _jmethodID*, ...)+42)
+Stack frame #20 pc 00059351 /system/lib/libandroid_runtime.so (android::AndroidRuntime::start(char const*, char const*)+945)
+Stack frame #21 pc 00000fd0 /system/bin/app_process (main+528)
+Stack frame #22 pc 0001a579 /system/lib/libc.so (__libc_init+89)
+Stack frame #00 pc 0001ca31 /system/lib/libc.so
+Stack frame #01 pc 000e66e8 /system/lib/libdvm.so (gcDaemonThread(void*)+216)
+Stack frame #02 pc 00097ee0 /system/lib/libdvm.so (internalThreadStart(void*)+528)
+Stack frame #03 pc 0000deb8 /system/lib/libc.so (__thread_entry+248)
+Stack frame #04 pc 0001c951 /system/lib/libc.so
+Stack frame #05 pc 000021e0 /dev/ashmem/dalvik-LinearAlloc (deleted)
+Stack frame #06 pc 0000af42 /data/dalvik-cache/system@app@PowerManagementService.apk@classes.dex
+Stack frame #00 pc 0001c05b /system/lib/libc.so
+Stack frame #01 pc 0009163c /system/lib/libdvm.so (signalCatcherThreadStart(void*)+92)
+Stack frame #02 pc 00097ee0 /system/lib/libdvm.so (internalThreadStart(void*)+528)
+Stack frame #03 pc 0000deb8 /system/lib/libc.so (__thread_entry+248)
+Stack frame #04 pc 0001c951 /system/lib/libc.so
+Stack frame #05 pc 00002ff4 /system/lib/libdvm.so
+Stack frame #00 pc 0001c317 /system/lib/libc.so
+Stack frame #01 pc 000c012b /system/lib/libdvm.so (jdwpThreadStart(void*)+123)
+
+Cool! Checking the stack trace we can see that my libmytestt.so crashed and the memory position is 00003a93
+
+So, what do we have on this memory address ? Let’s go to step 3!
+
+Step 3) Using the addr2line
+
+This is another tool that comes with your android ndk toolchain but the name is not only addr2line as we have the standard linux distributions. If it is a special one and comes with your android ndk. For example, in my installation is:
+
+i686-linux-android-addr2line
+
+located at:
+
+android-ndk-r8d/toolchains/x86-4.6/prebuilt/linux-x86/bin/
+
+Feel free to create an alias to addr2line with whole path and correct name
+
+alias addr2line='~/tools/android-ndk-r8d/toolchains/x86-4.6/prebuilt/linux-x86/bin/i686-linux-android-addr2line'
+
+To run this command is quite simple. You can type “addr2line -?” in your linux.
+
+Usage: /home/mcramon/tools/android-ndk-r8d/toolchains/x86-4.6/prebuilt/linux-x86/bin/i686-linux-android-addr2line [option(s)] [addr(s)]
+ Convert addresses into line number/file name pairs.
+ If no addresses are specified on the command line, they will be read from stdin
+ The options are:
+  @                Read options from 
+  -a --addresses         Show addresses
+  -b --target=  Set the binary file format
+  -e --exe=  Set the input file name (default is a.out)
+  -i --inlines           Unwind inlined functions
+  -j --section=    Read section-relative offsets instead of addresses
+  -p --pretty-print      Make the output easier to read for humans
+  -s --basenames         Strip directory names
+  -f --functions         Show function names
+  -C --demangle[=style]  Demangle function names
+  -h --help              Display this information
+  -v --version           Display the program's version
+
+In my case I will run the following command line specifying the lib that crashed and address:
+
+bytesthink@ubuntu:~/tools/android-ndk-r8d$ addr2line -f -e ~/myrelease/symbols/system/lib/libmytestt.so 00003a93
+
+the my output will be:
+
+Java_com_test_jni_MyLibWrapper_getMonitorSample
+.../device/test/PRIVATE/log_infra/myservice/jni/com_test_jni_MyLibWrapper.c:189
+
+So, now I know the file and line that your software crashed!
+
+Good debuggings!!
+

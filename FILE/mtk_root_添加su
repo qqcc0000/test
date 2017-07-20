@@ -1,0 +1,447 @@
+
+
+
+
+q@pc:~/project/mt6735_cb04/device/simcom$ git diff .
+diff --git a/simcom/cb04_6735_35u/ProjectConfig.mk b/simcom/cb04_6735_35u/ProjectConfig.mk
+index e637fd8..18e277f 100755
+--- a/simcom/cb04_6735_35u/ProjectConfig.mk
++++ b/simcom/cb04_6735_35u/ProjectConfig.mk
+@@ -649,7 +649,7 @@ MTK_ULTRA_DIMMING_SUPPORT = no
+ MTK_UMTS_TDD128_MODE = no
+ MTK_USB_AUDIO_SUPPORT = yes
+ MTK_USB_CBA_SUPPORT = no
+-MTK_USER_ROOT_SWITCH = no
++MTK_USER_ROOT_SWITCH = yes
+
+
+
+
+
+
+
+MTK Android user版本如何打开root权限
+2015-01-24 15:56 6336人阅读 评论(0) 收藏 举报
+分类：
+Android 功能开发（17）
+
+版权声明：本文为博主原创文章，未经博主允许不得转载。
+[FAQ11862]user版本如何打开root权限 
+
+[Description] 
+user版本怎么打开root权限 
+[Keyword] 
+user root adb superuser 用户版本 root权限 security 
+[Serious Declaration] 
+严重声明: 任何在最终user版本上打开root权限的手法都会给用户带来安全风险, 请仔细评估您的需求是否真实需要. 
+MTK 强烈反对此类做法, 由此带来的安全风险，以及造成的损失, MTK 不承担任何的责任。 
+[Solution] 
+首先您要确认您是想开启adbd 的root 权限，还是让app 也可以拿到root 权限。他们之间的差别，可以参考FAQ 
+FAQ08317:android apk 的root 权限和USB adb 权限的区别 
+https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ08317 
+
+(1). adbd 的root 权限 
+我们通常在debug user 版本问题时, 或者进行user 版本的monkey test 时都会这个工作，以便debug. 可以参考FAQ. 
+FAQ06317 如何永久性开启adb 的root权限 https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ06317 
+如果你想user 版本adb root 权限默认关闭, 而在想开启时, 可以通过工程模式中的设置项开启, 那么请USER2ROOT 功能。 
+此功能默认关闭, 如果开启, 需要在ProjectConfig.mk 中设置: MTK_USER_ROOT_SWITCH = yes 
+同样注意此项功能通常只用于debug 或者 cmcc 送测, 在正式出货版本, 强烈要求关闭, 否则有安全风险. 
+
+(2). app 的root 权限 
+app 的root 权限通常是通过执行su 命令来获取。注意的是KK 上, 因为多种限制, 普通的su 难以直接拿到root 权限, 
+需要做针对性的改动. 
+通常我们会内置具有控制端的第三方su, 下面以内置SuperSU, 以及使用Google default su 为例进行说明。 
+
+(3). 如何内置第三方SuperSU 
+该方式可以绕过zygote 和 adbd 对Root Capabilities BoundSet 的限制. 
+3.1. 下载SuperSU 
+SuperSU: http://forum.xda-developers.com/showthread.php?t=1538053 
+3.2. 内置Superuser.apk 到 system/app 
+  将su 复制并改名成: daemonsu 
+  内置su 到 system/xbin 
+  内置daemonsu 到 system/xbin 
+  内置chattr 到 system/xbin 
+  内置chattr.pie 到 /system/xbin 
+3.3. 内置install-recovery.sh 到system/etc 
+并且按照FAQ:  FAQ09021 如何修改系统内置文件的权限, 用户，属性 
+https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ09021 
+更新alps/system/core/inlcude/private/android_filesystem_config.h 
+在android_files 数组的最开始新增. 
+{ 00755, AID_ROOT,      AID_ROOT,      0, "system/etc/install-recovery.sh" }, 
+
+(4). 如何内置Google default su 
+4.1 放开Google default su 只准shell/root 用户使用的限制. 
+   system/extras/su/su.c 中删除下面3行代码 
+   if (myuid != AID_ROOT && myuid != AID_SHELL) { 
+       fprintf(stderr,"su: uid %d not allowed to su\n", myuid); 
+       return 1; 
+   } 
+4.2 首先将此编译出的su 内置到system/bin, 然后修改su 的内置权限,启用sbit 位. 
+按照FAQ:  FAQ09021 如何修改系统内置文件的权限, 用户，属性 
+https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ09021 
+更新alps/system/core/inlcude/private/android_filesystem_config.h 
+在android_files 数组中 
+增加 
+{ 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/su" }, 
+注意这行要放在 
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" }, 
+之前 
+4.3 如果是KK 以及以后版本, 需要强行解除zygote 和 adbd 对Root Capabilities BoundSet 的限制 
+更新kernel/security/commoncap.c 中 cap_prctl_drop 函数为: 
+static long cap_prctl_drop(struct cred *new, unsigned long cap) 
+{ 
+ //mtk71029 add begin: Let 'zygote' and 'adbd' drop Root Capabilities BoundSet ineffectively 
+       if (!strncmp(current->comm, "zygote", 16)) { 
+               return -EINVAL; 
+       } 
+       if (!strncmp(current->comm, "adbd", 16)) { 
+               return -EINVAL; 
+       } 
+       // add end 
+       if (!capable(CAP_SETPCAP)) 
+               return -EPERM; 
+       if (!cap_valid(cap)) 
+               return -EINVAL; 
+       cap_lower(new->cap_bset, cap); 
+       return 0; 
+} 
+重新编译系统, 重新download 后, adb shell 进入后再输入su 看看是否命令行由$切换到#, 如果切换即成功。 
+
+(5). 在KK 版本后app 使用root 权限受到更加严格的限制, 可以参考FAQ 
+[FAQ11414] android KK 4.4 版本后，user 版本su 权限严重被限制问题说明 
+http://online.mediatek.inc/Pages/FAQ.aspx?List=SW&FAQID=FAQ11414 
+FAQ11538：android KK 4.4 版本后，app 使用root(su) 权限受到严格限制说明 
+https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ11538
+
+
+
+
+
+
+
+
+
+
+
+[FAQ08317]android apk 的root 权限和USB adb 权限的区别
+2016-07-14
+平台MT6572MT6582MT6589MT6588...
+软件分支GB3JB2JB3JB5...
+FAQs 11 of 75	
+	Google CTS 测试中关于root process 过多，如何限制root process 数量	如何快速对系统重启问题进行归类	
+内容
+[Description]
+android apk 的root 权限和USB adb 权限的区别
+ 
+[Keyword]
+apk usb Superuser SuperSU root adb
+ 
+[Solution]
+USB adb 权限是指，当adb 连接手机时，手机中的守护进程adbd 的权限为root 权限，从而它的子进程也具有root 权限，通常如果adb shell 看到是：
+Android 4.0 以后版本:
+C:\Users\mtk71029\Desktop>adb shell
+root@android:/ #
+Android 2.3 版本：
+C:\Users\mtk71029\Desktop>adb shell
+#
+即表明adb 的连接是root 权限的，相反如果看到是$ 即表明是shell 权限
+Android 的APK 本身都是不具备root 权限的，如果想启用root 权限，那么就必须借助具有root 权限的进程或者具有s bit 的文件，目前比较通用的手法是，手机root 后，内置了su到system/bin, 然后普通APP 即可借助su 命令来达到root 权限切换。
+网络上已经有同仁修改su 命令，并通过一个APK 来控制su 命令的权限控制。
+如常见的Superuser： http://androidsu.com/superuser/ 这样即可人为的控制root 权限的使用。((因很久都没有更新了，只能用于ICS 以及以前的版本))
+        SuperSU: http://forum.xda-developers.com/showthread.php?t=1538053 (更新速度很快，推荐使用)
+ 
+综上所叙，如果adb 已经有root 权限，那么让apk 行使root 权限就很简单了。比如在JB 版本或者以前的版本上：
+adb remount
+adb push su /system/bin
+adb push Superuser.apk /system/app
+adb shell chmod 0644 /system/app/Superuser.apk
+adb shell chmod 6755 /system/bin/su
+adb reboot
+ 
+在KK 以及以后的版本上，请参考FAQ:
+ 
+[FAQ11862] user版本如何打开root权限
+http://online.mediatek.inc/Pages/FAQ.aspx?list=SW&FAQID=FAQ11862
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[FAQ11862]user版本如何打开root权限
+2016-06-27
+平台MT6571MT6572MT6582MT6582/92+MT6290...
+软件分支GB3GB5JB2JB3...
+FAQs 18 of 29	
+	[SELinux Debug]权限(Permission denied)问题如何确认是Selinux 约束引起？	init 启动 Native Service 时出现Service xxxx needs a SELinux domain defined; please fix 警告的说明	
+内容
+[Description]
+user版本怎么打开root权限
+ 
+[Keyword]
+user root adb superuser 用户版本 root权限 security
+ 
+[Serious Declaration]
+严重声明: 任何在最终user版本上打开root权限的手法都会给用户带来安全风险, 请仔细评估您的需求是否真实需要. MTK 强烈反对此类做法, 由此带来的安全风险，以及造成的损失, MTK 不承担任何的责任。
+ 
+[Solution]
+首先您要确认您是想开启adbd 的root 权限，还是让app 也可以拿到root 权限。他们之间的差别，可以参考FAQ
+FAQ08317:android apk 的root 权限和USB adb 权限的区别  https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ08317
+ 
+(1). adbd 的root 权限
+我们通常在debug user 版本问题时, 或者进行user 版本的monkey test 时都会这个工作，以便debug. 可以参考FAQ.
+FAQ06317 如何永久性开启adb 的root权限 https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ06317
+ 
+如果你想user 版本adb root 权限默认关闭, 而在想开启时, 可以通过工程模式中的设置项开启, 那么请USER2ROOT 功能 (L 版本不再支持此功能)。
+此功能默认关闭, 如果开启, 需要在ProjectConfig.mk 中设置: MTK_USER_ROOT_SWITCH = yes
+同样注意此项功能通常只用于debug 或者 cmcc 送测, 在正式出货版本, 强烈要求关闭, 否则有安全风险.
+ 
+(2). app 的root 权限
+app 的root 权限通常是通过执行su 命令来获取。注意的是KK 上, 因为多种限制, 普通的su 难以直接拿到root 权限, 需要做针对性的改动.
+通常我们会内置具有控制端的第三方su, 下面以内置SuperSU, 以及使用Google default su 为例进行说明。
+ 
+(3). 如何内置第三方SuperSU
+该方式可以绕过zygote 和 adbd 对Root Capabilities BoundSet 的限制. MTK 目前仅测试KK 以及以前的版本, L 版本后因为SuperSU 还在持续更新中, 请客户查看它官网的说明.
+3.1. 下载SuperSU
+ SuperSU: http://forum.xda-developers.com/showthread.php?t=1538053
+ 
+3.2. 内置Superuser.apk 到 system/app
+   将su 复制并改名成: daemonsu
+   内置su 到 system/xbin
+   内置daemonsu 到 system/xbin
+   内置chattr 到 system/xbin
+   内置chattr.pie 到 /system/xbin
+ 
+3.3. 内置install-recovery.sh 到system/etc
+并且按照FAQ:  FAQ09021 如何修改系统内置文件的权限, 用户，属性 https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ09021
+更新alps/system/core/inlcude/private/android_filesystem_config.h
+在android_files 数组的最开始新增.
+{ 00755, AID_ROOT,      AID_ROOT,      0, "system/etc/install-recovery.sh" },
+ 
+(4). 如何内置Google default su
+4.1 放开Google default su 只准shell/root 用户使用的限制.
+    system/extras/su/su.c 中删除下面3行代码
+    if (myuid != AID_ROOT && myuid != AID_SHELL) {
+        fprintf(stderr,"su: uid %d not allowed to su\n", myuid);
+        return 1;
+    }
+ 
+4.2 首先将此编译出的su 内置到system/bin, 然后修改su 的内置权限,启用sbit 位.
+按照FAQ:  FAQ09021 如何修改系统内置文件的权限, 用户，属性 https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ09021
+更新alps/system/core/inlcude/private/android_filesystem_config.h
+在android_files 数组中
+增加
+{ 06755, AID_ROOT,      AID_ROOT,      0, "system/bin/su" },
+注意这行要放在
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" },
+之前
+ 
+4.3 如果是KK 版本(非KK2 MT6752/MT6732), 需要强行解除zygote 和 adbd 对Root Capabilities BoundSet 的限制
+更新kernel/security/commoncap.c 中 cap_prctl_drop 函数为:
+static long cap_prctl_drop(struct cred *new, unsigned long cap)
+{
+  //mtk71029 add begin: Let 'zygote' and 'adbd' drop Root Capabilities BoundSet ineffectively
+        if (!strncmp(current->comm, "zygote", 16)) {
+                return -EINVAL;
+        }
+        if (!strncmp(current->comm, "adbd", 16)) {
+                return -EINVAL;
+        }
+        // add end
+        if (!capable(CAP_SETPCAP))
+                return -EPERM;
+        if (!cap_valid(cap))
+                return -EINVAL;
+        cap_lower(new->cap_bset, cap);
+        return 0;
+}
+ 
+4.4 如果贵司一定要在K2(MT6752/MT6732) 上开启, 请提交eService, 申请定制的DVM, 放开相关的权限限制.
+ 
+ 
+4.5 如果贵司在L 版本操作, 请按下面的流程:
+ 4.5.1 更新alps/frameworks/base/core/jni/com_android_internal_os_Zygote.cpp 
+  将 DropCapabilitiesBoundingSet(JNIEnv* env) 这个函数置空.
+
+ 4.5.2 更新alps/frameworks/base/cmds/app_process/app_main.cpp 的main 函数, 注释掉main函数开始的下面这段代码
+  if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) < 0) {
+   // Older kernels don't understand PR_SET_NO_NEW_PRIVS and return
+   // EINVAL. Don't die on such kernels.
+   if (errno != EINVAL) {
+    LOG_ALWAYS_FATAL("PR_SET_NO_NEW_PRIVS failed: %s", strerror(errno));
+    return 12;
+   }
+  }
+
+ 4.5.3 更新alps/system/core/adb/adb.c 将should_drop_privileges() 函数, 清空这个函数，直接返回 0 即可.
+
+ 4.5.4 将SELinux 调整到permissve mode, 参考FAQ11484: http://online.mediatek.inc/Pages/FAQ.aspx?List=SW&FAQID=FAQ11484
+  
+ 
+重新编译系统, 重新download 后, adb shell 进入后再输入su 看看是否命令行由$切换到#, 如果切换即成功。
+ 
+(5). 在KK 版本后app 使用root 权限受到更加严格的限制, 可以参考FAQ
+[FAQ11414] android KK 4.4 版本后，user 版本su 权限严重被限制问题说明
+http://online.mediatek.inc/Pages/FAQ.aspx?List=SW&FAQID=FAQ11414
+FAQ11538：android KK 4.4 版本后，app 使用root(su) 权限受到严格限制说明
+https://online.mediatek.com/Pages/FAQ.aspx?List=SW&FAQID=FAQ11538
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[FAQ06317]如何永久性开启adb 的root权限
+2017-01-10
+平台MT6589MT6572MT2601MT6571...
+软件分支JB2GB3GB5JB3...
+FAQs 9 of 135	
+	How to readback expdb	HW reboot抓取minidump	
+内容
+
+[Description]
+如何永久性开启adb 的root权限
+ 
+[Keyword]
+user debug root adb adbd
+ 
+[Solution]
+* adb 的root 权限是在system/core/adb/adb.c 中控制。主要根据ro.secure 以及 ro.debuggable 等system property 来控制。
+默认即档ro.secure 为0 时，即开启root 权限，为1时再根据ro.debuggable 等选项来确认是否可以用开启root 权限。为此如果要永久性开启adb 的root 权限，有两种修改的方式:
+1. 修改system property ro.secure， 让ro.secure=0。
+2. 修改adb.c 中开启root 权限的判断逻辑。
+
+* 在L 版本上adb 会受到SELinux 的影响, 所以需要调整SELinux policy 设置.
+
+下面详细说明这两种修改方式:
+第一种方法. 修改system property ro.secure， 让ro.secure=0。
+(1)修改alps/build/core/main.mk
+ifneq (,$(user_variant))
+  # Target is secure in user builds.
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
+
+将ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1 改成 ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0 即可。
+
+(2)在android JB 版本(4.1) 以后，google 从编译上直接去除了adbd 的user 版本root 权限， 为此您要修改system/core/adb/Android.mk 中的编译选项ALLOW_ADBD_ROOT, 如果没有打开这个选项，那么adb.c 中将不会根据ro.secure 去选择root 还是shell 权限，直接返回shell 权限。因此您必须需要Android.mk 中的第126行：
+    ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+    ===> ifneq (,$(filter userdebug user eng,$(TARGET_BUILD_VARIANT)))
+
+(3)在android L (5.0) 以后, google 默认开启SELinux enforce mode, 需要在user build 上将su label 默认build 进SEPolicy.
+   放开SELinux 的限制. 更新alps/external/sepolicy/Android.mk 116 行,  将su label 默认编译进入sepolicy.
+ sepolicy_policy.conf := $(intermediates)/policy.conf
+ $(sepolicy_policy.conf): PRIVATE_MLS_SENS := $(MLS_SENS)
+ $(sepolicy_policy.conf): PRIVATE_MLS_CATS := $(MLS_CATS)
+ $(sepolicy_policy.conf) : $(call build_policy, $(sepolicy_build_files))
+  @mkdir -p $(dir $@)
+  $(hide) m4 -D mls_num_sens=$(PRIVATE_MLS_SENS) -D mls_num_cats=$(PRIVATE_MLS_CATS) \
+   -D target_build_variant=$(TARGET_BUILD_VARIANT) \
+   -D force_permissive_to_unconfined=$(FORCE_PERMISSIVE_TO_UNCONFINED) \
+   -s $^ > $@
+  $(hide) sed '/dontaudit/d' $@ > $@.dontaudit
+ 
+ 将-D target_build_variant=$(TARGET_BUILD_VARIANT) 改成 -D target_build_variant=eng
+
+如果是N 版本, selinux policy 已经搬移到 alps/system/sepolicy.
+ 
+即第一种方法在android L(5.0) 以后你需要改(1),(2),(3). 
+    
+第二种方法. 修改adb.c 中开启root 权限的判断逻辑。这里针对4.1 以后版本 和4.1以前版本有所区别。
+(1).如果是JB 4.1 以后版本，直接修改函数should_drop_privileges() 函数, 清空这个函数，直接返回 0 即可。返回0 即开启root 权限。
+
+(2).如果是JB 4.1 以前版本，直接修改函数adb_main 函数，在
+    /* don't listen on a port (default 5037) if running in secure mode */
+    /* don't run as root if we are running in secure mode */
+    if (secure) {
+        struct __user_cap_header_struct header;
+        struct __user_cap_data_struct cap;
+
+        if (prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0) != 0) {
+            exit(1);
+        }
+  
+在这段代码前加一行:
+
+    secure = 0;  //mtk71029 add for root forever.
+
+    /* don't listen on a port (default 5037) if running in secure mode */
+    /* don't run as root if we are running in secure mode */
+    if (secure) {
+        struct __user_cap_header_struct header;
+        struct __user_cap_data_struct cap;
+
+        if (prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0) != 0) {
+            exit(1);
+        }
+  
+(3)在android L (5.0) 以后, google 默认开启SELinux enforce mode, 需要在user build 上将su label 默认build 进SEPolicy.
+   放开SELinux 的限制. 更新alps/external/sepolicy/Android.mk 116 行,  将su label 默认编译进入sepolicy.
+ sepolicy_policy.conf := $(intermediates)/policy.conf
+ $(sepolicy_policy.conf): PRIVATE_MLS_SENS := $(MLS_SENS)
+ $(sepolicy_policy.conf): PRIVATE_MLS_CATS := $(MLS_CATS)
+ $(sepolicy_policy.conf) : $(call build_policy, $(sepolicy_build_files))
+  @mkdir -p $(dir $@)
+  $(hide) m4 -D mls_num_sens=$(PRIVATE_MLS_SENS) -D mls_num_cats=$(PRIVATE_MLS_CATS) \
+   -D target_build_variant=$(TARGET_BUILD_VARIANT) \
+   -D force_permissive_to_unconfined=$(FORCE_PERMISSIVE_TO_UNCONFINED) \
+   -s $^ > $@
+  $(hide) sed '/dontaudit/d' $@ > $@.dontaudit
+ 
+ 将-D target_build_variant=$(TARGET_BUILD_VARIANT) 改成 -D target_build_variant=eng  
+
+如果是N 版本, selinux policy 已经搬移到 alps/system/sepolicy.
+  
+即第二种方法在android L(5.0) 以后你需要改(1),(3).   
+  
+[测试与确认]
+当修改完成后，只需要重新build bootimage ，然后download 即可，然后到setting 中开启debug 选项，adb 连接后，会显示 #, 即root 成功。
+
+
+[相关FAQ]
+JB 版本后user build + eng bootimage 无法开机
+如何打开user debug选项
+JB 4.2 user 版本的开发选项不见了，如何打开adb debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

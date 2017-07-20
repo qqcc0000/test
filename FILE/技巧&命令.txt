@@ -1,0 +1,1302 @@
+======book audio lab======
+S700 11-Nov-15
+S201 23-Nov-15
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Good Qcom case owner:
+Power-Idle Power -- Madhusudana Tanugundala
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+make: *** No rule to make target 
+fatal error: camera_custom_motiontrack.h
+
+frameworks/av/media/libstagefright/Android.mk
+
+sshfs -o cache=yes huchongyang@172.21.7.18:/home/huchongyang ~/zzz
+
+adb reboot edl 或者 adb reboot dload
+adb reboot recovery  	//drivers/power/reset/msm-poweroff.c
+adb reboot bootloader
+adb reboot rtc
+
+看分区信息
+cat /proc/mounts
+
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+
+# Always start adbd on userdebug and eng builds
+on property:ro.debuggable=1
+    write /sys/class/android_usb/android0/enable 1
+    start adbd
+
+# Restart adbd so it can run as root
+on property:service.adb.root=1
+    write /sys/class/android_usb/android0/enable 0
+    restart adbd
+    write /sys/class/android_usb/android0/enable 1
+
+
+logcat和kernel log同时输出
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg > kernel_logcat.txt
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+
+./scripts/dtc/dtc -I dtb -O dts -o q39.dts arch/arm64/boot/dts/q39.dtb
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm/boot/dts/s600.dtb
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb09-apq8096-v3.0-pmi8994-cdp.dtb
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb05.dtb
+
+/home/q/project/mt6735_cb04/frameworks/av/media/
+/home/q/project/2.1_msm8939_q39_s201/frameworks/av/media/
+/home/q/project/APQ8096_CB09/frameworks/av/media/mediaserver/
+
+
+
+HAL_GPIOINT_137
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_CDP.xml:137:    <props name="blsp_spi_cs_n[7]" type="TLMMGpioIdType">{136, 2}</props>
+
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_CDP.xml:138:    <props name="blsp_spi_mosi[7]" type="TLMMGpioIdType">{137, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_MTP.xml:137:    <props name="blsp_spi_cs_n[7]" type="TLMMGpioIdType">{136, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_MTP.xml:138:    <props name="blsp_spi_mosi[7]" type="TLMMGpioIdType">{137, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_RCM.xml:137:    <props name="blsp_spi_cs_n[7]" type="TLMMGpioIdType">{136, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_RCM.xml:138:    <props name="blsp_spi_mosi[7]" type="TLMMGpioIdType">{137, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_QRD.xml:95:    <props name="blsp_spi_cs_n[7]" type="TLMMGpioIdType">{136, 2}</props>
+core/systemdrivers/tlmm/config/msm8953/PlatformIO_QRD.xml:96:    <props name="blsp_spi_mosi[7]" type="TLMMGpioIdType">{137, 2}</props>
+core/systemdrivers/hwio/hw/msm8953/msmhwioreg.h:74201:#define HWIO_TLMM_MPM_WAKEUP_INT_EN_0_GPIO_137_BMSK                                           0x400000
+core/power/mpm/config/asic/8953/MPMIntDevCfgData.c:125:  { MPM_TRIGGER_RISING_EDGE, 137             , MPM_GPIO }, 
+
+
+Collecting kernel and userspace log in single file:
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+
+adb logcat ­-v thread
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee zzker_cat.txt
+
+
+go+rwx为group和other添加权限, owner/group/others 組別, chmod u=rwx,g=rx,o=r filename
+chmod  go+rwx . -R
+
+查找并筛选出不含有"xxx"的行
+grep -nrs CONFIG_COMPAT . | grep -v "#ifdef" | grep -v "#endif" | grep -v "CONFIG_COMPAT_BRK" | grep -v "if defined"
+查找包含qiancheng和cam_idx的行
+adb logcat  | grep -E "qiancheng|cam_idx"
+
+
+tar -zcvf /tmp/etc.tar.gz /etc<==打包后，以 gzip 压缩 
+tar -zxvf /tmp/etc.tar.gz
+
+tar -jcvf /tmp/etc.tar.bz2 /etc<==打包后，以 bzip2 压缩
+
+LINUX 后台执行
+(ping xxx &)
+
+用文件夹打开
+nautilus ./
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+============VI集合 vim==============
+1.全词匹配搜索
+/\<word\>
+
+2.不保存行尾空格
+%s/\s*$//g
+
+3.CTRL+v --> shift+I --> 修改 --> ESC 退出批量编辑模式 
+================================
+安装jeffy提供的方案
+$ sudo apt-get install exuberant-ctags cscope
+$ svn checkout http://jeffy-vim.googlecode.com/svn/trunk/ jeffy-vim-read-only 
+$ cd jeffy-vim-read-only
+$ ./install.sh
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+sudo sshfs -o cache=yes,allow_other server@172.21.1.13:/home/server ~/sshfs_mount
+
+
+sshfs -o cache=yes liuyang@172.21.1.151:/work/liuyang/ ~/qmyfile
+密码3626833131liuyang
+
+
+
+ssh -l server 172.21.1.13
+
+远程拷贝
+scp xxx@172.21.1.13:/home/server/.ssh/id_rsa.pub .
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/platform/vendor/qcom/proprietary.git HEAD:refs/for/S600
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/kernel/lk.git HEAD:refs/for/S600
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/kernel/msm-3.10.git HEAD:refs/for/S600
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/platform/build.git HEAD:refs/for/S600
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/platform/system/core.git HEAD:refs/for/S600
+
+git push ssh://qiancheng@172.16.6.72:29418/S600/platform/vendor/qcom/s600 HEAD:refs/for/S600
+
+git push ssh://qiancheng@192.167.100.232:29418/Non-HLOS_second.git HEAD:refs/for/8939_L
+
+1使用git format-patch生成所需要的patch:
+当前分支所有超前master的提交：
+git format-patch -M master
+某次提交以后的所有patch:
+git format-patch 4e16                --4e16指的是commit名
+从根到指定提交的所有patch:
+git format-patch                          --root 4e16
+某两次提交之间的所有patch:
+git format-patch 365a..4e16      --365a和4e16分别对应两次提交的名称
+某次提交（含）之前的几次提交：
+git format-patch –n 07fe             --n指patch数，07fe对应提交的名称
+故，单次提交即为：
+git format-patch -1 07fe
+git format-patch生成的补丁文件默认从1开始顺序编号，并使用对应提交信息中的第一行作为文件名。如果使用了-- numbered-files选项，则文件名只有编号，不包含提交信息；如果指定了--stdout选项，可指定输出位置，如当所有patch输出到一个文件；可指定-o <dir>指定patch的存放目录；
+
+
+2应用patch：
+先检查patch文件：git apply --stat newpatch.patch
+检查能否应用成功：git apply --check  newpatch.patch
+打补丁：git am --signoff < newpatch.patch
+
+(使用-s或--signoff选项，可以commit信息中加入Signed-off-by信息)
+
+
+如果应用patch出现问题：参考git am PATCH 失败的处理方法http://blog.csdn.net/sunnylgz/article/details/7660638
+
+
+
+
+
+
+
+
+
+git clean -xdf
+
+ 比如，一个典型的git am失败，可能是这样的：
+$ git am PATCH
+Applying: PACTH DESCRIPTION
+error: patch failed: file.c:137
+error: file.c: patch does not apply
+error: patch failed: Makefile:24
+error: libavfilter/Makefile: patch does not apply
+Patch failed at 0001 PATCH DESCRIPTION
+When you have resolved this problem run "git am --resolved".
+If you would prefer to skip this patch, instead run "git am --skip".
+To restore the original branch and stop patching run "git am --abort".
+
+正如你所见，如果冲突发生，git只是输出上述信息，然后就停下来。一个小冲突会导致整个patch都不会被集成。
+
+处理这种问题的最简单方法是先使用 git am --abort，然后手动的添加此patch, patch -p1 < PATCH，手动解决掉代码冲突，最后使用 git commit -a 提交代码。但是这样做有个问题就是你会失去PATCH中原本包含的commit信息（比如From，Date，Subject，Signed-off-by等）。应该有一种更聪明的方法。
+
+在 .git/rebase-apply 目录下，存放着相应的补丁文件，名字是"0001" （在更新的git版本中，存放补丁文件的目录名有所改变，这里使用的git版本是 1.7.4.1）。
+
+事实上，你可以使用 git apply 命令打patch（git apply 是git中的patch命令）。如同使用 patch -p1 命令时一样，然后手动解决代码冲突（检视生成的 .rej 文件，与冲突文件比较，修改冲突内容，并最终把文件加入到index中）：
+
+$ git apply PATCH --reject
+$ edit edit edit
+（译注：根据.rej文件手动解决所有冲突）
+$ git add FIXED_FILES
+$ git am --resolved
+
+就这么简单！
+想多一些解释，好吧。git am 并不改变index，你需要使用 git apply --reject 打patch（保存在 .git/rebase-apply），手动解决代码冲突，（译注：使用 git status 列出所有涉及文件），把所有文件（不仅仅是引起冲突的文件）添加到（git add）index，最后告诉 git am 你已经解决（--resolved）了问题。这样做的好处是你不需要重新编辑commit信息。而且，如果你正在打的是一系列patch（就是说你在打的是多个patch，比如 git am *.patch）你不需要使用 git am --abort，然后又 git am。
+
+tag回退
+$ git tag
+$ repo forall -c git checkout tagname
+
+$ git format-patch commit号1 commit号2  # 提取2次commit号之间的不同, 并生成patch文件 (commit号可以通过 git log 来查看)
+$ git format-patch tag1 tag2            # 提取2次tag之间的不同, 并生成patch文件 (tag可以通过 git tag 来查看)
+
+
+======脚本中log输出到logcat=======
+
+shell@android:/system/bin $ log -p e -t 11 000000000
+#!/bin/bash
+LOG_TAG="qcom-bt-cta"
+LOG_NAME="${0}:"
+
+logi ()
+{
+/system/bin/log -t $LOG_TAG -p e "$LOG_NAME $@"	9
+}
+logi "8x10 BT CTA test exit......"
+
+=================================
+
+
+
+==============Q39================
+抓wifi log
+
+修改WCNSS_qcom_cfg.ini如下
+vosTraceEnableHDD = 255
+vosTraceEnableSME = 255
+vosTraceEnablePE = 255
+
+1. 下载之前传的cfg.ini ,用下面的命令替换原有ini文件，
+adb shell setprop service.adb.root 1
+adb push WCNSS_qcom_cfg.ini /data/misc/wifi/WCNSS_qcom_cfg.ini
+重启手机。
+
+2. 下载logmask ，QXDM使用这个logmask抓log，
+
+3.  高通抓sniffer log时，不要设置
+filter，他们需要完整的原始数据。
+
+4. 用下面命令
+adb shell wpa_cli ifname=p2p0 log_level EXCESSIVE
+adb shell wpa_cli ifname=wlan0 log_level EXCESSIVE
+
+5. logcat和kernel log用下面的方法抓：
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+
+注意：抓kernel
+log之前先用下面的命令获取root权限和退出SEandroid强制模式：
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+
+=================================
+
+查看已连接的AP MAC
+iwconfig wlan0  | grep "Access Point"
+
+
+#iwconfig wlan0
+wlan0     Qcom:802.11n  ESSID:"testhome"
+          Mode:Managed  Frequency:2.412 GHz  Access Point: 9C:21:6A:94:E6:52
+          Bit Rate=36 Mb/s   Tx-Power=16 dBm
+          RTS thr=2346 B   Fragment thr=8000 B
+          Encryption key:790F-9C4D-70A8-A712-C3F7-AC97-619E-2712 [2]   Security mode:restricted
+
+
+WIFI:
+
+Change configuration
+WCNSS_qcom_cfg.ini is used to configure the feature in the firmware and on the host side. This
+document covers all the configurable variables present in the file. See [Q3] and [Q4] for more
+information.
+
+How to get the .ini file from the DUT:
+1. Turn on the WLAN from the UI.
+2. Connect to a USB.
+3. In the command window, type "adb root."
+4. Type "adb remount."
+5. Type "adb pull /etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini."
+
+How to replace the .ini file in the DUT:
+1. Turn on the WLAN from the UI.
+2. Connect to a USB.
+3. In the command window, type "adb root."
+4. Type "adb remount."
+5. Type "adb push WCNSS_qcom_cfg.ini /etc/firmware/wlan/prima."
+
+How to change the WCNSS firmware:
+1. Open a command window.
+2. Type "adb root."
+3. Type "adb shell."
+
+80-Y0476-4 Rev. A
+MAY CONTAIN U.S. AND INTERNATIONAL EXPORT CONTROLLED INFORMATION
+Confidential and Proprietary – Qualcomm Atheros, Inc.
+8WCNSS Power Measurement Test Procedure
+Test Setup
+4. Type "mount."
+5. Copy the line with /firmware up to "/firmware" = cmd1.
+6. Type "mount –o remount,rw cmd1."
+7. Type "exit."
+8. Type "adb push Firmware-location /firmware/image."
+9. Type "adb shell sync."
+10. Reboot the phone.
+
+	<fwConfig>
+		<skuID>8</skuID>
+		<tpcMode2G>3</tpcMode2G>
+		<tpcMode5G>3</tpcMode5G>
+		<configItem1>0</configItem1>
+		<xPA2G>1</xPA2G>
+		<xPA5G>1</xPA5G> //0内置PA，1外置PA
+		<extPaCtrl0Polarity>0</extPaCtrl0Polarity>
+		<extPaCtrl1Polarity>0</extPaCtrl1Polarity>
+		<xLNA2G>1</xLNA2G>
+		<xLNA5G>1</xLNA5G>
+		<xCoupler2G>1</xCoupler2G>
+		<xCoupler5G>1</xCoupler5G>
+		<xPdet2G>1</xPdet2G>
+		<xPdet5G>1</xPdet5G>
+		<enableDPD2G>0</enableDPD2G>
+		<enableDPD5G>0</enableDPD5G>
+		<pdadcSelect2G>1</pdadcSelect2G>
+		<pdadcSelect5GLow>1</pdadcSelect5GLow>
+		<pdadcSelect5GMid>1</pdadcSelect5GMid>
+		<pdadcSelect5GHigh>1</pdadcSelect5GHigh>
+		<configItem2>4354</configItem2>
+		<configItem3>0</configItem3>
+		<configItem4>0</configItem4>
+	</fwConfig>
+
+
+》》》》》》》》》》》》》》》》》》》》》》》》
+1、 主机安装bootchart工具
+
+sudo apt-get install bootchart(Ubuntu)
+
+2、  生成支持bootchart的boot.img
+
+export INIT_BOOTCHART=true
+
+make boot.img
+
+烧写boot.img到手机，重启手机
+
+3、  设定bootchart收集信息 的结束时间
+
+adb shell ‘echo 120>/data/bootchart-start’
+
+重启手机。如果需要停止收集信息，可以使用adb shell 'echo 1 > /data/bootchart-stop'。
+
+4、  可以看到在/data/bootchart目录下，生成了下面五个文件
+
+header、kernel_pacct、proc_diskstats.log、proc_ps.log、proc_stat.log
+
+pull到bootchart目录下
+
+5、 在pull出来的bootchart目录下，使用tar czfbootchat.tgz *
+
+6、 设成bootchart.png图表
+
+在Ubuntu下，使用bootchart bootchart.tgz，生成bootchart.png图表。
+
+ 根据得到的bootchart.png图表，分析结果。
+《《《《《《《《《《《《《《《《《《《《《《《《《《《《《
+
+
+抓ramdump
+
+CONFIG_MSM_DLOAD_MODE=y 
+开启download_mode: echo 1 > /sys/module/restart/parameters/download_mode
+或者
+echo 1 > ./sys/module/msm_poweroff/parameters/download_mode
+手动触发测试：adb shell echo c > /proc/sysrq-trigger
+
+
+
+ #mkdir /data/debug
+ #mount -t debugfs debugfs /data/debug
+
+/d/ -> /sys/kernel/debug (debugfs)
+
+python ramparse.py --everything  --64-bit -g /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-gdb -n /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-nm  --vmlinux ~/_ramdump/Debug/vmlinux --auto-dump ~/_ramdump/Port_COM50  -o ~/_ramdump/Port_COM50/out/ 
+
+
+python ramparse.py --everything  --64-bit -g /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-gdb -n /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-nm  --vmlinux /home/q/temp/HHT6B_8939/Debug/vmlinux --auto-dump ~/temp/HHT6B_8939/Port_COM45 -o ~/temp/HHT6B_8939/Port_COM45/out/ 
+
+
+python ramparse.py --everything  --64-bit -g /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-gdb -n /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-nm  --vmlinux /home/q/temp/s700/Debug/vmlinux --auto-dump /home/q/temp/s700/Port_COM63/ -o /home/q/temp/s700/Port_COM63/out/ 
+
+
+python ramparse.py --everything  --64-bit -g /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-gdb -n /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-nm  --vmlinux /home/q/temp/HHT6B_8939/Debug/vmlinux --auto-dump /home/q/temp/HHT6B_8939/S700_Randump/Port_COM8_1/ -o /home/q/temp/HHT6B_8939/S700_Randump/Port_COM8_1/out/ 
+
+
+python ramparse.py --everything  --64-bit -g /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-gdb -n /home/q/project/2.1_msm8939_q39_s201/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.8/bin/aarch64-linux-android-nm  --vmlinux /home/q/temp/HHT6B_8939/vmlinux --auto-dump /home/q/temp/HHT6B_8939/S700_randump_20160322/Port_COM11/ -o /home/q/temp/HHT6B_8939/S700_randump_20160322/Port_COM11/out/ 
+
+
+
+
+source 过代码后
+全部dump
+aarch64-linux-android-objdump  -Dz -S vmlinux > vm.txt
+按行分析：
+aarch64-linux-android-addr2line -a ffffffc00082a908 -e vmlinux
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+file debug log / .c debug
+例如,在PCM平台驱动程序中启用日志
+echo –n "file msm-pcm-q6-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+====================================================================
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WIFI:
+○ Disable captive_portal
+su
+settings put global captive_portal_detection_enabled 0
+reboot 
+
+ tcpdump抓包并保存成cap文件
+首选介绍一下tcpdump的常用参数
+tcpdump采用命令行方式，它的命令格式为：
+　　tcpdump [ -adeflnNOpqStvx ] [ -c 数量 ] [ -F 文件名 ]
+　　　　　　　　　　[ -i 网络接口 ] [ -r 文件名] [ -s snaplen ]
+　　　　　　　　　　[ -T 类型 ] [ -w 文件名 ] [表达式 ]
+
+1. tcpdump的选项介绍
+　　　-a 　　　将网络地址和广播地址转变成名字；
+　　　-d 　　　将匹配信息包的代码以人们能够理解的汇编格式给出；
+　　　-dd 　　　将匹配信息包的代码以c语言程序段的格式给出；
+　　　-ddd 　　　将匹配信息包的代码以十进制的形式给出；
+　　　-e 　　　在输出行打印出数据链路层的头部信息；
+　　　-f 　　　将外部的Internet地址以数字的形式打印出来；
+　　　-l 　　　使标准输出变为缓冲行形式；
+　　　-n 　　　不把网络地址转换成名字；
+　　　-t 　　　在输出的每一行不打印时间戳；
+　　　-v 　　　输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息；
+　　　-vv 　　　输出详细的报文信息；
+　　　-c 　　　在收到指定的包的数目后，tcpdump就会停止；
+　　　-F 　　　从指定的文件中读取表达式,忽略其它的表达式；
+　　　-i 　　　指定监听的网络接口；
+　　　-r 　　　从指定的文件中读取包(这些包一般通过-w选项产生)；
+　　　-w 　　　直接将包写入文件中，并不分析和打印出来；
+　　　-T 　　　将监听到的包直接解释为指定的类型的报文，常见的类型有rpc（远程过程
+          调用）和snmp（简单网络管理协议；）
+
+当网络出现故障时，由于直接用tcpdump抓包分析有点困难，而且当网络中数据比较多时更不容易分析，使用tcpdump的-w参数+ethereal分析会很好的解决这个问题，具体参数如下：
+
+tcpdump -i eth1 -c 2000 -w eth1.cap
+
+-i eth1 只抓eth1口的数据
+
+-c 2000代表数据包的个数，也就是只抓2000个数据包
+
+-w eth1.cap 保存成cap文件，方便用ethereal分析
+
+抓完数据包后ftp到你的FTP服务器，put一下，然后用ethereal软件打开就可以很直观的分析了
+
+注：有时将.cap文件上传到FTP服务器后，发现用ethreal打开时提示数据包大于65535个，这是你在ftp上传或者下载的时候没有用bin的模式上传的原因。
+
+另：有的网站提示在tcpdump中用-s 0命令，例如 tcpdump -i eth1 -c 2000 -s0 -w eth1.cap，可实际运行该命令时系统却提示无效的参数,去掉-s 0参数即可
+
+例子：
+
+[root@localhost cdr]#tcpdump -i eth0 -t tcp -s 60000 -w diaoxian.cap 
+[root@localhost cdr]# tcpdump host 58.240.72.195 -s 60000 -w x.cap
+
+ 
+
+tcpdump 的抓包保存到文件的命令参数是-w xxx.cap
+抓eth1的包 
+tcpdump -i eth1 -w /tmp/xxx.cap 
+抓192.168.1.123的包 
+tcpdump -i eth1 host 192.168.1.123 -w /tmp/xxx.cap 
+抓192.168.1.123的80端口的包 
+tcpdump -i eth1 host 192.168.1.123 and port 80 -w /tmp/xxx.cap 
+抓192.168.1.123的icmp的包 
+tcpdump -i eth1 host 192.168.1.123 and icmp -w /tmp/xxx.cap 
+抓192.168.1.123的80端口和110和25以外的其他端口的包 
+tcpdump -i eth1 host 192.168.1.123 and ! port 80 and ! port 25 and ! port 110-w /tmp/xxx.cap 
+抓vlan 1的包 
+tcpdump -i eth1 port 80 and vlan 1 -w /tmp/xxx.cap 
+抓pppoe的密码 
+tcpdump -i eth1 pppoes -w /tmp/xxx.cap 
+以100m大小分割保存文件，超过100m另开一个文件 -C 100m 
+抓10000个包后退出 -c 10000 
+后台抓包， 控制台退出也不会影响： 
+nohup tcpdump -i eth1 port 110 -w /tmp/xxx.cap & 
+抓下来的文件可以直接用ethereal或者wireshark打开。 wireshark就是新版的ethereal，程序换名了
+
+首选介绍一下tcpdump的常用参数
+
+tcpdump采用命令行方式，它的命令格式为：
+　　tcpdump [ -adeflnNOpqStvx ] [ -c 数量 ] [ -F 文件名 ]
+　　　　　　　　　　[ -i 网络接口 ] [ -r 文件名] [ -s snaplen ]
+　　　　　　　　　　[ -T 类型 ] [ -w 文件名 ] [表达式 ]
+
+1. tcpdump的选项介绍
+　　　-a 　　　将网络地址和广播地址转变成名字；
+　　　-d 　　　将匹配信息包的代码以人们能够理解的汇编格式给出；
+　　　-dd 　　　将匹配信息包的代码以c语言程序段的格式给出；
+　　　-ddd 　　　将匹配信息包的代码以十进制的形式给出；
+　　　-e 　　　在输出行打印出数据链路层的头部信息；
+　　　-f 　　　将外部的Internet地址以数字的形式打印出来；
+　　　-l 　　　使标准输出变为缓冲行形式；
+　　　-n 　　　不把网络地址转换成名字；
+　　　-t 　　　在输出的每一行不打印时间戳；
+　　　-v 　　　输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息；
+　　　-vv 　　　输出详细的报文信息；
+　　　-c 　　　在收到指定的包的数目后，tcpdump就会停止；
+　　　-F 　　　从指定的文件中读取表达式,忽略其它的表达式；
+　　　-i 　　　指定监听的网络接口；
+　　　-r 　　　从指定的文件中读取包(这些包一般通过-w选项产生)；
+　　　-w 　　　直接将包写入文件中，并不分析和打印出来；
+　　　-T 　　　将监听到的包直接解释为指定的类型的报文，常见的类型有rpc（远程过程
+          调用）和snmp（简单网络管理协议；）
+
+当网络出现故障时，由于直接用tcpdump抓包分析有点困难，而且当网络中数据比较多时更不容易分析，使用tcpdump的-w参数+ethereal分析会很好的解决这个问题，具体参数如下：
+
+tcpdump -i eth1 -c 2000 -w eth1.cap
+
+-i eth1 只抓eth1口的数据
+
+-c 2000代表数据包的个数，也就是只抓2000个数据包
+
+-w eth1.cap 保存成cap文件，方便用ethereal分析
+
+抓完数据包后ftp到你的FTP服务器，put一下，然后用ethereal软件打开就可以很直观的分析了
+
+注：有时将.cap文件上传到FTP服务器后，发现用ethreal打开时提示数据包大于65535个，这是你在ftp上传或者下载的时候没有用bin的模式上传的原因。
+
+另：有的网站提示在tcpdump中用-s 0命令，例如 tcpdump -i eth1 -c 2000 -s0 -w eth1.cap，可实际运行该命令时系统却提示无效的参数,去掉-s 0参数即可
+
+例子：
+
+[root@localhost cdr]#tcpdump -i eth0 -t tcp -s 60000 -w diaoxian.cap 
+[root@localhost cdr]# tcpdump host 58.240.72.195 -s 60000 -w x.cap
+
+ 
+
+tcpdump 的抓包保存到文件的命令参数是-w xxx.cap
+抓eth1的包 
+tcpdump -i eth1 -w /tmp/xxx.cap 
+抓192.168.1.123的包 
+tcpdump -i eth1 host 192.168.1.123 -w /tmp/xxx.cap 
+抓192.168.1.123的80端口的包 
+tcpdump -i eth1 host 192.168.1.123 and port 80 -w /tmp/xxx.cap 
+抓192.168.1.123的icmp的包 
+tcpdump -i eth1 host 192.168.1.123 and icmp -w /tmp/xxx.cap 
+抓192.168.1.123的80端口和110和25以外的其他端口的包 
+tcpdump -i eth1 host 192.168.1.123 and ! port 80 and ! port 25 and ! port 110-w /tmp/xxx.cap 
+抓vlan 1的包 
+tcpdump -i eth1 port 80 and vlan 1 -w /tmp/xxx.cap 
+抓pppoe的密码 
+tcpdump -i eth1 pppoes -w /tmp/xxx.cap 
+以100m大小分割保存文件，超过100m另开一个文件 -C 100m 
+抓10000个包后退出 -c 10000 
+后台抓包， 控制台退出也不会影响： 
+nohup tcpdump -i eth1 port 110 -w /tmp/xxx.cap & 
+抓下来的文件可以直接用ethereal或者wireshark打开。 wireshark就是新版的ethereal，程序换名了
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+<<<<<<<<<<<<<<<<<<
+LINUX命令 LINUX技巧 磁盘容量 空间
+
+ls -l --sort=time | head  按时间排序查看最近10个文件
+
+df -h 查分区大小
+du -Bm 当前目录下文件大小（单位兆）
+
+du -h --max-depth=1 .
+
+du -sm * | sort -n //统计当前目录大小 并安大小 排序
+    du -sk * | sort -n
+    du -sk * | grep guojf //看一个人的大小
+    du -m | cut -d "/" -f 2 //看第二个/ 字符前的文字
+    查看此文件夹有多少文件 /*/*/* 有多少文件
+    du xmldb/
+    du xmldb/*/*/* |wc -l
+    40752
+    解释：
+    wc [-lmw]
+    参数说明：
+    -l :多少行
+    -m:多少字符
+    -w:多少字
+
+sed
+输出指定字符之前的部分
+echo "djdkfalfjakfjak dfdfdf   doioio add" | sed -r 's/.*(doioio)/\1/'
+
+
+删除文件z2.sh中每一行最后一个 (空格)之后的内容
+sed 's/\ [^\ ]*$//' z2.sh
+删除文件005tree.txt中每一行最后一个/之后的内容
+sed 's/\/[^\/]*$//' 005tree.txt
+sed 's/\/[^\/]*$//' 005tree.txt
+删除文件000.txt中每一行最后一个,之后的内容
+sed 's/,[^,]*//g' 000.txt
+sed 's/,[^,]*//g' 000.txt
+
+
+删除文件001中每一行最后一个空格之前的内容
+cat 001 | sed -r 's/.*(\ )/\1/'
+删除文件001中每一行最后一个AAA之前的内容
+cat 001 | sed -r 's/.*(AAA)/\1/'
+删除文件005中每一行第一个/之后的内容
+sed 's/\/.*//' 005
+删除文件005中每一行第一个A之后的内容
+sed 's/A.*//' 005
+
+在每行的头添加字符，比如"HEAD"，命令如下：
+sed 's/^/HEAD&/g' test.file
+在每行的行尾添加字符，比如"TAIL"，命令如下：
+sed 's/$/&TAIL/g' test.file
+在文件001每行的行尾添加字符，比如" Android.mk \|grep LOCAL_MODULE"，命令如下：
+sed 's/$/& Android.mk \|grep LOCAL_MODULE/g' 001
+
+每行复制一次
+sed 's/.*/&\n&/' 009 > 0010
+
+删除含export_includes的一行
+sed '/export_includes/d' 004 > 005
+
+去掉AA.txt中重复的行
+awk '!a[$0]++'　AA.txt
+
+两个文件按行合并，008tree并../005tree.txt到009
+paste -d '' 008tree ../005tree.txt > 009
+
+
+删除匹配Sysadmin的行
+sed '/Sysadmin/d' thegeekstuff.txt 
+sed '/Sysadmin/'d thegeekstuff.txt 
+
+显示文件中重复的行
+cat s700_defconfig | sort | uniq -cd
+
+
+>>>>>>>>>>>>>>>>>>
+
+
+虚拟按键
+qemu.hw.mainkeys=0
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+systrace工具
+external/chromium-trace/systrace.py
+
+adb shell setprop service.adb.root 1
+adb wait-for-device
+adb shell setenforce 0
+adb wait-for-device
+
+adb root
+adb wait-for-device
+adb remount
+adb shell "echo 0 > /sys/kernel/debug/tracing/tracing_on"
+adb shell "echo > /sys/kernel/debug/tracing/trace"
+adb shell "echo 51200 > /sys/kernel/debug/tracing/buffer_size_kb"
+adb shell "echo thermal:* > /sys/kernel/debug/tracing/set_event"
+adb shell "echo msm_low_power:* >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo sched:sched_migrate_task >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo sched:sched_switch >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo sched:sched_wakeup >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo sched:sched_cpu_load >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo core_ctl_eval_need >> /sys/kernel/debug/tracing/set_event"
+adb shell "echo cpufreq_interactive:* >> /d/tracing/set_event"
+adb shell "echo kgsl:* >> /d/tracing/set_event"
+adb shell "echo mdss:* >> /d/tracing/set_event"
+adb shell "echo irq:* >> /sys/kernel/debug/tracing/set_event"
+adb shell "cat /sys/kernel/debug/tracing/set_event"
+
+
+Frame drop issue on browsing, gaming, and UX 丢帧问题，浏览，游戏，和UX
+$ python systrace.py gfx input view sched am wm dalvik freq idle load sync workq power mmc disk -b 40000 -t 10 -o output.html
+
+Application launch latency 应用程序启动延迟
+$ python systrace.py gfx input sched am wm dalvik freq idle load sync workq power mmc disk  -b 40000 -t 10 -o output.html
+
+Audio quality issue 音频质量问题
+$ python systrace.py sched dalvik freq idle load sync workq power mmc disk audio hal res -b 40000 -t 10 -o output.html
+
+Camera frame drop issue 相机帧下降问题
+$ python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk camera hal res membus -b 40000 -t 10 -o output.html
+
+Video frame drop issue 视频帧下降问题
+$ python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk video audio hal res membus –b 40000 –t 10 -o output.htm
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+file debug / .c debug
+
+adb shell "echo 8 > /proc/sys/kernel/printk"
+adb shell "echo 'file qpnp-adc-tm.c +p' > /sys/kernel/debug/dynamic_debug/control"
+adb shell "echo 'file qpnp-adc-common.c +p' > /sys/kernel/debug/dynamic_debug/control" 
+adb shell "echo 'file qpnp-charger.c +p' > /sys/kernel/debug/dynamic_debug/control" 
+
+adb shell "echo 'file core.c +p' > /sys/kernel/debug/dynamic_debug/control"
+adb shell "echo 'file dwc3-msm.c +p' > /sys/kernel/debug/dynamic_debug/control"
+adb shell "echo 'file gadget.c +p' > /sys/kernel/debug/dynamic_debug/control"
+
+ （1）adb shell关闭LDO
+如关闭L3：
+cd /sys/kernel/debug/regulator/8916_l3/
+echo 0 > enable
+（2）LDO太多设备用到，不适合用adb shell来关。可以这样调试：
+cat /sys/kernel/debug/regulator/8916_l6/consumers
+shell@msm8916_32:/sys/kernel/debug/regulator/8916_l6 $ cat consumers
+Device-Supply EN Min_uV Max_uV load_uA
+0-000c-vio Y 1800000 1800000 0
+0-0068-vi2c N 1800000 1800000 0
+5-0038-vcc_i2c Y 1800000 1800000 0
+1a98000.qcom,mdss_dsi-vddio N 1800000 1800000 100
+1a98300.qcom,mdss_dsi_pll-vddio N 1800000 1800000 100
+8916_l6 N 0 0 0
+这样就可以看到是哪些设备请求了LDO6。然后 找到对应的代码，在休眠时关掉LDO，唤醒时再打开。
+0-000c: 挂在I2C0上地址为0xc
+5-0038: 挂在I2C0上地址为0x38
+查看这两个设备的驱动代码是否有执行regulator_enable。
+
+（3）通过寄存器地址关闭LDO
+如LDO6的地址是0x14546，则关闭方法是：
+# cd /sys/kernel/debug/spmi/spmi-0
+# echo 0x14546 > address
+# echo 1 > count
+# cat data 可以读寄存器
+# echo 0x00 > data 关LDO6 #在较新的平台是无法手动关闭LDO
+在S600项目LDO6和LDO17分别是提供主外设用的数字电压和模拟电压，分别是1.8v和2.8v，在cd /sys/kernel/debug/regulator/8916_l6中，cat use_count，如果值等于0表明引用计数没有使用LDO6.如果不等于0，分别将他们驱动去除，去除之后重新查看use_count的值，在S600项目中，因为icm20546陀螺仪驱动导致底电流过高，系统睡不下去。 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+USB端口不识别的问题
+
+1.
+vi /etc/udev/rules.d/70-android.rules
+SUBSYSTEM=="usb", ATTRS{idVendor}=="05c6", ATTRS{idProduct}=="9091",MODE="0666"
+
+运行命令，重启udev：
+$sudo chmod a+rx /etc/udev/rules.d/70-android.rules
+$sudo service udev restart
+
+2.如果还不行
+sudo chown root:root adb
+sudo chmod a+x adb
+sudo chmod a+s adb
+adb kill-server
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera FULLSweep
+sudo adb root;
+adb wait-for-device;
+sudo adb remount;
+adb wait-for-device;
+adb shell setprop debug.camera.af_fullsweep 1
+
+adb shell setprop persist.camera.stats.debug.mask 4
+
+adb shell logcat |grep "FULL Sweep AF ENDs here - success"
+
+
+7
+10
+14
+20
+30
+40
+50
+60
+120
+300
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+解除adb验证：
+device/qcom/common/base.mk
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES+= \
+ro.adb.secure=1	 改成   ro.adb.secure=0
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+例程：
+Linux中变量#,
+@,0,
+1,2,
+*,$$,$?的含义
+
+	
+$# 是传给脚本的参数个数
+$0 是脚本本身的名字
+$1 是传递给该shell脚本的第一个参数
+$2 是传递给该shell脚本的第二个参数
+$@ 是传给脚本的所有参数的列表
+$* 是以一个单字符串显示所有向脚本传递的参数，与位置变量不同，参数可超过9个
+$$ 是脚本运行的当前进程ID号
+$? 是显示最后命令的退出状态，0表示没有错误，其他表示有错误
+
+区别：@
+
+*
+    相同点：都是引用所有参数
+    不同点：只有在双引号中体现出来。假设在脚本运行时写了三个参数（分别存储在12 3）则"*" 等价于 "12 3"（传递了一个参数）；而"@" 等价于 "1""
+    2" "$3"（传递了三个参数）
+
+例子一
+复制代码
+
+##dels.sh
+echo "number:$#"
+echo "scname:$0"
+echo "first :$1"
+echo "second:$2"
+echo "argume:$@"
+echo "show parm list:$*"
+echo "show process id:$$"
+echo "show precomm stat: $?"
+
+复制代码
+
+执行结果
+	
+[@jihite]$ sh del.sh 1 2 3
+number:3
+scname:del.sh
+first: 1
+second:2
+argume:1 2 3
+show parm list:1 2 3
+show process id:21057
+show precomm stat: 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+编译内核defconfig
+
+make -C kernel-3.10 O=/home/qiancheng/mt6735/out/target/product/cb04_6735_35u/obj/KERNEL_OBJ ARCH=arm CROSS_COMPILE=/home/qiancheng/mt6735/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- ROOTDIR=/home/qiancheng/mt6735  cb04_6735_35u_gz_hg_debug_defconfig
+
+make O=out1/ ARCH=arm cb04_6735_35u_defconfig
+make O=out1/  menuconfig
+
+编译system.img
+
+Homebox
+make_ext4fs -s -S out/target/product/msm8610/root/file_contexts -l 838860800 -a system out/target/product/msm8610/obj/PACKAGING/systemimage_intermediates/system.img out/target/product/msm8610/system
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+md5校验
+md5sum files.zip
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+远程adb抓取LOG
+
+    远程adb调试方式：
+        1) 手机和电脑处于同一局域网
+        2) 使用USB线连接手机，输入命令： adb tcpip 5555
+        3) 拔出USB，出入命令： adb connect <手机的IP>
+        4) 需要断开连接：adb disconnect <手机的IP>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+linux创建文件节点proc/
+
+gt1x_debug_proc_entry = proc_create(GT1X_DEBUG_PROC_FILE, 0660, NULL, &gt1x_debug_fops);
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+cmpxchg(void *ptr, unsigned long old, unsigned long new);
+函数完成的功能是：将old和ptr指向的内容比较，如果相等，则将new写入到ptr中，返回old，如果不相等，则返回ptr指向的内容。
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+???????????? no permissions
+sudo vi /etc/udev/rules.d/70-android.rules
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0b05", MODE="0666" 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+如果是s600就不运行下面的
+ifeq (, $(filter s600, $(TARGET_PRODUCT)))
+endif
+
+q@pc:~/project/_4_4_Qrd892x_new/vendor/qcom/proprietary$ find . -name Android.mk | xargs grep "(filter"
+./bt/hci_qcomm_init/Android.mk:ifneq (, $(filter d508 d508_b d508_c g55 g55c s55 c580 d801, $(TARGET_PRODUCT)))
+./bt/hci_qcomm_init/Android.mk:ifneq (, $(filter d508 d508_b d508_c g55 g55c s55 c580 d801, $(TARGET_PRODUCT)))
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ADB over Wi-Fi
+1. Connect the device to Wi-Fi.
+2. In device settings, go to Wi-Fi /WLAN.
+3. Select the network name to get the IP address.
+4. Connect the PC to the same wireless network.
+5. Connect the PC to the device via USB and do the following:
+adb shell "setprop persist.adb.tcp.port 5555"
+adb tcpip 5555
+6. Disconnect USB from the device and do the following:
+adb connect <device’s IP address>
+adb shell
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+board id -- bootable/bootloader/lk/target/s600/init.c
+void target_detect(struct board_data *board)
+{
+        board->platform_hw = 0x11;
+        board->platform_subtype = 0x05;
+	/*
+	* already fill the board->target on board.c
+	*/
+}
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+kernel/drivers/platform/msm/qpnp-haptic.c
+
+adb root
+<wait briefly>
+adb shell
+mount –t debugfs none /sys/kernel/debug
+cd /sys/kernel/debug/spmi/spmi-0
+
+adb root
+<wait briefly>
+adb shell
+mount –t debugfs none /sys/kernel/debug
+cd /sys/kernel/debug/regmap/spmi0-02
+
+
+ADB over WiFi
+1. Connect the device to Wi-Fi.
+2. In device settings, go to Wi-Fi /WLAN.
+3. Select the network name to get the IP address.
+4. Connect the PC to the same wireless network.
+5. Connect the PC to the device via USB and do the following:
+adb shell "setprop persist.adb.tcp.port 5555"
+adb tcpip 5555
+6. Disconnect USB from the device and do the following:
+adb connect <device’s IP address>
+adb 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+MSM8996电源控制 ldo控制
+./drivers/regulator/rpm-smd-regulator.c
+EXPORT_SYMBOL(rpm_regulator_get);
+EXPORT_SYMBOL(rpm_regulator_put);
+EXPORT_SYMBOL(rpm_regulator_enable);
+EXPORT_SYMBOL(rpm_regulator_disable);
+EXPORT_SYMBOL(rpm_regulator_set_voltage);
+EXPORT_SYMBOL(rpm_regulator_set_mode);
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+更改HDMI分辨率
+Solution Number	00019982
+Solution Title	Dynamic change HDMI resolution by ABD
+Solution Details	
+Question:
+How to dynamic change HDMI output resolution by ADB?
+Answer:
+1. adb shell setprop enable.hdmi.edid 1 (enables dynamic switching)
+2. adb shell setprop hdmi.yRes 480 (or can be 720/576).
+3. Turn off/on the HDMI user option.
+After this the HDMI TV should show the new resolution set.
+See the logs to verify the new resolution.
+
+
+//////////////////////////////////////////////////
+Solution Number	00028359
+Solution Title	How to force HDMI resolution on Android?
+Solution Details	
+
+The HDMI resolution can be force changed using adb as below. Note this applies to HDMI as secondary display , for HDMI primary currently the resolution is set to 1080p
+Step 1: Pulling "build.prop" file from android device
+1. C:\> adb pull /system/build.prop c:/
+
+
+Step 2: Modifying the "build.prop" to force HDMI resolution
+1. Open "build.prop" and add "hw.hdmi.resolution" property if it does not exist .
+2. To set the resolution to 1080p, change "hw.hdmi.resolution=16"
+3. Save the file
+
+Step 3: Pushing "build.prop" file to android device
+1. C:\> adb root
+2. C:\> adb remount
+3. C:\> adb push build.prop /system/
+4. C:\> adb shell chmod 644 /system/build.porp
+5. C:\> adb reboot. 
+
+To force the resolution to other than 1080p
+"hw.hdmi.resolution=NUMBER"
+
+Where NUMBER is defined as below.
+1 => m640x480p60_4_3
+2 => m720x480p60_4_3
+3 => m720x480p60_16_9
+4 => m1280x720p60_16_9
+5 => m1920x1080i60_16_9
+6 => m1440x480i60_4_3
+7 => m1440x480i60_16_9
+16 => m1920x1080p60_16_9
+17 => m720x576p50_4_3
+18 =>m720x576p50_16_9
+19 => m1280x720p50_16_9
+21 => m1440x576i50_4_3
+22 =>m1440x576i50_16_9
+31 => m1920x1080p50_16_9
+32 => m1920x1080p24_16_9
+33 => m1920x1080p25_16_9
+34 => m1920x1080p30_16_9
+
+//////////////////////////////////////////////////
+
+Solution Number	00018214
+Solution Title	HDMI dynamic resolution chage using adb
+Solution Details	
+The foll steps will help to change the resolution dynamically on HDMI:
+
+Step1) adb root
+Step2) adb shell
+Step3) cd /sys/class/graphics/fb2 ( please check whether HDMI is on fb1 or fb2 and change accordingly ) . On my device it was fb2
+Step4) cat edid_modes
+( This will show all the existing modes present and supported by the TV
+
+the number to mapping is present in kernel/include/video/msm_hdmi_modes.h
+Step5) To change the resolution, choose the mode you want to change to
+
+For example,
+
+to change to HDMI_VFRMT_720x480p60_16_9 3
+
+you have to do the foll command:
+
+adb shell setprop hw.hdmi.resolution 3
+
+Step6) Now disconnect the HDMI cable and re-connect it
+
+Wait for a few seconds and then the TV will change to the resolution you selected in step(5)
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+modem build version(gps)
+modem_proc/build/ms/build_parms_8996.gps.prod.py
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+q@pc:~/project/lipeng/mt6735/build$ adb shell getprop | grep adb
+[init.svc.adbd]: [running]
+[persist.sys.usb.config]: [diag,serial_cdev,serial_tty,rmnet_ipa,mass_storage,adb]
+[sys.usb.config]: [diag,serial_cdev,serial_tty,rmnet_ipa,mass_storage,adb]
+[sys.usb.state]: [diag,serial_cdev,serial_tty,rmnet_ipa,mass_storage,adb]
+
+q@pc:~/project/lipeng/mt6735/build$ adb shell getprop | grep adb
+[init.svc.adbd]: [running]
+[persist.sys.usb.config]: [diag,serial_cdev,serial_tty,rmnet_ipa,mass_storage,adb]
+[sys.usb.config]: [mtp,adb]
+[sys.usb.state]: [mtp,adb]
+
+adb shell setprop sys.usb.config mtp,adb
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+使能关机充电charging
+http://192.167.100.232:8080/#/c/9709/1/app/aboot/aboot.c
+#if defined(MSM_S55_USB_CHARGE) || defined(MSM_G55_USB_CHARGE) || defined(MSM_C580_USB_CHARGE) || defined(MSM_D508_USB_CHARGE)
+	if (target_pause_for_battery_charge())
+		device.charger_screen_enabled = 1;
+#endif
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+进入快速工厂模式
+misc.img ffbm-00
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+查显示HDMI信息display信息
+adb shell dumpsys SurfaceFlinger
+看刷新率
+adb shell dumpsys SurfaceFlinger | grep -i refresh-rate
+adb shell dumpsys SurfaceFlinger | grep -i refresh-rate
+
+HDMI支持的分辨率
+adb shell cat /sys/class/graphics/fb1/modes
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera 效果文件重新加载,调试
+adb root
+adb remount
+adb push libchromatix_s5k2p7sx_snapshot.so /system/vendor/lib
+adb shell stop media
+adb shell start media
+adb shell stop qcamerasvr
+adb shell start qcamerasvr
+adb shell sync
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+wifi FTM (APQ8096_QCA6174A)
+
+#!/bin/bash
+
+wlan_path="/system/lib/modules/wlan.ko"
+wlan_ko="wlan"
+
+if [ ! -f "$wlan_path" ]; then
+	echo "wlan.ko doesn't exist, make sure the platform and chip!"
+	exit 0
+fi
+
+has_in=`lsmod | grep $wlan_ko | grep $wlan_ko`
+if [ "$has_in" != "" ]; then
+	echo "rmmod wlan"
+	rmmod wlan
+fi
+
+str=`ps | grep ptt`
+ptt_uid=${str:7:9}
+ptt_uid_len=${#ptt_uid}
+#echo "ptt_uid:$ptt_uid, ptt_uid_len:$ptt_uid_len"
+if [ $ptt_uid_len -eq '0' ]; then
+	echo "not find ptt_socket_app uid"
+else
+	kill $ptt_uid
+	echo "kill ptt_socket_app"
+fi
+
+insmod /system/lib/modules/wlan.ko con_mode=5
+sleep 1
+echo "insmod /system/lib/modules/wlan.ko con_mode=5"
+
+ftmdaemon -n
+echo "start ftmdaemon -n"
+
+#iwpriv wlan0 ftm 1 #start ftm
+#echo "iwpriv wlan0 ftm 1"
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+lsusb -d 05c6:9091 -v   > lsusb2.txt
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+HDMI显示
+adb reboot bootloader
+fastboot oem select-display-panel hdmi
+fastboot reboot 
+
+mdss_mdp.panel=1:dsi:0:qcom,mdss_dsi_ili9885_1080p_video:1:none
+
+
+hdmi横屏
+#set hdmi display portrait (rotates 90 degrees)
+persist.demo.hdmirotation=portrait
+frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+git 忽略文件
+git update-index --assume-unchanged <PATH>
+<PATH>是需要忽略的文件
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adsp/slpi sensor调试
+adb root
+adb wait-for-device
+adb shell mount -o remount,rw /firmware
+adb shell rm /firmware/image/slpi*   
+adb push <location of SLPI binaries> /firmware/image
+adb shell sync
+adb reboot 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera dump抓图像
+adb shell chmod 777 /data
+adb shell setprop persist.camera.dumpimg 655615
+
+root@cb09:/ # ls -l data/misc/camera/                                          
+-rw-r--r-- media    audio      447771 2017-01-01 09:35 0_16777216.jp
+-rw-r--r-- media    audio     1417760 2017-01-01 09:36 1_16842752.jp
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934550p_1440x1080_4512.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934551p_1440x1080_4513.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934552p_1440x1080_4514.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934553p_1440x1080_4515.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934554p_1440x1080_4516.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934555p_1440x1080_4517.yuv
+
+
+camera debug
+80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+grep忽略
+grep -E "http"  . -R --exclude-dir={.git,res,bin}
+grep -nr --exclude-dir={out,.repo,.git} cam_cds_mode_type_t .
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb shell setprop service.adb.root 1
+adb wait-for-device
+adb shell setenforce 0
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WIFI MAC
+
+地址到 /persist/wlan_mac.bin, 下面是格式, 符合格式就可以了
+
+Intf0MacAddress=00037faabb00
+
+Intf1MacAddress=08037faabbdd
+
+END
+
+80-Y7674-2 文档
+设置BT MAC
+
+关闭蓝牙功能
+
+adb shell rm persist/bluetooth/.bt_nv.bin
+
+adb shell btnvtool -b 22.22.22.22.22.22
+
+打开蓝牙功能即生效
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+jack-admin list-server
+jack-admin kill-server
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+github
+Username for 'https://github.com': qqcc0000
+q***q**C19**
+
+echo "# test" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/qqcc0000/test.git
+git push -u origin master
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+设置抓ramdump进data目录
+setprop persist.sys.ssr.enable_ramdumps 1
+在线ramdump, QCAP入门指南
+80-NR964-54SC版本F
+https://cap.qti.qualcomm.com/default.aspx
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+
+
+
+
+
+
+
+
+

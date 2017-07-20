@@ -1,0 +1,679 @@
+
+TC(HTB)+iptables作流量控制
+kinds kinds 2010-09-29 10:26:43
+一、环境和要求：
+线路：ADSL：2M/512K
+eth0:10.0.0.136,外网口
+eth1:192.168.1.1,内网口
+
+业务需求：保证正常的网页浏览，FTP，SMTP，POP3，对其它的所有应用加以限制，以免影响正常业务的使用。
+
+1、让交互数据包保持较低的延迟时间,也就是说上载或下载文件不会打扰SSH/telnet等。
+2、上载或下载期间有合理的速率用于网页浏览,即使http属于一种大量数据传输，也不应受其它传输影响太大
+3、对FTP-data限速，不会占用所有带宽
+4、对SMTP，pop3限速
+5、对未分类的进行限制，以免影响
+6、保证上载不会影响下载，上载数据流会影响下载的速率，这是相当普遍的现象。
+7、对每个IP的下载速率进行限制
+8、取得空闲带宽的优先级别如：交互数据，FTP-data,smtp,pop3；网页浏览，其它业务优先级别最低
+
+
+二、方法：
+
+1、(eth0)使用HTB分成五类：如下图
++---------+
+| root 1: |
++---------+
+|
++--------------------------------+
+| class 1:1 |
++--------------------------------+
+| | | | | |
++----+ +----+ +----+ +----+ +----+
+|1:11| |1:12| |1:13| |1:14| |1:15|
++----+ +----+ +----+ +----+ +----+
+
+classid 1:11：
+
+1）这个类优先权最高。拥有最低的延迟并最先取得空闲带宽，因此要设置这个类的峰值速率。
+ssh、telnet、dns、quake3、irc,ftp控制，smtp命令和带有SYN标记的数据包都应属于这一类。
+
+2)为了保证上行数据流不会伤害下行流，我们还要把ACK数据包排在队列前面。这就是当发生大批量数据流的时
+
+候，双向传输均受到严重影响的原因。因为下行数据的ACK必须同上行流进行竞争，并在处理过程中被延迟。
+
+3)限制上载速率:把上载速率限制在比可用带宽稍小一些的位置上，于是你的MODEM中就不会形成队列了。
+
+4)排除了下行队列(除了偶尔的突发)，保证交互数据包永远排在上行队列的最前面。
+
+classid 1:12：大批量传输的类。主要用来处理浏览网页的数据包，目标端口80,8080,443,8443的包。
+
+classid 1:13:此类是拥用最大吞吐TOS位的数据包。用于处理目的地址为xxxx的FTP-data。
+
+classid
+
+1:14：这里是邮件(SMTP、pop3)相关和TOS要求最小成本的数据流。用于处理目的地址为xxxx的smtp,pop3服务
+
+classid 1:15：最后是经过NAT进行大批量传输的机器，以保证他们不会妨碍正常服务。
+
+2、(eth0)限制下载速率：。丢掉那些太快到来的数据包，不让他们导致TCP/IP的速率低于我们期望的速率。因为我们不希望轻易地丢弃数据包，所以我们要配置“burst”来容纳突发传输。
+
+3、(eth1)限制下载速率：对每一个IP限制最高下载速率
+
+
+
+三、
+1、队列处理
+
+#脚本：用384kbps作为峰值速率，调整CEIL为上行速率的75%。
+#Set the following values to somewhat lesss than your actual download and uplink speed.
+DOWNLINK=2000
+UPLINK=384
+
+#清空已有的队列，并把出错消息清空
+#clean existing down and uplink qdiscs,put the errors to /dev/null
+tc qdisc del dev eth0 root    2>; /dev/null >; /dev/null
+tc qdisc del dev eth0 ingress 2>; /dev/null >; /dev/null
+tc qdisc del dev eth1 root    2>; /dev/null >; /dev/null
+
+########################################uplink###########################################
+
+#建立HTB父类，默认数据由1：15这个类通走
+#install root HTB,point default traffic to 1:15:
+tc qdisc add dev eth0 root handle 1: htb default 15
+
+#设定uplink的最大速率。
+#shape everything at $UPLINK speed -this prevents huge queues in your DSL modem which destroy
+
+latency:
+# main class
+tc class add dev eth0 parent 1:  classid 1:1  htb rate ${UPLINK}kbit ceil ${UPLINK}kbit
+
+#分类，1：11为最高优先级别，stmp,pop3,ftp-data次之，网页浏览再次之。并对每个类限制了最高速率。
+#high prio class 1:11:
+tc class add dev eth0 parent 1:1 classid 1:11 htb rate 128kbit ceil 128kbit prio 0
+tc class add dev eth0 parent 1:1 classid 1:12 htb rate 128kbit ceil ${UPLINK}kbit prio 2
+tc class add dev eth0 parent 1:1 classid 1:13 htb rate 32kbit ceil ${UPLINK}kbit prio 1
+tc class add dev eth0 parent 1:1 classid 1:14 htb rate 32kbit ceil ${UPLINK}kbit prio 1
+#bulk & default class 1:15 -gets slightly less traffic,and a lower priority:
+tc class add dev eth0 parent 1:1 classid 1:15 htb rate 16kbit ceil ${UPLINK}kbit prio 3
+
+
+可以在类下面再附加上另一个队列规定，以保证带宽的公平使用：
+#bost get Stochastic Fairness:
+tc qdisc add dev eth0 parent 1:12 handle 12: sfq
+tc qdisc add dev eth0 parent 1:13 handle 13: sfq
+tc qdisc add dev eth0 parent 1:14 handle 14: sfq
+tc qdisc add dev eth0 parent 1:15 handle 15: sfq
+
+
+2、分类：
+上面的队列处理中等于把所有发出的数据包都送给了1:15
+(tc qdisc add dev eth0 root handle 1: htb default 15)。
+现在应该需要告诉机器那些数据包走哪条路。设置过滤器以便用iptables对数据包进行分类。
+可以通过RETURN方法避免遍历所有的规则。
+#TOS Mininum Delay (ssh,telnet) in 1:11:
+tc filter add dev eth0 parent 1:0 protocol ip prio 1 handle 1 fw classid 1:11
+#80,8080,443 in 1:12
+tc filter add dev eth0 parent 1:0 protocol ip prio 2 handle 2 fw classid 1:12
+#ftp-data in 1:13
+tc filter add dev eth0 parent 1:0 protocol ip prio 3 handle 3 fw classid 1:13
+#smtp,pop3 in 1:14
+tc filter add dev eth0 parent 1:0 protocol ip prio 4 handle 4 fw classid 1:14
+#
+tc filter add dev eth0 parent 1:0 protocol ip prio 5 handle 5 fw classid 1:15
+
+这样数据包会有一个特定的FWMARK标记值(hanlde x fw)，表明它应该送给哪个类( classid x)。
+后面要给数据包打标记。
+
+
+3、丢掉那些太快到来的数据包，不让他们导致TCP/IP的速率低于我们期望的速率。因为我们不希望轻易地丢弃数据包，所以我们要配置“burst”来容纳突发传输。,
+########################################DOWNLINK###########################################
+# install the ingress qdisc on the ingress
+tc qdisc add dev eth0 handle ffff: ingress
+# DROP everything that's coming in too fast:
+tc filter add dev eth0 parent ffff: protocol ip prio 50 u32 match ip src 0.0.0.0/0 police rate ${DOWNLINK}kbit burst 10k drop flowid :1
+
+
+4、对内网的IP速率进行限制，把内网192.168.1.0段的速率限制成128Kbit，所能借到的最大带宽384Kbit，允许突发流量为15Kbit,当然你可以改rate或ceil.
+
+tc qdisc del dev eth1 root 2>;/dev/null
+tc qdisc add dev eth1 root handle 2: htb
+tc class add dev eth1 parent 2: classid 2:1 htb rate 512kbit
+i=2;
+while [ $i -lt 255 ]
+do
+tc class add dev eth1 parent 2:1 classid 2:2$i htb rate 128kbit ceil 384kbit burst 15k
+tc qdisc add dev eth1 parent 2:2$i handle 2$i: sfq
+tc filter add dev eth1 parent 2:0 protocol ip prio 4 u32 match ip dst 192.168.1.$i flowid 2:2$i
+i=`expr $i + 1`
+done
+
+
+四、现在对数据进得mark
+1、首先启用ip转发，做NAT转换，并设定默认iptable策略：
+echo "1" >; /proc/sys/net/ipv4/ip_forward
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+iptables -t nat -A POSTROUTING -s 192.168.1.0/255.255.255.0 -o eth0 -j SNAT --to-source
+
+10.0.0.136
+
+2、设置TOS的处理：
+最小延迟的归第一类
+iptables -t mangle -A PREROUTING -m tos --tos Minimize-Delay -j MARK --set-mark 0x1
+iptables -t mangle -A PREROUTING -m tos --tos Minimize-Delay -j RETURN
+
+这里是邮件(SMTP、pop3?)相关和TOS要求最小成本的数据流。
+iptables -t mangle -A PREROUTING -m tos --tos Minimize-Cost -j MARK --set-mark 0x4
+iptables -t mangle -A PREROUTING -m tos --tos Minimize-Cost -j RETURN
+
+最后是路由器后面经过NAT进行大批量传输的机器。以保证他们不会妨碍正常服务。
+iptables -t mangle -A PREROUTING -m tos --tos Maximize-Throughput -j MARK --set-mark 0x5
+iptables -t mangle -A PREROUTING -m tos --tos Maximize-Throughput -j RETURN
+
+
+3、给数据包打标记
+类1：
+提高tcp初始连接(也就是带有SYN的数据包)的优先权是非常明智的：
+# tag all incoming SYN packets through eth0 as mark value
+iptables -t mangle -I PREROUTING -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j MARK --set-mark 0x1
+iptables -t mangle -I PREROUTING -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j RETURN
+
+ftp控制放第1类,因为一般是小包,  
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp -j MARK --set-mark 0x1
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp -j MARK --set-mark 0x1
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp -j RETURN
+
+然后提高ssh数据包的优先权：
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 22 -j MARK --set-mark 0x1
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 22 -j RETURN
+
+DNS放第一类，
+iptables -t mangle -A PREROUTING -p udp -m udp --dport 53 -j MARK --set-mark 0x1
+iptables -t mangle -A PREROUTING -p udp -m udp --dport 53 -j RETURN
+
+
+
+类2：用于放置大批量传输的类。用来处理浏览网页的数据包，目标端口80的包。
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 80 -j MARK --set-mark 0x2
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 80 -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 80 -j MARK --set-mark 0x2
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 80 -j RETURN
+
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 443 -j MARK --set-mark 0x2
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 443 -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 443 -j MARK --set-mark 0x2
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 443 -j RETURN
+
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 8080 -j MARK --set-mark 0x2  
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 8080 -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 8080 -j MARK --set-mark 0x2  
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 8080 -j RETURN
+
+
+类3：ftp-data放在第3类,要求最大吞吐.
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp-data -j MARK --set-mark 0x3
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp-data -j RETURN
+
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp-data -j MARK --set-mark 0x3
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp-data -j RETURN
+
+类4：
+邮件(SMTP、pop3)相关和TOS要求最小成本的数据流。
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 25 -j MARK --set-mark 0x4
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 25 -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 25 -j MARK --set-mark 0x4
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 25 -j RETURN
+
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 110 -j MARK --set-mark 0x4
+iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 110 -j RETURN
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 110 -j MARK --set-mark 0x4
+iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 110 -j RETURN
+
+类5：前面没有打过标记的数据包将交给1:15处理：
+iptables -t mangle -A PREROUTING -j MARK --set-mark 0x5
+
+
+4、最后应该在OUTPUT链中再重复一遍上面的设置，也就是说把命令中的–A PREROUTING改成-A OUTPUT
+
+iptables -t mangle -A OUTPUT -m tos --tos Minimize-Delay -j MARK --set-mark 0x1
+iptables -t mangle -A OUTPUT -m tos --tos Minimize-Delay -j RETURN
+
+iptables -t mangle -A OUTPUT -m tos --tos Minimize-Cost -j MARK --set-mark 0x4
+iptables -t mangle -A OUTPUT -m tos --tos Minimize-Cost -j RETURN
+
+iptables -t mangle -A OUTPUT -m tos --tos Maximize-Throughput -j MARK --set-mark 0x5
+iptables -t mangle -A OUTPUT -m tos --tos Maximize-Throughput -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 22 -j MARK --set-mark 0x1
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 22 -j RETURN
+
+iptables -t mangle -I OUTPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j MARK --set-mark 0x1
+iptables -t mangle -I OUTPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j RETURN
+
+iptables -t mangle -A OUTPUT -p udp -m udp --dport 53 -j MARK --set-mark 0x1
+iptables -t mangle -A OUTPUT -p udp -m udp --dport 53 -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp -j MARK --set-mark 0x1
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp -j MARK --set-mark 0x1
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 80 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 80 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 80 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 80 -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 443 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 443 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 443 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 443 -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 8080 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 8080 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 8080 -j MARK --set-mark 0x2
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 8080 -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp-data -j MARK --set-mark 0x3
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp-data -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp-data -j MARK --set-mark 0x3
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp-data -j RETURN
+
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 25 -j MARK --set-mark 0x4
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 25 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 25 -j MARK --set-mark 0x4
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 25 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 110 -j MARK --set-mark 0x4
+iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 110 -j RETURN
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 110 -j MARK --set-mark 0x4
+iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 110 -j RETURN
+
+iptables -t mangle -A OUTPUT -j MARK --set-mark 0x3
+
+5、iptables策略
+
+iptables -A INPUT -p ALL -i eth1 -s 192.168.1.0/24 -j ACCEPT
+iptables -A INPUT -p ALL -i lo -j ACCEPT
+iptables -A INPUT -p ALL -d 10.0.0.136 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+iptables -A FORWARD -i eth1 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+iptables -A OUTPUT -p ALL -s 127.0.0.1 -j ACCEPT
+iptables -A OUTPUT -p ALL -s 192.168.1.1 -j ACCEPT
+iptables -A OUTPUT -p ALL -s 10.0.0.136 -j ACCEPT
+
+#因为我上面做了squid代理，所以把80的数据都转发给squid处理
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-ports 3128
+
+
+附完整脚本：
+
+   1. #!/bin/bash
+   2. echo "1" >; /proc/sys/net/ipv4/ip_forward
+   3. iptables -P INPUT DROP
+   4. iptables -P OUTPUT DROP
+   5. iptables -P FORWARD DROP
+   6. iptables -t nat -A POSTROUTING -s 192.168.1.0/255.255.255.0 -o eth0 -j SNAT --to-source 10.0.0.136
+   7.
+
+   8. # start filters
+   9. # TOS Minimum Delay (ssh, NOT scp) in 1:11:
+  10. iptables -t mangle -A PREROUTING -m tos --tos Minimize-Delay -j MARK --set-mark 0x1
+  11. iptables -t mangle -A PREROUTING -m tos --tos Minimize-Delay -j RETURN
+  12.
+
+  13. iptables -t mangle -A PREROUTING -m tos --tos Minimize-Cost -j MARK --set-mark 0x4
+  14. iptables -t mangle -A PREROUTING -m tos --tos Minimize-Cost -j RETURN
+  15.
+
+  16. iptables -t mangle -A PREROUTING -m tos --tos Maximize-Throughput -j MARK --set-mark 0x5
+  17. iptables -t mangle -A PREROUTING -m tos --tos Maximize-Throughput -j RETURN
+  18.
+
+  19. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 22 -j MARK --set-mark 0x1
+  20. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 22 -j RETURN
+  21.
+
+  22. iptables -t mangle -I PREROUTING -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j MARK --set-mark 0x1
+  23. iptables -t mangle -I PREROUTING -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j RETURN
+  24.
+
+  25. iptables -t mangle -A PREROUTING -p udp -m udp --dport 53 -j MARK --set-mark 0x1
+  26. iptables -t mangle -A PREROUTING -p udp -m udp --dport 53 -j RETURN
+  27.
+
+  28. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp -j MARK --set-mark 0x1
+  29. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp -j RETURN
+  30. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp -j MARK --set-mark 0x1
+  31. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp -j RETURN
+  32.
+
+  33. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 80 -j MARK --set-mark 0x2
+  34. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 80 -j RETURN
+  35. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 80 -j MARK --set-mark 0x2
+  36. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 80 -j RETURN
+  37.
+
+  38. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 443 -j MARK --set-mark 0x2
+  39. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 443 -j RETURN
+  40. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 443 -j MARK --set-mark 0x2
+  41. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 443 -j RETURN
+  42.
+
+  43. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 8080 -j MARK --set-mark 0x2  
+  44. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 8080 -j RETURN
+  45. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 8080 -j MARK --set-mark 0x2  
+  46. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 8080 -j RETURN
+  47.
+
+  48.
+
+
+  49. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp-data -j MARK --set-mark 0x3
+  50. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport ftp-data -j RETURN
+  51.
+
+  52. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp-data -j MARK --set-mark 0x3
+  53. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport ftp-data -j RETURN
+  54.
+
+  55. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 25 -j MARK --set-mark 0x4
+  56. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 25 -j RETURN
+  57. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 25 -j MARK --set-mark 0x4
+  58. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 25 -j RETURN
+  59.
+
+  60. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 110 -j MARK --set-mark 0x4
+  61. iptables -t mangle -A PREROUTING -p tcp -m tcp --dport 110 -j RETURN
+  62. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 110 -j MARK --set-mark 0x4
+  63. iptables -t mangle -A PREROUTING -p tcp -m tcp --sport 110 -j RETURN
+  64.
+
+  65. iptables -t mangle -A PREROUTING -j MARK --set-mark 0x5
+  66.
+
+  67.
+
+
+  68.
+
+
+
+  69. iptables -t mangle -A OUTPUT -m tos --tos Minimize-Delay -j MARK --set-mark 0x1
+  70. iptables -t mangle -A OUTPUT -m tos --tos Minimize-Delay -j RETURN
+  71.
+
+  72. iptables -t mangle -A OUTPUT -m tos --tos Minimize-Cost -j MARK --set-mark 0x4
+  73. iptables -t mangle -A OUTPUT -m tos --tos Minimize-Cost -j RETURN
+  74.
+
+  75. iptables -t mangle -A OUTPUT -m tos --tos Maximize-Throughput -j MARK --set-mark 0x5
+  76. iptables -t mangle -A OUTPUT -m tos --tos Maximize-Throughput -j RETURN
+  77.
+
+  78. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 22 -j MARK --set-mark 0x1
+  79. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 22 -j RETURN
+  80.
+
+  81. iptables -t mangle -I OUTPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j MARK --set-mark 0x1
+  82. iptables -t mangle -I OUTPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -j RETURN
+  83.
+
+  84. iptables -t mangle -A OUTPUT -p udp -m udp --dport 53 -j MARK --set-mark 0x1
+  85. iptables -t mangle -A OUTPUT -p udp -m udp --dport 53 -j RETURN
+  86.
+
+  87. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp -j MARK --set-mark 0x1
+  88. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp -j RETURN
+  89. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp -j MARK --set-mark 0x1
+  90. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp -j RETURN
+  91.
+
+  92. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 80 -j MARK --set-mark 0x2
+  93. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 80 -j RETURN
+  94. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 80 -j MARK --set-mark 0x2
+  95. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 80 -j RETURN
+  96.
+
+  97. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 443 -j MARK --set-mark 0x2
+  98. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 443 -j RETURN
+  99. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 443 -j MARK --set-mark 0x2
+ 100. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 443 -j RETURN
+ 101.
+
+ 102. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 8080 -j MARK --set-mark 0x2
+ 103. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 8080 -j RETURN
+ 104. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 8080 -j MARK --set-mark 0x2
+ 105. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 8080 -j RETURN
+ 106.
+
+ 107. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp-data -j MARK --set-mark 0x3
+ 108. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport ftp-data -j RETURN
+ 109. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp-data -j MARK --set-mark 0x3
+ 110. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport ftp-data -j RETURN
+ 111.
+
+ 112. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 25 -j MARK --set-mark 0x4
+ 113. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 25 -j RETURN
+ 114. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 25 -j MARK --set-mark 0x4
+ 115. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 25 -j RETURN
+ 116. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 110 -j MARK --set-mark 0x4
+ 117. iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 110 -j RETURN
+ 118. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 110 -j MARK --set-mark 0x4
+ 119. iptables -t mangle -A OUTPUT -p tcp -m tcp --sport 110 -j RETURN
+ 120. iptables -t mangle -A OUTPUT -j MARK --set-mark 0x3
+ 121.
+
+ 122.
+
+
+ 123. iptables -A INPUT -p ALL -i eth1 -s 192.168.1.0/24 -j ACCEPT
+ 124. iptables -A INPUT -p ALL -i lo -j ACCEPT
+ 125. iptables -A INPUT -p ALL -d 10.0.0.136 -m state --state ESTABLISHED,RELATED -j ACCEPT
+ 126.
+
+ 127. iptables -A FORWARD -i eth1 -j ACCEPT
+ 128. iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+ 129.
+
+ 130. iptables -A OUTPUT -p ALL -s 127.0.0.1 -j ACCEPT
+ 131. iptables -A OUTPUT -p ALL -s 192.168.1.1 -j ACCEPT
+ 132. iptables -A OUTPUT -p ALL -s 10.0.0.136 -j ACCEPT
+ 133.
+
+ 134. iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-ports 3128
+ 135.
+
+ 136.
+
+
+ 137. #Set the following values to somewhat lesss than your actual download and uplink speed.
+ 138. DOWNLINK=1600
+ 139. UPLINK=384
+ 140.
+
+ 141. #clean existing down and uplink qdiscs,put the errors to /var/log/htb_log
+ 142. tc qdisc del dev eth0 root    2>; /dev/null >; /dev/null
+ 143. tc qdisc del dev eth0 ingress 2>; /dev/null >; /dev/null
+ 144. tc qdisc del dev eth1 root    2>; /dev/null >; /dev/null
+ 145.
+
+ 146. ########################################uplink###########################################
+ 147.
+
+ 148. #install root HTB,point default traffic to 1:15:
+ 149. tc qdisc add dev eth0 root handle 1: htb default 15 r2q 1
+ 150. #shape everythin at $UPLINK speed -this prevents huge queues in your DSL modem which destroy
+ 151.
+
+ 152. latency:
+ 153. # main class
+ 154. tc class add dev eth0 parent 1:  classid 1:1  htb rate ${UPLINK}kbit ceil ${UPLINK}kbit
+ 155. #high prio class 1:11:
+ 156. tc class add dev eth0 parent 1:1 classid 1:11 htb rate 128kbit ceil 128kbit prio 0
+ 157. tc class add dev eth0 parent 1:1 classid 1:12 htb rate 128kbit ceil ${UPLINK}kbit prio 2
+ 158. tc class add dev eth0 parent 1:1 classid 1:13 htb rate 32kbit ceil ${UPLINK}kbit prio 1
+ 159. tc class add dev eth0 parent 1:1 classid 1:14 htb rate 32kbit ceil ${UPLINK}kbit prio 1
+ 160. #bulk & default class 1:15 -gets slightly less traffic,and a lower priority:
+ 161. tc class add dev eth0 parent 1:1 classid 1:15 htb rate 16kbit ceil ${UPLINK}kbit prio 3
+ 162.
+
+ 163. #bost get Stochastic Fairness:
+ 164. tc qdisc add dev eth0 parent 1:12 handle 12: sfq
+ 165. tc qdisc add dev eth0 parent 1:13 handle 13: sfq
+ 166. tc qdisc add dev eth0 parent 1:14 handle 14: sfq
+ 167. tc qdisc add dev eth0 parent 1:15 handle 15: sfq
+ 168.
+
+ 169. #TOS Mininum Delay (ssh,telnet) in 1:11:
+ 170. tc filter add dev eth0 parent 1:0 protocol ip prio 1 handle 1 fw classid 1:11
+ 171. tc filter add dev eth0 parent 1:0 protocol ip prio 2 handle 2 fw classid 1:12
+ 172. tc filter add dev eth0 parent 1:0 protocol ip prio 3 handle 3 fw classid 1:13
+ 173. tc filter add dev eth0 parent 1:0 protocol ip prio 4 handle 4 fw classid 1:14
+ 174. tc filter add dev eth0 parent 1:0 protocol ip prio 5 handle 5 fw classid 1:15
+ 175.
+
+ 176. # install the ingress qdisc on the ingress
+ 177. tc qdisc add dev eth0 handle ffff: ingress
+ 178. # DROP everything that's coming in too fast:
+ 179. tc filter add dev eth0 parent ffff: protocol ip prio 50 u32 match ip src 0.0.0.0/0 police rate ${DOWNLINK}kbit burst 15k drop flowid :1
+ 180.
+
+ 181.
+
+
+ 182. tc qdisc del dev eth1 root 2>;/dev/null
+ 183. tc qdisc add dev eth1 root handle 2: htb
+ 184. tc class add dev eth1 parent 2: classid 2:1 htb rate 512kbit
+ 185. i=2;
+ 186. while [ $i -lt 255 ]
+ 187. do
+ 188. tc class add dev eth1 parent 2:1 classid 2:2$i htb rate 128kbit ceil 384kbit burst 15k
+ 189. tc qdisc add dev eth1 parent 2:2$i handle 2$i: sfq
+ 190. tc filter add dev eth1 parent 2:0 protocol ip prio 4 u32 match ip dst 192.168.1.$i flowid 2:2$i
+ 191. i=`expr $i + 1`
+ 192. done
+193.
+
+复制代码
+
+
+
+六、查看状态：
+tc -s -d qdisc show dev eth0
+tc -s -d class show dev eth0
+
+可以看到1:11,1：15都有了一定流量,然后，你可以试试收发邮件和FTP-data，1:13,1:14也会有一定流量的。
+
+
+
+
+
+
+
+
+
+http://blog.csdn.net/u014015972/article/details/50647039
+对特定IP进行流量统计
+
+        例如我要统计服务器上的IP：192.168.0.10的入网流量：
+        iptables -I INPUT -d 192.168.0.10
+        统计该IP的出网流量：
+        iptables -I OUTPUT -s 192.168.0.10
+
+统计特定端口的流量
+
+        方法和统计IP的流量差不多，使用-p指定端口类型，–dport指定端口号。 例如我要统计服务器上的IP：127.0.0.1，1080端口的入网流量：
+        sudo iptables -I INPUT -d 127.0.0.1 -p tcp –dport 1080
+        统计该IP 80端口的出网流量：
+        sudo iptables -I OUTPUT -s 127.0.0.1 -p tcp –sport 1080 出口流量统计命令
+        上面的命令中，参数-d是目标IP，-s是源IP。因为入网的流量发送至127.0.0.1 这个IP，因此把127.0.0.1 作为目标IP可以统计入网的流量。出网时，127.0.0.1 发出的流量，因此把127.0.0.1 作为OUTPUT的源IP可以统计流量。 不仅如此，还可以对特定来源IP，来源端口，出网的目的IP，出网的目的端口进行统计，根据需要使用-s,–sport,-d,–dport几个参数即可。
+
+查看流量
+
+        iptables -n -v -L -t filter 默认是使用易读的单位，也就是自动转化成M，G。如过需要Bytes做单位，则增加一个-x参数
+        iptables -n -v -L -t filter -x
+
+作为路由时的流量统计
+
+        如果服务器是做路由的，那么使用上面的命令把规则插入至INPUT/OUTPUT链中就无效了，因为那些IP根本不是在你的服务器上。但是那些IP的流量，都需要经过你的服务器的转发，因此把对于的规则插入至FORWARD表即可。、 例如我要统计IP为192.168.0.10的服务器入网流量：
+        iptables -I FORWARD -d 192.168.0.10
+        统计该IP的出网流量：
+        iptables -I FORWARD -s 192.168.0.10
+        需要注意的是，此时添加统计出网和入网流量的规则，不再需要分INPUT链和OUTPUT链，因为你服务器只负责根据目标IP，进行转发。
+
+iptables规则的保存
+
+        一般重启后iptables规则会丢失，因此需要进行保存操作。
+        基于Red Hat：
+        service iptables save
+        基于Debian：
+        先保存：
+        iptables-save > /etc/iptables.rules
+        恢复：
+        iptables-restore < /etc/iptables.rules
+
+shadowsocks流量检测控制方法
+
+        端口的出口流量统计命令
+        sudo iptables -I OUTPUT -s 127.0.0.1 -p tcp –sport 1080
+        然后去定时检测统计流量,查看统计流量信息:
+        sudo iptables -n -v -L -t filter
+        sudo iptables -n -v -L -t filter |grep -i –color -B 3 spt:1080 定期检测命令，流量带颜色
+        sudo iptables -n -v -L -t filter |grep -i ‘spt:1080’ |awk -F’ ’ ‘{print $2}’ 只输出具体流量值
+        然后自己写个crontab脚本,每分钟去读取流量统计出来的流量值,判断下,超过预设流量即停止shadowsocks服务
+        当然你可能开启多个shadowsocks服务,需要保存他们的进程id,超出流量的就kill 这个id
+
+    #启动服务并记录进程id到文件
+    PORT=1080
+    PID_FILE=~/shadow_$PORT.pid
+    #开启对应端口流量统计
+    sudo iptables -I OUTPUT -s 127.0.0.1 -p tcp --sport $PORT
+    shadowsocks -c shadowsocks.json -p $PORT > logshadow.log 2>&1 &
+    echo "$!" > $PID_FILE
+
+    1
+    2
+    3
+    4
+    5
+    6
+    7
+
+    1
+    2
+    3
+    4
+    5
+    6
+    7
+
+    #定时检测 流量超出则停止服务,比如限制每天流量100M
+    PORT=1080
+    PID_FILE=~/shadow_$PORT.pid
+    MAX=100
+    SLEEP_TIME=20 #每20秒检测流量一次
+    while true
+    do
+      value_string=`sudo iptables -n -v -L -t filter |grep -i "spt:$PORT"|awk -F' ' '{print $2}'`
+      grep 'M' $value_string
+      if [ $? = 0 ] ;then
+       value=`echo $value_string |tr -d 'M'`
+       if [ $value -gt $MAX ]; then
+          kill -9 `cat $PID_FILE`
+          rm $PID_FILE
+          #关闭流量统计
+          sudo iptables -D OUTPUT -s 127.0.0.1 -p tcp --sport $PORT
+          break
+        fi
+      fi
+      sleep $SLEEP_TIME
+    done
+
+
+
+

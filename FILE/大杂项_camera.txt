@@ -1,0 +1,224 @@
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AF调试方案
+1. 开发背景和目的
+高通在将3A的版本更新至4.1以后，AF这块调试不需要借助激光测距仪进行调试，我们可以以debug的方式进行调试，并做相应的优化。
+2. AF对焦基本术语
+l  景深
+当对焦完成后，在焦点前后一定的距离内的景物都是清晰的。这一前一后的距离就是景深，光圈越大，景深越浅，背景越糊，光圈越小，景深越大，背景越清晰
+l  超焦距(Hyperfocal)
+当镜头对焦在无穷远时，离镜头最近清晰点到镜头的距离称之为超焦距。换句话说当镜头对焦在无穷远时，超焦距点到无穷远全部清晰
+    理论值：Hyperfocal [cm]  = EFL  * EFL / ( F# * ( 2 * Pixel ))  * 100
+l  Um_per_step:
+此值是每个step所移动的um值，根据高通的excel表计算出来的方式为：
+Index_per_um =  （ 2^ DAC -1 ）  /  ( Sensitivity* max_A  );
+此值在我们目前碰到的是最大的值是2.，影响对焦速度，过小对焦慢，过大会出现抖动的情况。
+3. AF调试步骤
+l  AF的移植
+获取高通认证的AF驱动，根据所用的Driver IC 来进行相关的修改。根据Driver IC的spec 来修改xx_lib.h的以下内容：
+Ø  I2C 地址的确认，此处是8位地址：
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg
+Ø  Datatype  和 addr type的修改，从spec的获取
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.jpg
+Ø  马达类型的确认，目前我们所用到的都是音圈马达，因此此处一般情况下面都是ACTUATOR_VCM
+Ø  数据格式以及数据位的设置格式,以下是DW9714的设置：
+hw_mask:  0x0000000F.: 主要用于hwdamping
+reg_addr:  0xFFFF, Driver ic的写data的寄存器地址，如何没有地址，此处则写成0xFFFF，
+hw_shift:  hw damping 的偏移量 ,在此项目中为SD[3,0],因此偏移量是0.
+data_shift:数据所占的位数，此设置中数据位为SD[13,4],因此偏移量上移4位、
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.jpg
+Ø  Initsetting 的设置
+此值需要模组厂根据模组来测试，只需要合入即可
+l   基本参数调试
+由于我们在许多项目上面未拿到模组厂提供的相关资料，只能通过log方式调试，在调试前需要将init code  ，near_end 设置为 0， far_end 设置为最大，确保能全部扫描到。 并在 af_actuator_move_focus  函数中打开log。设置调试指令， 然马达进入fullsweep，打开af的log。
+            adb shellsetprop debug.camera.af_fullsweep  1
+           adbshell setprop persist.camera.stats.debug.mask 4
+         分别在 7cm，10cm，14cm，20cm，30cm，40cm，50cm，60cm，120cm，Hyperfocal的距离对着分辨率卡对焦，从log中找到对焦成功时候马达的位置，并将此值填写到headfile 中，可以参数高通的调试的pdf 文档
+         af_fullsweep_final: FULL Sweep AF ENDshere - success, Lens pos。
+a. Init code 值的确定
+在超焦距以外的距离对着分辨率卡对焦，从 af_actuator_move_focus 中获取 的step 值或者 用最大距离减去 sweep 的时候的lens pos值得到 。
+4. 常见问题汇总
+AF的log如下：
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.giffile:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image010.giffile:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image012.jpg
+信息1: 对焦完成所需的帧率。
+信息2：所在的位置。
+信息3：fv值的变化。
+信息4：Histogram：亮度的变化，当此值大于 hist_inc_dec_thres 会认为对焦结束，为了防止histogram引起对焦失败，所以需要将此值调试的较大
+信息5： us_status_cur
+        从此值可以知道fv当前处于上升还是下降状态。 1代表上升状态
+       2.代表下降状态，3代表fv处于平坦区域，变化较缓慢，0代表的
+无效帧
+   优化方向：
+1. 降低无效帧。
+Ø  Log中的无效帧(fv是0)总共4帧，前两个无效帧是pre_scan时所丢失的帧，后两个是fine_scan 开始的时候所丢失的帧，此为3a算法为了防止无效帧所做的处理。
+去除算法中的fine_scan,这样至少少掉2帧无效的数据。改法如下：
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image014.jpg
+去除fine_scan 之后的log如下：
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image016.jpg
+可以从log中看到此种方法是最有效的
+Ø  减小flat fv 的数量
+参数如下：
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image018.jpg
+Fv的比值小于1.010 或者大于0.986的时候，算法会认为进入flat区域，我们可以尝试着对这个值修改来减少flat帧。
+Ø  Histogram
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image020.jpg
+将此值设置比较大，防止对焦过程中histogram 超过阈值导致停在了我们所不需要的位置
+file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image022.jpg
+2.      采集较大区域的fv值。
+此值太小会导致对焦不成功。太大会导致所拍背景可能很清晰，所希望拍摄的景物很模糊。
+   h_clip_ratio_normal_light    h_offset_ratio_normal_light
+  v_clip_ratio_normal_light      v_offset_ratio_normal_light
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ android Camera拍照 及 MediaRecorder录像 预览图像差90度
+标签： androidSurfaceViewMediaRecorder
+2014-01-22 16:01 1505人阅读 评论(0) 收藏 举报
+分类：
+Android从入门到精通（118）
+Camera拍照：
+今天做照相机程序，结果写好了发现出问题了，预览的图像差90度。相关源代码如下：
+   Camera.Parameters params = camera.getParameters();
+       params.setPreviewSize(width， height);
+       params.setPreviewFrameRate(4);
+       params.setPictureFormat(PixelFormat.JPEG);
+       params.set("jpeg-quality", 85);
+       params.setPictureSize(width， height);
+       camera.setParameters(params);
+       camera.setPreviewDisplay(sHolder);
+       camera.startPreview();
+       camera.autoFocus(null);
+于是在网上搜索，发现确实存在这样一个问题，网上的解决方法也各不一致。最后用setDisplayOrientation()方法解决了，修改后的代码如下：
+   Camera.Parameters params = camera.getParameters();
+       params.setPreviewSize(height, width);                1
+       params.setPreviewFrameRate(4);
+       params.setPictureFormat(PixelFormat.JPEG);
+       params.set("jpeg-quality", 85);
+       params.setPictureSize(height, width);                2
+       camera.setParameters(params);
+       camera.setDisplayOrientation(90);                    3
+       camera.setPreviewDisplay(sHolder);
+       camera.startPreview();
+       camera.autoFocus(null);
+首先添加了代码3，让Camera旋转90度。测试时发现虽然图像转回正常，但是上下却拉长了。进过研究修改代码1，把长宽颠倒。再测试预览正常了，但是拍照的时候获取的图片却依然是拉长的，于是修改代码2。这回拍照正常，但是仍然存在一个问题，保存的图片是横着的。
+看网上很多人都遇到了这个问题，好像与系统有关，既然没法在Camera这里搞定，那么就将获取的Bitmap进行旋转。程序里通过重写PictureCallback的onPictureTaken来获取图片，代码是
+  Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+在这里可以对bm进行旋转，代码如下：
+  Bitmap bm0 = BitmapFactory.decodeByteArray(data, 0, data.length);
+      Matrix m = new Matrix();
+      m.setRotate(90,(float) bm0.getWidth() / 2, (float) bm0.getHeight() / 2);
+      final Bitmap bm = Bitmap.createBitmap(bm0, 0, 0, bm0.getWidth(), bm0.getHeight(), m, true);
+这样保存的图片就正常了！
+ 
+MediaRecorder录像：
+同样的预览问题在录像中也出现了，但是由于是用MediaRecorder进行录像，没有Camera对象，一时比较无措。后来经过网友的提醒，想到了MediaRecorder有setCamera()的方法，于是添加如下代码：
+        Camera c = Camera.open();
+            c.setDisplayOrientation(90);
+            c.unlock();
+            mRecorder.setCamera(c);
+这样预览的问题就解决了！至于网上很多人说添加mRecorder.setOrientationHint(90); 这个方法并不能改变预览的角度，这个方法会改变保存后的视频文件播放时是否是横向。根据用户的习惯，最后也添加这个代码保证在播放视频是是横向的。 
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+效果
+~/project/2.1_msm8939_q39_s201/vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/sensor_libs/imx214_s700/imx214_s700_lib.c
+media-controller/modules/sensors/chromatix/0301/libchromatix/chromatix_imx214_s700
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+android权限管理  
+
+2012-06-06 18:42:09|  分类： android |举报 |字号 订阅
+       
+
+  下载LOFTER 我的照片书  |
+问题
+今天尝试用一个android application读写网卡的mac地址，java层通过jni用ioctl命令。在将apk放在/system/app中、设置platform签名凭证、以及设置shareUid后，发现设置MAC地址(ioctl(SIOCSIFHWADDR))总是有权限问题，而读取MAC地址(ioctl(SIOCGIFHWADDR))则正常。
+
+kernel检查
+跟踪到kernel中net/core/dev.c，在函数dev_ioctl中，会检查CAP_NET_ADMIN权限：
+
+if (!capable(CAP_NET_ADMIN))
+  return -EPERM;
+
+
+进入这个函数，发现检查的是进程是否在group AID_NET_ADMIN中：
+
+if (cap == CAP_NET_ADMIN && in_egroup_p(AID_NET_ADMIN))
+  return 0;
+
+
+这里AID_NET_ADMIN跟android在init中的权限定义有些类似。
+
+android权限定义
+在system/core/include/private/android_filesystem_config.h中，android定义了一组uid和gid，如AID_ROOT, AID_SYSTEM, AID_NET_ADMIN。每一个id对应有字符串，如root, system, net_admin。当用户程序需要访问受限资源是，需要保证自己加入到对应的group中。
+
+我在frameworks中搜索net_admin，没有找到任何文件。搜索蓝牙权限net_bt_admin时，找到了文件/etc/permissions/platform.xml。这里存放有AndroidManifest.xml中权限与底层权限的对应关系：
+
+<permission name="android.permission.BLUETOOTH_ADMIN" >
+    <group gid="net_bt_admin" />
+</permission> 
+
+
+我想，当开发者在AndroidManifest.xml中申请权限时，framework会通过platform.xml将它对应到net_bt_admin，进而确定所属组AID_XXX。这样，每个apk就有不同的权限。
+
+另外，在android_filesystem_config.h，还可以看到为某些特定目录和特定文件静态设置的group，如/system/bin/ping加入了AID_NET_RAW。
+
+尝试
+我在platform.xml的android.permission.INTERNET权限下加入了group net_admin，使它变成：
+
+<permission name="android.permission.INTERNET" >                    
+    <group gid="inet" />                                          
+    <group gid="net_admin" />                                            
+</permission> 
+
+
+然后，在AndroidManifest.xml中请求权限android.permission.INTERNET。重启系统后运行apk，发现可以修改mac了！
+
+
+apk文件的group设置
+PackageManagerService构造函数会解析platform.xml，建立android权限和gid的对应关系。然后，扫描apk时，会由请求的权限找到对应的gid，并保存在Package类中。
+
+PackageManagerService()
+  readPermissions(); /* 解析/etc/permissions/platform.xml */
+    readPermissionsFromXml()
+      readPermission() /* 建立permisstion名字与gid的关系，放在map mSettings.mPermissions中*/
+  scanDirLI() /* 扫描/system/app, /data/app */
+  updatePermissionsLP()
+    grantPermissionsLP()
+
+      
+
+grantPermissionsLP()
+{
+  final PackageSetting ps = (PackageSetting)pkg.mExtras;
+
+  /* gp 指向ps，即pkg的PackageSetting成员 */
+  final GrantedPermissions gp = ps.sharedUser != null ? ps.sharedUser : ps;
+
+  /* 设置gid */
+  gp.gids = mGlobalGids;
+
+  /* 如果package请求了permission, 则根据permission的protectionLevel决定是否要授予特定的gid，加入到gids中 */
+} 
+
+
+protectionLevel有4种：
+normal - 安装时即授予权限，不需要确认
+dangerous - 危险的权限，需要用户确认授予
+signature - 安装的app需要与声明该权限的app有相同的signature
+signatureOrSystem - 拥有相同的signature，或者放在system image中
+
+比如拿android.permission.WRITE_SECURE_SETTINGS来讲，即使用户在app中声明的该权限，如果不把它放在system中，或者用platform key签名的话，android是不会授予该权限的。因为，在声明该权限的地方，即frameworks/base/core/res/AndroidManifest.xml中，该权限被声明为signatureOrSystem，而该app是用platform key签名的。
+
+不管怎样，根据实际情况，android会给app授予一定的用户组。具体来说，apk的group信息是保存在pkg.mExtras中。在启动apk是，可以看到adb打印：
+
+I/ActivityManager(  134): Start proc com.android.settings for activity com.android.settings/.Settings: pid=792 uid=1000 gids={3003, 3005, 3002, 3001}
+
+
+后面的{3003, 3005, 3002, 3001}就是所在的组的id列表。
+

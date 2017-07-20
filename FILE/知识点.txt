@@ -1,0 +1,3262 @@
+
+项目：camera
+Q39：远大（1供）后摄3m2，前摄4h5 shiyin（2供）
+S700(kc20):后摄imx214(新模组供应商)，前摄imx219 TP:gt1x 合力泰-张帅 Mobile:13761264956 s700屏幕: R63315; hst1006a-gt5688; NT35596; S700B-gt1x
+S600: 后摄SP5409      屏幕:二供屏st7789v   RGB转MIPI:tc358762
+S201: 前摄gc2355 和 后摄ov5648
+W80: 后摄3m2 前摄4h5(老的 前摄ov5648 imx135 )
+CB04: 后摄OV8858,OV2710 ov4689广角，　前摄gc2355和CVBS ?550(转换芯片tw9992) tp:当前用的gt9xx(GT915L) [=====板子上面的UART1~3一一对应软件的ttyMT1~3=====] 
+             LCD:顺盟  ili9342c     宏电/拓途  icn6202
+
+
+PBS01: 前后摄相同imx214 马达AF:DW9714
+CB05: 后s5k3m2xx 前s5k4h8
+精联PA726: s5k3p3sm        1D:se655 (barcode gpio: [0]3.3V, [12,13]uart [41]level-shift , [47]MCU-wake , [50]PWD , [59]trigger)
+
+2D:SE4750 (1280 x 960)
+
+SE4750: Top = 955, Bottom = 959, Left = 1271, Right = 1279
+SE4750  1280 x 960  640 x 480  320 x 240
+(CB05 gpio25-EN gpio2/3-i2c)
+
+
+
+./sys/devices/soc/soc:se655/se655_state
+./sys/firmware/devicetree/base/soc/se655/
+
+
+整项目:
+[CB09 APQ8096]
+前摄 s5k4h8 5MP 后摄s5k3m2xx 16MP AF电控dw9714 双屏h381dln01
+FM:RDA5820NS; APQ Application-only processor; (camera postion 1前摄, 0后摄)
+铭源:gc2755
+sensor: 光感/接近ap3426 地磁AKM09911 icm206xx(ICM-20608D /客户Ivensense 20602)
+BT/WIFI: QCA6174
+GPS：WGR7640 两路LDO供电： VREG-L32-1P8 和 VREG-L4-1P225;  RFCLK1-----PM8996 Pin68 RFCLK1;   SSBI-----APQ8096 GPIO140
+矩阵键盘芯片: 驱动pca953x, 型号XRA1201P
+USB TYPE-C PTN5150
+LCD: 铭源  夏普双屏h381dln01 和 三星ams567jd09
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Due to which ffs unable to enable again
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+晨讯科技集团：希姆通信息技术(上海)有限公司/上海罗捷斯迪电子有限公司/麦维讯电子(上海)有限公司/上海思必得通讯技术有限公司/基信康信息技术（上海）有限公司/芯讯通无线科技（上海）有限公司
+上海市长宁区金钟路633号晨讯科技大楼/上海青浦区胜利路888号/上海市外高桥保税区希雅路69号16号厂房4D/上海市外高桥保税区希雅路69号16号厂房4B
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<!--
+ 8996 Decoder capabilities
+ __________________________________________________________________
+ | Codec    | W       H       fps     Mbps    MB/s    | Secure-dec |
+ |__________|_________________________________________|____________|
+ | h264     | 3840    2160    60      100     1958400 |  Y         |
+ |          | (4096)  (2160)  (56)    (100)           |            |
+ | hevc     | 3840    2160    60      100     1958400 |  Y         |
+ |          | (4096)  (2160)  (56)    (100)           |            |
+ | mpeg4    | 1920    1088    60      60      489600  |  N         |
+ | vc1      | 1920    1088    60      60      489600  |  Y         |
+ | vp8      | 3840    2160    30      20      979200  |  N         |
+ | vp9      | 3840    2160    30      20      979200  |  Y         |
+ | divx3    | 720     480     30      2       40500   |  N         |
+ | div4/5/6 | 1920    1088    30      10      244800  |  N         |
+ | h263     | 864     480     30      2       48600   |  N         |
+ | mpeg2    | 1920    1088    30      40      244800  |  Y         |
+ |__________|_________________________________________|____________|
+
+
+ 8996 Encoder capabilities
+ ______________________________________________________
+ | Codec    | W       H       fps     Mbps    MB/s    |
+ |__________|_________________________________________|
+ | h264     | 3840    2160    30      100     979200  |
+ | hevc     | 3840    2160    30      100     979200  |
+ | mpeg4    | 1920    1088    60      60      489600  |
+ | vp8      | 3840    2160    30      20      979200  |
+ | h263     | 864     480     30      2       48600   |
+ |__________|_________________________________________|
+-->
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+HomeBox
+172.19.2.76
+用户名xtqt
+密码  空格
+
+
+S600 进CIT: *#886#
+
+查看屏型号
+adb shell cat proc/cmdline S600看屏LCM/LCD型号st7789v(旧ili9341v)
+
+快递申诉
+http://www.zhihu.com/question/27985854
+http://sswz.spb.gov.cn/index.do
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+固定帧率
+vi ./QCamera2/HAL/QCamera2HWICallbacks.cpp +2155
+adb shell setprop persist.debug.sf.showfps 1
+adb logcat | grep Frames
+min_fps
+
+qiancheng@BU5-SERVER04:~/2.1_msm8939_q39_s201/hardware/qcom/camera$ git diff .
+diff --git a/QCamera2/HAL/QCameraParameters.cpp b/QCamera2/HAL/QCameraParameters.cpp
+index 61d38f7..92a09da 100644
+--- a/QCamera2/HAL/QCameraParameters.cpp
++++ b/QCamera2/HAL/QCameraParameters.cpp
+@@ -1923,8 +1923,8 @@ bool QCameraParameters::UpdateHFRFrameRate(const QCameraParameters& params)
+                 max_fps = 0;
+                 break;
+         }
+-        m_hfrFpsRange.video_min_fps = (float)min_fps;
+-        m_hfrFpsRange.video_max_fps = (float)max_fps;
++        m_hfrFpsRange.video_min_fps = 60000.0;//(float)min_fps;
++        m_hfrFpsRange.video_max_fps = 60000.0;//(float)max_fps;
+
+setprop persist.debug.set.fixedfps 28 (preview fps)
+echo -n 'file xx.c +p' > /sys/kernel/debug/dynamic_debug/control
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+打开默认的小波降噪
+QCamera2/HAL/QCameraParameters.cpp
+	int32_t QCameraParameters::setWaveletDenoise(const QCameraParameters& params)	3939
+	3940	{	{	3940
+	3941	    const char *str = params.get(KEY_QC_DENOISE);	    const char *str = params.get(KEY_QC_DENOISE);	3941
+	3942	    const char *prev_str = get(KEY_QC_DENOISE);	    const char *prev_str = get(KEY_QC_DENOISE);	3942
+	3943	    if (str != NULL) {	    if (str != NULL) {	3943
+	3944	        if (prev_str == NULL ||	        if (prev_str == NULL ||	3944
+	3945	            strcmp(str, prev_str) != 0) {	            strcmp(str, prev_str) != 0) {	3945
+M	3946	            return setWaveletDenoise(str);	            //return setWaveletDenoise(str);	3946
+	3947	        }	        }	3947
+	3948	    }	    }	3948
+M	3949	    return NO_ERROR;	    return setWaveletDenoise(DENOISE_ON);//return NO_ERROR;	3949
+	3950	}	}
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/sensor_libs/imx214_s700/imx214_s700_lib.c
+#define IMX214_S700_LOAD_CHROMATIX(n) \
+   "libchromatix_"SENSOR_MODEL_NO_IMX214_S700"_"#n".so"
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+camera debug 抓AF log
+adb shell setprop persist.camera.debug.mask 4 (抓前3项为7)
+typedef enum {  
+STATS_DEBUG_MASK_AEC_LOG   = (1 << 0),   //<value> 1   //曝光
+STATS_DEBUG_MASK_AWB_LOG   = (1 << 1),   //2  //白平衡
+STATS_DEBUG_MASK_AF_LOG   = (1 << 2),   //4   //对焦
+STATS_DEBUG_MASK_ASD_LOG   = (1 << 3),   //8   //自动场景选择
+STATS_DEBUG_MASK_AFD_LOG   = (1 << 4),   //16   //工频干扰消除
+} stats_debug_mask_type;
+
+看录像帧率
+adb shell setprop service.adb.root 1 
+adb shell setprop persist.debug.sf.showfps 1
+adb logcat | grep Frames
+
+前摄gc2355 0x92 或 0x94 (+-1) 0x17 (0x14->0x15)
+expected id
+mount angle valid
+s201 temp-------
+		qcom,torch-seq-val = <1 0>;
+		qcom,flash-seq-val = <1 1>;
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+6.2.1 验证帧类型 dump帧 camera帧
+验证帧类型需接入ISP输出流。输出文件使用扩展名 .yuv ,由ISP输出流的10个帧组成。
+1. 将 persist.camera.isp.dump <value> 属性设为以下某个值:
+值
+描述
+0 禁用,默认设置该值
+2 转储预览帧
+8 转储快照帧
+16 转储视频帧
+在以下示例中,快照帧从ISP数据流中输出:
+adb root
+adb shell setprop persist.camera.isp.dump 8
+adb shell chmod 777 /data
+必须获得设备的root权限,并且具有 /data 文件夹的完全(777)访问权限,才能设置该
+属性。
+80-NL239-33SC版本D
+
+
+
+31ISP ISPIF 模块
+2. 打开 vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/
+modules/isp 文件夹。
+3. 在 isp_channel_util.c 文件中,添加以下定义:
+#define ISP_IMG_DUMP_ENABLE
+
+
+4. enable ChromaFlash frame dumps:
+chmod 777 /data/misc/camera
+adb shell setprop persist.camera.imglib.dump 1
+adb shell sync
+
+
+5. camera dump抓图像
+adb shell chmod 777 /data
+adb shell setprop persist.camera.dumpimg 655615
+
+root@cb09:/ # ls -l data/misc/camera/                                          
+-rw-r--r-- media    audio      447771 2017-01-01 09:35 0_16777216.jp
+-rw-r--r-- media    audio     1417760 2017-01-01 09:36 1_16842752.jp
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934550p_1440x1080_4512.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934551p_1440x1080_4513.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934552p_1440x1080_4514.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934553p_1440x1080_4515.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934554p_1440x1080_4516.yuv
+-rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934555p_1440x1080_4517.yuv
+
+
+camera debug
+80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf
+
+frameworks/base/core/java/android/hardware/Camera.java
+if (exposeAuxCamera == false && (numberOfCameras > 3)) {
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+高通文档搜索
+-2X HARDWARE REGISTER DESCRIPTION DOCUMENT FOR OEMS
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+增加dmesg的buffer大小
+CONFIG_LOG_BUF_SHIFT=21
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Collecting kernel and userspace log in single file:
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+USB找不到端口
+2、sudo vi /etc/udev/rules.d/70-android.rules
+如果没有这个文件，可以创建，然后加入以下内容
+SUBSYSTEM=="usb" ENV{DEVTYPE}=="usb_device", MODE="0666"  
+SUBSYSTEM=="usb",ATTRS{idVendor}=="0bb4",ATTRS{idProduct}=="0d02",MODE="0666"
+3、修改权限
+sudo chmod a+rx /etc/udev/rules.d/70-android.rules
+4、重启udev 服务：
+sudo service udev restart
+5、重启adb server。
+重连设备，然后执行sudo adb kill-server
+adb start-server
+然后看看adb devices是否已经已经正常显示出设备的名称了。
+PS:
+最新修改方法，不用去看设备的ID，直接在rules.d下增加一个文件70-android.rules，内容为：
+    SUBSYSTEM=="usb" ENV{DEVTYPE}=="usb_device", MODE="0666"
+目前通用于所有android设备。保存后如上面的步骤修改权限，重启udev和adb，然后重新插上手机就可以了。 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+debug log
+例如,在PCM平台驱动程序中启用日志
+echo –n “file msm-pcm-q6-v2.c +p” > /sys/kernel/debug/dynamic_debug/control
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+modem清除编译结果
+modem compilation/build clean ((编译_和CTS_bug)80-NV933-7_A_M8939AAAAANLYD2104007.pdf)
+Build images – build_8936.bat
+Clean the build – build_8936.bat -c
+
+
+grep排除哪个目录，不搜索:
+--exclude-dir=
+
+
+VI:
+1.全词匹配搜索
+/\<xxx\>
+
+
+2.不保存行尾空格
+%s/\s*$//g
+
+屏通知回调，同步亮灭
+fb_notifier_callback
+
+
+8074 平台含有两个BLSP(BAM Low-Speed Peripheral) ， 每一个BLSP含有两个QUP, 每一个QUP可以被配置为I2C，
+ SPI, UART, UIM接口， BLSP是高通对于低速接口的一种管理方式。
+
+UART:
+RTS （Require ToSend，发送请求）为输出信号，用于指示本设备准备好可接收数据，低电平有效，低电平说明本设备可以接收数据。
+CTS （Clear ToSend，发送允许）为输入信号，用于判断是否可以向对方发送数据，低电平有效，低电平说明本设备可以向对方发送数据。
+如果UART只有RX、TX两个信号，要流控的话只能是软流控；如果有RX，TX，CTS，RTS 四个信号，则多半是支持硬流控的UART；如果有 RX，TX，CTS ，RTS ，DTR，DSR 六个信号的话，RS232标准的可能性比较大。正常3根线（RXD/TXD/GND）通信的，可以不接RTS/CTS.
+RS232中使用DTR（Date Terminal Ready，数据终端准备）和DSR（Data Set Ready ，数据设备准备好）进行主流控
+
+Captive Portal
+A mechanism for Wi-Fi Hotspot network access where an HTTP request from a mobile device is redirected to a server for authentication
+
+
+
+将Q39关机后，分 别测试以下5种充电口，得到的结果见下表。
+ 可以看出，当USB的D+和D-之间的阻抗很大时，Evoque会出现反复 重启现象。
+ 1、2情形下的D+/D-之间阻抗很大，可以看出是5情形的非标充电器。
+ 3情形下的D+/D-电阻为125 ohm，类似4情形的标准充电器
+ 结论：Q39不能兼容非 标充电器，需要软件加入对非标充电器的兼容（即：当检测到D+/D-之间电阻很大时，按非标充电器配置充电参数）
+ 
+ 
+ 
+充 电器类型
+D+/D-阻 抗
+手 机状态
+1.
+电脑休眠后，普通USB 2.0口
+D+/D-对GND电阻约为18 K。
+D+/D-之间电阻约为37 K。
+反复重启
+2.
+电脑休眠后，普通USB 3.0口
+D+/D-对GND电阻约为18 K。
+D+/D-之间电阻约为37 K。
+反复重启
+3.
+电脑休眠后，CDP口（联想电脑黄色USB口）
+D+/D-对GND电阻约为221 K。
+D+/D-之间电阻约为125 ohm。
+不重启
+4.
+标准充电器
+ 
+D+/D-之间为短路。
+不重启
+5.
+非标充电器
+ 
+D+/D-之间为开路。
+反复重启
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+http://blog.csdn.net/pillarbuaa/article/category/1138413
+
+自动输入限流器(AICL)技术 AICL(Auto Input Current Limited)
+
+/**
+ * USB charger types
+ *
+ * USB_INVALID_CHARGER	Invalid USB charger.
+ * USB_SDP_CHARGER	Standard downstream port. Refers to a downstream port
+ *                      on USB2.0 compliant host/hub.标准下行端口，标准充电器需要D+D-通信，电流500mA以下
+ * USB_DCP_CHARGER	Dedicated charger port (AC charger/ Wall charger).专用充电口（交流充电器/墙充）
+ * USB_CDP_CHARGER	Charging downstream port. Enumeration can happen and
+ *                      IDEV_CHG_MAX can be drawn irrespective of USB state.充电下行端口，需要D+D-的通信，1.5A大电流
+ * USB_ACA_A_CHARGER	B-device is connected on accessory port with charger
+ *                      connected on charging port. This configuration allows
+ *                      charging in host mode.
+ * USB_ACA_B_CHARGER	No device (or A-device without VBUS) is connected on
+ *                      accessory port with charger connected on charging port.
+ * USB_ACA_C_CHARGER	A-device (with VBUS) is connected on
+ *                      accessory port with charger connected on charging port.
+ * USB_ACA_DOCK_CHARGER	A docking station that has one upstream port and one
+ *			or more downstream ports. Capable of supplying
+ *			IDEV_CHG_MAX irrespective of devices connected on
+ *			accessory ports.
+ * USB_PROPRIETARY_CHARGER A proprietary charger pull DP and DM to specific
+ *			voltages between 2.0-3.3v for identification.
+ *
+QUSB PHY-based Data Contact Detection (DCD).
+
+POWER_SUPPLY_TYPE_USB,                      /* Standard Downstream Port */
+
+POWER_SUPPLY_TYPE_USB_DCP,           /* Dedicated Charging Port */
+
+POWER_SUPPLY_TYPE_USB_CDP,           /* Charging Downstream Port */
+
+POWER_SUPPLY_TYPE_USB_ACA,           /* Accessory Charger Adapters */
+
+POWER_SUPPLY_TYPE_BMS,                     /* Battery Monitor System */
+FCC: Full charge count of the battery 电池的完全充电计数
+算法：
+Rbatt = (VB_2-VB_1)*Rsense/VS_1
+Unusable Charge (UUC) = FCC*Lookup(Rbatt* Itest + Vfail)
+Battery Percentage Charge (PC) = Lookup(OCV)
+Remaining Charge (RC) = PC * FCC
+Remaining Usable Charge (RUC) = RC – CCmAh - UUC
+SoC = RUC/(FCC-UUC) 
+
+
+计算剩余电量：
+calculate_ocv_charge
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+中国移动、联通、电信的3G网络制式分别是什么？哪种会比较好？大多数手机支持哪种网络？
+
+中国移动：
+4g：TDD-LTE、3g：TD-SCDMA、2g：GSM
+中国联通：
+4g：TDD-LTE/FDD-LTE、3g：WCDMA、2g：GSM
+中国电信：
+4g：TDD-LTE/FDD-LTE、3g：CDMA2000、2g：CDMA
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+USB电池充电基础：应急指南
+分类: | 查看: 1440 | 评论(0)
+
+     摘要：毋庸置疑，USB电源最有用的一个功能是能够为便携装置的电池充电。但是，无论是USB电源还是其它电源，电池充电都不仅仅是从电源取电这样简单。对于Li+电池尤其如此，充电不正确不仅会缩短电池寿命，而且存在安全隐患。设计合理的充电器可以优化安全性并增强用户体验，同时它还降低了退货、维修担保等风险，进而降低成本。通过USB为电池充电需要权衡电池“维护和保养”，考虑USB功率限制以及便携式消费产品设计中存在的体积和成本问题。本文讨论了如何在这些因素中达到最佳平衡。
+
+　　引言
+
+　　USB为便携设备供电与其串行通信功能一样，已经成为一种标准应用。如今，USB供电已经扩展到电池充电、交流适配器及其它供电形式的应用。应用的普及带来的一个显着效果是便携设备的充电和供电可以互换插头和适配器。因此，相对于过去每种装置都采用专用适配器的架构相比，目前的解决方案允许采用多种电源进行充电。
+
+　　毋庸置疑，USB电源的最大用途是能够为便携产品的电池充电。但是，无论是USB电源还是其它电源，电池充电都不仅仅是从电源取电这样简单。对于Li+电池尤其如此，充电不正确不仅会缩短电池寿命，而且存在安全隐患。设计合理的充电器可以优化安全性并增强用户体验，同时它还降低了退货、维修担保等风险，进而降低成本。
+
+　　通过USB为电池充电需要权衡电池“维护和保养”，考虑USB功率限制以及便携式消费产品设计中存在的体积和成本问题。本文讨论了如何在这些因素中达到最佳平衡。
+
+　　供电端口
+
+　　USB规范已经经历了几代电源管理技术。最初的USB 1和USB 2.0规范规定了两种类型的电源(分别是5V 500mA和5V 100mA)，为所连接的设备供电。这些规范并非针对电池充电，而是用于小型外设供电，例如麦克风和键盘。但这并不妨碍设计人员设计出自己的USB电池充电装置。然而，如果没有统一指导，不同装置和充电器之间的互操作性就得不到保证。这种限制促使近期开发了USB规范补充说明：电池充电规范，1.1版，4/15/2009 (BC1.1)1，补充了充电知识和电源说明，最大电源电流可达1.5A。尽管标题为“电池充电规范”，但该文件几乎没有包括关于充电电池指标的任何信息，只是规定了应该从USB端口吸收多大功率充电。实际充电方法依然会留给设计人员。
+
+　　在BC1.1之前，所有USB电源端口在有效工作(即USB术语中的“非挂起”模式)时，归为“低功率”(100mA)或“大功率”(500mA)。任何端口也可以“挂起”，意味着接近关闭，但仍可提供2.5mA电流。对于大多数设备，PC、笔记本电脑或供电集线器(供电集线器是一种USB中断盒，利用自身的墙上适配器电源提供总线供电)端口为“大功率”，除了上行USB主机提供的电源外，不接收其它电源的集线器端口被认为是“低功率”。插入装置后，最初允许吸收最大100mA的电流，同时进行枚举并与主机协商其电流预算。随后，可能允许吸收高达500mA的电流，或者是保持在100mA。在USB串行总线规范2.0版的第7.2.1.4部分对此进行了详细规定。
+
+　　BC1.1的内容超出了USB 2.0规定的电源分配，它定义了更多用于充电的电源。主要有三种不同类型的电源：
+
+　　1.标准下行端口(SDP)这与USB 2.0规范定义的端口相同，也是台式机和笔记本电脑常见的典型端口。挂起时，最大负载电流为2.5mA；连接且非挂起状态下为100mA，可以配置电流为500mA (最大)。设备可利用硬件识别SDP，USB数据线D+和D-分别通过15kΩ接地，但仍然需要枚举，以符合USB规范。尽管现在许多硬件不经枚举即消耗功率，但在USB 2.0规范中，从严格意义上并不合法，违反规范要求。
+
+　　2.充电下行端口(CDP) BC1.1为PC、笔记本电脑及其它硬件规定了这种较大电流的新型USB口。现在，CDP可提供高达1.5A电流，由于可在枚举之前提供电流，所以有别于USB 2.0。插入CDP的装置可通过操纵和监测D+、D-线，从而利用硬件握手识别CDP (参见USB电池充电规范第3.2.3部分)。在将数据线转为USB收发之前进行硬件测试，这样就能够在枚举之前检测到CDP (以及开始充电)。
+
+　　3.专用充电端口(DCP) BC1.1规定了不进行枚举的电源，例如墙上适配器电源和汽车适配器，不需要数字通信即可启动充电。DCP可提供高达1.5A电流，通过短路D+和D-进行识别，从而能够设计DCP“墙上适配器电源”，采用USB mini或微型插孔，而非圆形插头或自制连接器的固定安装线。这样的适配器可采用任意USB电缆(配备正确插头)进行充电。
+
+　　USB电池充电规范，1.1版，4/15/2009中对这些接口类型进行了详细规定。
+
+　　电源类型检测
+
+　　对于连接到任意USB插孔并利用该电源工作或为电池充电的装置，需要了解吸收多大的电流合适。如果从只能提供500mA的电源试图吸收1A电流，这种措施并不妥当。USB接口出现过载时很可能导致关断、烧毁保险丝或触发自恢复保险丝动作。即使具有自恢复保护，也只能在拔出设备并重新连接后才能重新启动。在保护措施不严谨的接口设计中，接口过载会造成整个系统复位。
+
+　　便携设计可以选择适当方法管理接口检测，可以兼容于BC1.1、只兼容USB 2.0或根本不兼容。如果完全兼容于BC1.1，则必须能够检测所有类型的USB电源并限制其电流，包括合法的USB 1和2.0接口。如果兼容2.0，将在枚举后从SDP充电，但可能不能识别CDP和DCP。若不能识别CDP，它仍然能够充电并保持兼容，但只能在枚举后进行，与SDP方式相同。其它部分兼容和不兼容标准的充电方法将在随后讨论。
+
+　　器件可利用自身软件检测接口，或采用独立于系统资源、通过USB D+和D-数据线之间的互动进行检测的接口IC。这些功能设计的划分具体取决于系统架构。例如，已经采用微控制器或专用IC管理电源的设备，可能更倾向于使用IC进行端口检测和电流选择。由于这些设备能够通过USB连接主机并进行通信，可根据枚举和配置结果选择充电。这些选择可以由应用处理器控制，或者是由负责电源管理及其它系统功能的独立微控制器控制。系统检测端口类型、枚举，并向充电器发送相应指令。充电器负责处理充电的硬件和安全事项，具有内置门限，使系统不会损害电池(图1)。
+
+
+
+图1. 无枚举充电器。USB收发器和微处理器处理USB枚举，然后微控制器将电池充电器设置在正确的参数
+
+　　不同的设备设计可能不通过USB通信，或不希望专用系统软件管理USB充电，而仅仅是采用USB端口供电。这种方式避免了设计复杂性，或者无需担心软件故障所造成的充电失效。由于系统不进行枚举，最好的充电选择是自枚举充电器IC。充电器负责端口检测并选择合适的USB负载电流门限，无需系统介入(图2)。
+
+
+图2. 自枚举充电器直接连接至USB数据线，使得简单系统能够完全利用USB充电，无需占用USB收发器或微处理器资源。
+
+　　USB连接术语
+
+　　这里，我们有必要介绍一下部分USB术语，包括“插入”、“连接”、“枚举”和“配置”。
+
+　　插入：插入USB电缆的物理过程。
+
+　　连接：设备将1.5kΩ上拉电阻连接至D+或D-数据线时(刚插入)。
+
+　　枚举：设备和主机之间交换初始数据，识别设备类型。
+
+　　配置：设置设备参数。
+
+　　在USB 2.0中，设备进行枚举和配置期间需要了解USB端口可源出多大电流。枚举和配置需要设备与主机之间进行数字通信。BC1.1扩展了USB规范，除USB 2.0选项外，BC1.1还允许利用“哑”操作确定端口类型，所以，有些端口无需枚举即可充电。
+
+　　端口检测和自枚举充电器
+
+　　MAX8895判断如何使用所提供的输入电源，与系统*估电源无关。充电器自动确定适配器类型，能够区分以下类型：
+
+　　1. DCP：500mA至1.5A
+
+　　2. CDP (主机或集线器)：高速充电时达到900mA (啁啾期间为580mA)；低速和快速为1.5A
+
+　　3. 低功率SDP (主机或集线器)：100mA
+
+　　4. 大功率SDP (主机或集线器)：500mA
+
+　　所提供的电流支持电池充电或系统供电，或在它们之间进行分配。如果在长达10ms内未检测到总线流量，内置挂起定时器自动触发挂起。
+
+　　除了自动优化来自USB及适配器电源的电流外，MAX8895还巧妙处理适配器、USB供电和电池供电之间的转换；允许系统在必要时利用所有能够利用的输入电源(图3)。施加电源时，电池耗尽或没有电池同样可以保持工作。集成了所有功率控制MOSFET，无需外部二极管。热调节环路在极限温度下自动降地充电电流，以降低管芯温度。
+
+
+图3. MAX8895充电器自枚举，根据所连接电源的类型优化设置充电电流。即使是深度放电的电池，也能维持系统工作。
+
+　　增加端口检测
+
+　　BC1.1规定了检测端口类型的硬件方法。预计采用集成电路实现这一功能，如图2中的MAX8895，或在USB收发器中包括该电路。尽管如此，有些时候的首选方案依然是为现有充电器增加端口检测功能，至少包含其中部分功能。图4所示电路为一种基本的USB充电器检测方法，受系统微控制器控制工作。这种方法可检测DCP，但是不能区分SDP和CDP。它把两者均作为SDP，这就意味着有些情况下会丧失从CDP吸收更大充电电流的机会。在预算较低的设计中，这一缺陷是可接受的。
+
+
+图4. 高速USB开关实现有限的USB充电器检测形式
+
+　　图4所示连接方法支持如下有限端口检测功能。当便携设备插入三种端口类型之一时，VBUS为U1开关和设备的微控制器供电。U1的CB输入的逻辑低电平将其置于检测模式，D+线通过10kΩ上拉至系统逻辑电压，D-通过100kΩ拉至GND。如果连接的是DCP (D+与D-短路)，D-将变为高电平；如果连接的是SDP或CDP，D-及检测输出将为低电平。如果检测到SDP或CDP，系统将驱动CB为低电平，将开关置于数据模式，该模式下将D+和D-连接至数据通路，用于枚举及其它数据传输。以上方法有一个局限性：插入CDP时无法识别，从而不能立即充电，尽管在枚举后可从CDP充电。
+
+　　图5所示为完整的端口检测。MAX14578包括检测连接设备(USB电缆、USB CDP或专用充电器)所需的所有电路，并控制外部锂离子电池充电器。设备执行与USB电池充电规范1.1兼容的检测逻辑，包括数据触点检测、D+/D-短路检测和CDP识别。另外，它有一个充电定时器和低电池电量监测器，用于支持USB BC1.1“无电电池”充电机制。
+
+　　MAX14578具有一个数据开关，适用于USB高速和初始(全速和低速)信号。它具有低导通电阻(RON)、低导通电阻平坦度以及非常小的电容。CDN和CDP引脚还具有高达15kV的人体模式ESD保护。
+
+
+图5. 利用MAX14578 USB充电端口检测器和数据开关IC，可为充电器增加完全兼容于USB BC1.1的端口检测功能。
+
+　　在图6中，为USB设备增加了简单的Li+电池充电功能。MAX8814可配置为通过100mA或500mA USB端口为电池充电。电路初始化为100mA，然后微控制器枚举主机，以确定其电流驱动能力。如果USB端口允许，通过导通电流设置网络的N1和R1，增大充电电流。大电流充电标称设定为425mA，以避免超过考虑容限后的SDP 500mA限制。充电器还具有一个自动启动电路，当连接有外部电源时，提供输出信号(ABO)通知系统。图6尽管兼容USB，但并不符合BC1.1标准，所以需要枚举才能充电。
+
+
+图6
+
+　　图6. MAX8814为USB设备增加充电功能提供了简单、引脚数少的解决方案。枚举受系统控制，利用ISET引脚监测和控制充电电流。这种设计兼容USB，但并不符合BC1.1标准，所以需要枚举才能充电。
+
+　　其它充电策略
+
+　　USB电池充电设计非常复杂。便携式USB连接设备并非遵循同一设计理念，存在各种限制约束—其中尺寸、成本、充电时间的影响最为明显。设计中须谨慎考虑这些因素及其它更细致的事项，有助于选择USB充电方案。更多的设计考虑事项包括：
+
+　　●设备在施加外部电源(USB或适配器)后是否必须启动所有功能工作？
+
+　　●是否需要独立的输入，分别连接USB和适配器电源？
+
+　　●设备是否具有计算能力和固件与USB端口进行协商充电？
+
+　　●充电电流是否能够瞬间降低，以减小热耗，或者是否需要开关模式设计？
+
+　　●需要什么样的输入保护措施？
+
+　　多输入充电
+
+　　根据BC1.1规定，设备只能从USB定义的电源充电。这些设备的使用越来越普及，但您可能仍然希望选择常规的、可能不兼容USB的适配器进行充电。利用双输入充电器能够很好地解决这一问题，能够灵活替换外部电源。在此之前，通常采用“或”二极管或分立式MOSFET比较器进行电源切换，如果考虑潜在的“漏电”通路和切换时间时，设计会变得相对复杂。幸运的是，目前许多充电器IC具有电源关断控制(图7)。集成这一功能不仅仅是简单地替代外部元件。由于集成充电器能够了解开关电路的操作，有助于改善电源变化时的切换。
+
+
+图7. MAX8844等双输入充电器处理利用USB和适配器供电的充电器，器件还具有高达28V的输入过压保护。
+
+　　充电器常见的设计考虑是从多电源供电问题，特别是采用圆形连接器时，可能会连接到不正确的适配器。为避免这种事件的发生，MAX8844禁止从高于7.5V的输入电源充电，能够承受并阻止高达28V的输入，可有效保护电池、充电器及下行电路，防止错误地连接到其它任何类型的适配器。此外，MAX8844具有过压保护LDO，从USB和适配器(IN)输入偏置，可向系统提供30mA电流。无论充电器是否使能，这些LDO输出(SAFEUSB和SAFEOUT)都保持有效。器件执行的其它充电功能包括：电池检测、热限制、在极端环境温度下减小充电电流(以维持较低的管芯温度)、自动启动逻辑输出、外部电源作用时通知系统。
+
+　　电池负载切换(智能电源)与直接连接
+
+　　在USB和适配器供电的充电应用中，一个关键设计因素是充电电路是否直接连接到电池和系统负载，或者在连接外部电源时是否需要额外的开关断开电池与系统的连接，这两种情况如图8所示。
+
+
+图8. 直接连接充电器及Maxim的智能电源选择(Smart Power Selector?)技术示意图
+
+　　直接连接结构是最简单、最经济的实现方式。如果电池深度放电后施加外部电源，将会显露出它的主要缺陷。这种情况下，系统可能不能启动，直到电池达到可接受的水平。有些应用中，等待电池充电到一定程度，然后再恢复所有功能，用户也是可以接受的；然而，有些应用中，无论电池状态如何，“必须”要求连接外部电源时能够立即工作。后一种情况下，Maxim的智能电源选择器允许系统在电池深度放电状态下使用外部电源供电，参见图9。
+
+
+图9. 具有智能电源选择器的双输入USB/适配器(例如MAX8934)，在连接外部电源时能够立即为系统供电，并同时为完全放电的电池充电。
+
+　　图9中，系统负载输出(SYS)和电池(BAT)之间的内置低阻(40mΩ) MOSFET在充电和放电工作期间负责多项功能。充电期间，该智能电源选择器开关充分利用有限的USB或适配器电源，在确保系统供电的前提下为电池充电。它还将电池作为一个缓冲储能装置，在负载瞬时发生超过输入限流的峰值电流时保证系统供电。放电期间，该开关提供一条从电池到系统的低损耗通路。
+
+　　系统软件处理与USB主机的通信并向充电器发送命令。MAX8394管理充电硬件，并提供简单的通信，设置USB、适配器充电相关的参数。预设USB输入电流门限，确保不超过规定的限制，适配器使用用户设置的电流。充电器还向系统提供完整的状态和故障信号。
+
+　　MAX8934具有最新的充电安全特性，包括日本电子信息技术产业协会(JEITA)规定的与温度相关的充电协议，在温度升高时暂停或减缓充电。此外，输入具有高达16V的过压保护(OVP)，并且器件在极端条件下通过减小充电电流限制温度的上升。
+
+　　高达2A的开关模式快速充电器，发热最小
+
+　　有些紧凑设备需要较大的充电电流(超过1A)，无法承受线性充电器在高充电速率下产生的过多热量。针对这种需求，MAX8903 (图10)提供了一个4MHz DC-DC转换器，在保持器件最小面积的同时，能够从适配器电源为电池提供高达2A的电流。与MAX8934一样，MAX8903为双输入设计，通过独立的连接接受USB和适配器输入。与之前输入电源和电池电源关断操作一样，自动进行电源之间的切换。
+
+
+图10. 具有智能电源选择器的MAX8903开关模式充电器，可从适配器输入提供高达2A电流，从USB源提供500mA电流。
+
+　　MAX8903的4MHz开关频率使开关模转换器的有源元件保持在最小尺寸，在考虑了较低的功耗后，利用该器件构建的2A充电器会小于等效的线性充电器。实际上，考虑到热耗散，大多数便携设备在任何条件下都不能支持2A的线性充电架构。
+
+　　内置过压和极性反接保护
+
+　　尽管USB充电规范对电源适配器和充电器进行了一定程度的强制要求，但是针对便携设备的USB设计仍然比较混乱，尤其是那些选择使用普通圆形插头作为电源的应用(只使用适配器或者是双输入设备非常普遍)。用户极容易使用“随手找到”的、但输出电压甚至极性是错误的适配器。通过在充电器电源输入端集成正、负22V保护，MAX8900能够减轻设计人员的负担：无需外部保护器件或MOSFET开关(图11)。
+
+
+图11. 具有±22V过压和极性反接保护的直接连接开关模式充电器
+
+　　MAX8900是一款直接连接充电器，系统通常连接至电池。其3.25MHz开关频率允许使用非常小的外围器件，并提供高达1.2A的充电电流，热耗非常低。除了双极性输入保护外，还根据JEITA规定，按照温度的变化调整充电参数。
+
+　　通过USB为NiMH电池充电
+
+
+图12. USB供电的单节NiMH电池开关模式充电器
+
+　　虽然表面上Li+电池已经占据整个便携世界，但NiMH电池并没有被完全遗弃。令人吃惊的是，尽管单位重量的能量仍然有较大差距，但其单位体积的能量仅比Li+电池低大约15%。NiMH电池的最大缺点是自放电率较高，混合型NiMH电池在很大程度解决了这一问题，例如SANYO? Eneloop?电池，静态下一年之后仍然能够保留85%的电量。NiMH电池的吸引力在于成本低、安全性高、用户更换方便等，至少标准电池具备这些优势。
+
+　　图12所示便携设备由一节AA型NiMH电池供电，利用USB充电。DS2710充电器开关频率大约为150kHz，电池充电电流为1.1A (典型AA型NiMH电池在大约0.5°C条件下)。由于降压转换器将5V、500mA转换成电池充电时的1.5V、1.1A，电路供给电池的电流(1.1A)大于从USB接口获得的电流(500mA)。需要注意的是，由于在低充电速率下不能正确判断充电终止，只能采用500mA或更大功率的端口进行充电。所以，当枚举确定只有100mA电流可用时，不应激活充电。系统通过关闭TMR上的Q2，使定时器电阻悬空，停止充电。
+
+　　该充电器另外一项特别有用的功能是：通过检测电池阻抗确定接入的是否为碱性电池或故障电池，检测到这种状况时将禁止充电。这就允许用户在紧急情况下插入碱性电池，无需担心意外充电。
+
+　　USB 3.0
+
+　　USB 3.0规范进一步提高了USB的数据速率。规范在电源方面与USB 2.0相似，只不过“单位负载”从100mA增大至150mA，大功率端口不得不提供6个(而不是5个)单位负载。这就意味着低功率USB 3.0端口可提供150mA电流，大功率USB 3.0端口可提供900mA电流。
+
+　　“假象”—非标准USB充电
+
+　　与所有增加的不同于原始应用的标准一样，制造商有时为了提供至少受限的充电架构而忽略了USB 2.0规范的部分要求。通常这种非标准设备在任何条件下吸收的电流都不大于100mA，所以，无论是大功率还是低功率集线器都不会过载。将电流限制在这一水平的缺点是电池充电时间较长，但如果设备在大部分时间都连接至USB端口，或许仍可接受。除了充电时间较长外，这种方式还有另外一个局限性：如果系统电池已完全放电，启动所有系统功能须延迟到电池达到足够电量的水平。
+
+　　非标准充电的另一方面涉及到USB挂起的处理。USB 2.0规定所有设备在一定周期内没有总线操作时必须挂起(吸收电流小于2.5mA)。由于编制该规范时没有包括充电，所以没有考虑设备在关闭时继续保持电池充电的情况。然而，由于大多数USB主机实际并不关闭电源，这种违反规范的操作也很少妨碍充电。
+
+　　非标准充电假设可以获得500mA电流，指示用户插入到能够提供500mA电流的电源端口和集线器。如上所述，由于大多数USB端口不关闭电源，这种方法在大多数情况下有效。当这样的设备插入到不支持500mA电流的端口时，端口将按规定关断。然而，USB端口的过载状况并非任何情况下都给出了清晰的定义，会导致系统复位或损坏。幸运的是，电池充电已经是USB规范的一个有机组成部分，所以不再需要如此的冒险操作。
+
+　　结论
+
+　　USB充电具有多种形式，取决于不同USB设备的独特要求。USB电池充电规范1.1版最终对之前的许多充电操作进行了规范。随着BC1.1标准的普及，将会降低制造商和消费者的成本。该标准应用的普及也会提高系统的互操作性。尽管如此，USB规范也仅仅规定了从端口获取多大功率，仍然将电源管理架构和充电规范留给用户去判读。这正是Maxim各种充电器件的用武之地，它们能够为几乎所有USB连接的便携设备提供安全、可靠的电池充电器。
+
+　　表1汇总了以上讨论的充电器，这些仅仅是Maxim产品的一小部分，更多产品选择请访问电池管理。
+
+表1. 具有代表性的USB电池充电器
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+使用 logcat 命令
+
+        查看和跟踪系统日志缓冲区的命令logcat的一般用法是：
+
+[adb] logcat [<option>] ... [<filter-spec>] ...
+
+　　　下文介绍过滤器和命令选项，详细内容可参见Listing of logcat Command Options。
+
+　　  可以在开发机中通过远程shell的方式使用logcat命令查看日志输出：
+
+$ adb logcat
+
+　　  如果是在远程shell中可直接使用命令：
+
+# logcat
+
+　　过滤日志输出
+
+        每一条日志消息都有一个标记和优先级与其关联。
+
+标记是一个简短的字符串，用于标识原始消息的来源 (例如"View" 来源于显示系统)。
+
+优先级是下面的字符，顺序是从低到高：
+V — 明细 (最低优先级)
+D — 调试
+I — 信息
+W — 警告
+E — 错误
+F — 严重错误
+
+S — 无记载 (最高优先级，没有什么会被记载)
+
+　　  通过运行logcat ，可以获得一个系统中使用的标记和优先级的列表，观察列表的前两列，给出的格式是<priority>/<tag>。
+
+　　  这里是一个日志输出的消息，优先级是“I”，标记是“ActivityManager”：
+
+I/ActivityManager( 585): Starting activity: Intent { action=android.intent.action...}
+
+　　　　如果想要减少输出的内容，可以加上过滤器表达式进行限制，过滤器可以限制系统只输出感兴趣的标记-优先级组合。
+
+　　　　过滤器表达式的格式是tag:priority ... ，其中tag是标记， priority是最小的优先级， 该标记标识的所有大于等于指定优先级的消息被写入日志。也可以在一个过滤器表达式中提供多个这样的过滤，它们之间用空格隔开。
+
+　　　　下面给出的例子是仅输出标记为“ActivityManager”并且优先级大于等于“Info”和标记为“MyApp”并且优先级大于等于“Debug”的日志：
+
+adb logcat ActivityManager:I MyApp:D *:S
+
+　　　　上述表达式最后的 *:S 用于设置所有标记的日志优先级为S，这样可以确保仅有标记为“View”（译者注：应该为ActivityManager，原文可能是笔误）和“MyApp”的日志被输出，使用 *:S 是可以确保输出符合指定的过滤器设置的一种推荐的方式，这样过滤器就成为了日志输出的“白名单”。
+
+　　　　下面的表达是显示所有优先级大于等于“warning”的日志：
+
+adb logcat *:W
+
+　　　　如果在开发用电脑上运行 logcat (相对于运行运程shell而言)，也可以通过ANDROID_LOG_TAGS环境变量设置默认的过滤器表达式：
+
+export ANDROID_LOG_TAGS="ActivityManager:I MyApp:D *:S"
+
+　　　　需要注意的是，如果是在远程shell或是使用adb shell logcat 命令运行logcat ， ANDROID_LOG_TAGS 不会导出到模拟器或手机设备上。
+
+　　控制日志格式
+
+        日志消息在标记和优先级之外还有很多元数据字段，这些字段可以通过修改输出格式来控制输出结果， -v 选项加上下面列出的内容可以控制输出字段：
+
+brief — 显示优先级/标记和原始进程的PID (默认格式)
+
+process — 仅显示进程PID
+
+tag — 仅显示优先级/标记
+
+thread — 仅显示进程：线程和优先级/标记
+
+raw — 显示原始的日志信息，没有其他的元数据字段
+
+time — 显示日期，调用时间，优先级/标记，PID
+
+long —显示所有的元数据字段并且用空行分隔消息内容
+
+  可以使用 -v启动 logcat来控制日志格式：
+
+[adb] logcat [-v <format>]
+
+  例如使用 thread 输出格式：
+
+adb logcat -v thread
+
+  注意只能在 -v 选项中指定一种格式。
+
+　　Viewing Alternative Log Buffers
+
+        Android日志系统为日志消息保持了多个循环缓冲区，而且不是所有的消息都被发送到默认缓冲区，要想查看这些附加的缓冲区，可以使用-b 选项，以下是可以指定的缓冲区：
+
+radio — 查看包含在无线/电话相关的缓冲区消息
+
+events — 查看事件相关的消息
+
+main — 查看主缓冲区 (默认缓冲区)
+
+-b 选项的用法：
+
+[adb] logcat [-b <buffer>]
+
+  例如查看radio缓冲区：
+
+adb logcat -b radio
+
+
+     三、“查看”可用日志缓冲区:
+
+       Android日志系统有循环缓冲区，并不是所有的日志系统都有默认循环缓冲区。为了得到 日志信息，你需要通过-b 选项来启动logcat 。如果要使用循环缓冲区，你需要查看剩余的 循环缓冲期:
+
+    radio — 查看缓冲区的相关的信息.
+    events — 查看和事件相关的的缓冲区.
+    main — 查看主要的日志缓冲区
+
+
+    -b 选项使用方法:   
+      [adb] logcat [-b <buffer>]
+     下面的例子表示怎么查看日志缓冲区包含radio 和 telephony信息:
+      adb logcat -b radio
+     四、查看 stdout 和stderr
+     在默认状态下，Android系统有stdout 和 stderr (System.out和System.err ) 输出到/dev/null ， 在运行Dalvik VM的进程中，有一个系统可以备份日志文件。在这种情况下，系统会用stdout 和stderr 和 优先级 I.来记录日志信息
+      通过这种方法指定输出的路径，停止运行的模拟器/设备，然后通过用setprop 命 令远程输入日志
+       $ adb shell stop
+       $ adb shell setprop log.redirect-stdio true
+       $ adb shell start
+      系统直到你关闭模拟器/设备前设置会一直保留，可以通过添加/data/local.prop 可 以使用模拟器/设备上的默认设置
+
+     五、Logcat命令列表:
+
+
+Option 	Description
+-b<buffer> 	加载一个可使用的日志缓冲区供查看，比如event 和radio . 默认值是main 。具体查看Viewing Alternative Log Buffers.
+-c 	清楚屏幕上的日志.
+-d 	输出日志到屏幕上.
+-f<filename> 	指定输出日志信息的<filename> ， 默认是stdout .
+-g 	输出指定的日志缓冲区，输出后退出.
+-n <count> 	设置日志的最大数目<count> .， 默认值是4，需要和 -r 选 项一起使用。
+-r <kbytes> 	每<kbytes> 时 输出日志，默认值为16，需要和-f 选 项一起使用.
+-s 	设置默认的过滤级别为silent.
+-v <format> 	设置日志输入格式，默认的是brief 格 式，
+要知道更多的支持的格式，参看Controlling Log Output Format.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+==============Q39================
+抓wifi log
+
+修改WCNSS_qcom_cfg.ini如下
+vosTraceEnableHDD = 255
+vosTraceEnableSME = 255
+vosTraceEnablePE = 255
+
+1. 下载之前传的cfg.ini ,用下面的命令替换原有ini文件，
+adb shell setprop service.adb.root 1
+adb push WCNSS_qcom_cfg.ini /data/misc/wifi/WCNSS_qcom_cfg.ini
+重启手机。
+
+2. 下载logmask ，QXDM使用这个logmask抓log，
+
+3.  高通抓sniffer log时，不要设置
+filter，他们需要完整的原始数据。
+
+4. 用下面命令
+adb shell wpa_cli ifname=p2p0 log_level EXCESSIVE
+adb shell wpa_cli ifname=wlan0 log_level EXCESSIVE
+
+5. logcat和kernel log用下面的方法抓：
+adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+
+注意：抓kernel
+log之前先用下面的命令获取root权限和退出SEandroid强制模式：
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+WIFI
+WCN-SS Wireless Connectivity (WConnect) SubSystem. It contains all the digital logic for WLAN, BT and FM integrated within the MSM TM devices.
+cCPU Connectivity CP running WCNSS firmware.
+aCPU Application CPU. Application processors running operating systems. WLAN, BT and FM drivers are running here.
+mCPU Modem Subsystem processor
+CMEM Connectivity Memory. This is internal SRAM within the WCNSS. It contains the WLAN HW data structures.
+aCPU DDR Portion of DDR set aside and protected for the Application SS. DXE can move data to and from that memory.
+cCPU DDR Portion of DDR set aside and protected for the cCPU.
+Shared DDR Portion of DDR shared by multiple cores within the MSMTM chipset. The Shared Memory Services are implemented on top of that memory.
+RPM Resource Power Manager. This is a subsystem within the MSM chipset that manages shared resources to
+	optimize power consumption on the MSM chipset. This subsystem will facilitate WCNSS power
+consumption within the MSM chipset.
+
+
+
+WIFI/WLAN搜索关键词
+kernel:
+[WIFI_ROAM] threshold_tmp:-50 roam_threshold:-50
+
+logcat:
+wifi_state_changed(  448): ConnectedState
+D/wpa_supplicant(26712): 76:74:2a:b2:ec:9e freq=2452 qual=0 noise=0 level=-58 flags=0xb
+11-30 16:55:14.349 I/wpa_supplicant( 3340): wlan0: WPA: Key negotiation completed with 06:69:6c:41:14:d7 [PTK=CCMP GTK=CCMP]
+11-30 16:55:14.349 I/wpa_supplicant( 3340): wlan0: CTRL-EVENT-CONNECTED - Connection to 06:69:6c:41:14:d7 completed (auth) [id=0 id_str=]
+
+快速定位:
+camera:
+kernel log:
+	camera: 0. expected id  1. sensor_id  2. camera id
+msm_sensor_match_id: read id: 0x485b expected id 0x485b:
+s5k4h5_8916 probe succeeded
+
+lowmemorykiller:
+
+audio音频
+具体acdb文件路径,看logcat:
+ACDB-LOADER(  286): ACDB -> Load file: /etc/acdbdata/MTP/MTP_Handset_cal.acdb
+
+音频参数中具体哪个通道看logat:
+1. adb logcat | grep acdb
+D/ACDB-LOADER(  337): ACDB -> send_hw_delay : acdb_id = 4 path = 1
+2. 再打开QACT --> Tools --> DeviceDesigner --> 看具体的Device ID:(Dec十进制)找对应的
+
+D/hardware_info(  207): hw_info_append_hw_type : device_name = handset-mic
+D/ACDB-LOADER(  207): ACDB -> send_audio_cal, acdb_id = 4, path =  1
+
+
+音频各种路径命令测试:
+80-NU323-1SC_A_MULTIMEDIA_DRIVER_DEVELOPMENT_AND_BRINGUP_GUIDE_-_AUDIO_SIMPLIFIED_CHINESE.pdf
+播放PCM音频:
+tinyplay <filename.wav >
+
+回环测试:
+vendor/qcom/proprietary/mm-audio/audio_ftm/family-b/config/8x16/ftm_test_config
+把ftm_test_config push到data目录
+/system/bin/mm-audio-ftm -tc 17 -c /data/ftm_test_config -d 60 -v 70    ----handset mic-> speaker
+/system/bin/mm-audio-ftm -tc 28 -c /data/ftm_test_config -d 60 -v 70    ----headset mic-> headset
+
+s700音频路径看logcat:
+/system/etc/mixer_paths_skuk.xml
+s201:
+/system/etc/mixer_paths_qrd_skui.xml
+
+耳机按键MBHC
+L R M G  North American (NA) style stereo with mic.
+L R G M  European-style stereo with mic.
+L R G    European or NA stereo headset no mic.
+L M G    NA mono headset with mic.
+L G M    European style mono headset with mic.
+
+--------------------------------------原始文件翻译
+
+＃这个文件允许用户覆盖出厂
+＃为WLAN驱动程序的默认值
+＃启用IMPS或不
+gEnableImps = 1
+
+＃启用/禁用空闲扫描
+gEnableIdleScan = 0
+
+＃IMPS期间增加睡眠时间（秒）
+＃0意味着没有周期性的唤醒IMPS。周期唤醒
+＃不必要的，如果空闲扫描被禁用。
+gImpsModSleepTime = 0
+
+＃启用BMPS或不
+gEnableBmps = 1
+
+＃启用暂停或不
+＃1：启用备用，2：启用深度睡眠，3：启用MCAST / BCAST筛选
+gEnableSuspend = 3
+
+＃PHY模式（自动，B，G，N，等）
+＃有效值为0-9，0 =自动，4 = 9 = 11N，11AC
+gDot11Mode = 0
+
+＃切换启用（1）禁用（0）
+gEnableHandoff = 0
+
+＃CSR漫游启用（1）禁用（0）
+gRoamingTime = 0
+
+＃分配的MAC地址 - 在此之前，将使用NV项目
+＃MAC地址的每个字节的十六进制格式表示为XX
+Intf0MacAddress = 000AF58989FF
+Intf1MacAddress = 000AF58989FE
+Intf2MacAddress = 000AF58989FD
+Intf3MacAddress = 000AF58989FC
+
+＃UAPSD服务间隔为VO，VI，BE，BK交通
+InfraUapsdVoSrvIntv = 0
+InfraUapsdViSrvIntv = 0
+InfraUapsdBeSrvIntv = 0
+InfraUapsdBkSrvIntv = 0
+
+＃禁用RSSI FW过滤
+gEnableFWRssiMonitoring = 1
+
+＃1x1的天线配置的默认
+gNumRxAnt = 1
+
+＃灯塔滤波频率的信标间隔（单位）
+gNthBeaconFilter = 50
+
+＃启用WAPI或不
+＃WAPIIsEnabled = 0
+＃旗，过滤MCAST阿卜杜勒的BCAST RX包。
+＃值0：不过滤：过滤所有组播。
+＃2：过滤所有广播。 3：过滤所有MCAST阿卜杜勒BCAST
+McastBcastFilter = 3
+
+＃标志来启用功能，或者不HostARPOffload
+hostArpOffload = 0
+
+＃SoftAP相关参数
+＃AP的MAC地址
+gAPMacAddr = 000AF589dcab
+
+＃802.11n的保护标志
+gEnableApProt = 1
+
+＃启用OBSS保护
+＃小蜜改变
+gEnableApOBSSProt = 0
+
+＃启用/禁用此功能UAPSD
+＃小蜜改变
+gEnableApUapsd = 1
+
+＃修正率
+gFixedRate = 0
+
+＃最大发射功率
+＃gTxPowerCap = 30
+＃碎片阈值
+＃gFragmentationThreshold = 2346
+
+＃RTS阈值
+RTSThreshold = 2347
+
+＃内BSS前锋
+gDisableIntraBssFwd = 0
+
+＃WMM启用/禁用
+WmmIsEnabled = 0
+
+＃802.11d支持的
+g11dSupportEnabled = 1
+
+＃CCX支持和快速过渡
+CcxEnabled = 0
+FastTransitionEnabled = 1
+ImplicitQosIsEnabled = 1
+gNeighborScanTimerPeriod = 200
+
+gNeighborLookupThreshold = 76
+gNeighborReassocThreshold = 81
+
+gNeighborScanChannelMinTime = 20
+gNeighborScanChannelMaxTime = 30
+gMaxNeighborReqTries = 3
+
+＃遗产（非CCX，无的802.11r标准）快速漫游支持
+＃要启用，设置= 1 FastRoamEnabled，= 1 gEnableFWRssiMonitoring，FastTransitionEnabled = 1
+＃要禁用，设置FastRoamEnabled = 0，gEnableFWRssiMonitoring = 0，FastTransitionEnabled = 0
+FastRoamEnabled = 1
+
+＃检查如果我们的AP漫游优于当前AP的RSSI。
+＃检查被禁用如果设置为Zero.Otherwise它会使用这个值如何更好
+＃新的/可漫游AP的RSSI应该是漫游
+＃小蜜改变
+RoamRssiDiff = 5
+
+＃配置的RSSI，将用于分割的间隙/分类宽度
+＃各个类别（又名斗）。
+gRssiCatGap = 5
+
+＃不想5GHz的接入点漫游时（默认为gRoamPrefer5GHz = 1）
+gRoamPrefer5GHz = 1
+
+＃如果RSSI任何可用的候选人是优于目前相关的
+＃AP至少gImmediateRoamRssiDiff，然后立刻漫游（不含
+＃注册门槛reassoc的）。
+＃注：值0意味着，我们将注册reassoc门槛。
+gImmediateRoamRssiDiff = 10
+＃SAP国家代码
+
+＃默认国家代码为2字节，3字节是可选的室内或门。
+＃示例
+＃美国室内USI
+＃韩国户外，KRO
+＃日本无可选字节，JP
+＃法国无可选字节，FR
+＃gAPCntryCode = USI
+
+＃短卫队间隔启用/禁用
+gShortGI20Mhz = 1
+gShortGI40Mhz = 1
+
+在几秒钟内自动关机值。值为0表示自动关机功能被禁用
+gAPAutoShutOff = 0
+
+＃SAP自动信道选择配置
+＃0 =禁用自动信道选择
+＃1 =启用自动信道选择，信道请求者提供的将被忽略
+gApAutoChannelSelection = 0
+
+＃听能量检测模式配置
+＃有效值0-128
+＃128手段禁用能量检测功能
+＃0-9阈值码和7的推荐值，如果要启用的功能是从系统。
+＃10-128被保留。
+＃映射的EDET门槛是一样在3dB的步骤如下：
+＃0 = -60 dBm的
+＃1 = -63 dBm的
+＃2 = -66 dBm的
+＃...
+＃7 = -81 dBm的
+＃8 = -84 dBm的
+＃9 = -87 dBm的
+
+＃注：这些设置是有效的。设置为0，将产生最高省电（在嘈杂的环境中）在范围更大的成本。影响的范围大约是＃计算公式为：
+＃
+范围损耗（dB）= EDET阈值电平（dBm）+ 97 dBm的。
+＃
+gEnablePhyAgcListenMode = 128
+
+＃首选渠道启动BT AMP AP模式（0手段，任何通道）
+BtAmpPreferredChannel = 0
+
+＃首选带（两个或2.4只或5只）
+＃小蜜改变
+BandCapability = 1
+
+＃灯塔早期终止（1 =使BET功能，0 =禁用）
+enableBeaconEarlyTermination = 0
+beaconEarlyTerminationWakeInterval = 3
+
+＃蓝牙替代MAC PHY（1 =启用BT AMP功能，0 =禁用）
+gEnableBtAmp = 0
+
+＃此功能通道范围选择
+gAPChannelSelectStartChannel = 1
+gAPChannelSelectEndChannel = 11
+
+＃此功能通道的范围选择工作频段
+＃0:2.4 GHZ 1：LOW-5GHZ 2：MID-5GHZ 3：高5GHZ 4：4.9HZ BAND
+gAPChannelSelectOperatingBand = 0
+
+＃通道绑定
+＃小蜜改变
+＃gChannelBondingMode5GHz = 6
+
+＃启用保持非零值活着
+＃gStaKeepAlivePeriod = 30
+
+＃如果设置将开始主动扫描后加载驱动程序，否则将启动
+＃被动扫描找出域
+gEnableBypass11d = 1
+
+＃如果设置为0，将不扫描DFS通道
+gEnableDFSChnlScan = 1
+gVhtChannelWidth = 2
+gEnableLogp = 1
+
+＃启用自动发射功率控制
+gEnableAutomaticTxPowerControl = 1
+
+＃0 1 OLPC和CLPC和SCPC
+gEnableCloseLoop = 1
+
+＃数据闲置超时在节电模式时（毫秒）
+gDataInactivityTimeout = 200
+
+＃国家代码
+＃小蜜改变
+gCountryCodePriority = 1
+
+＃小蜜改变
+gEnableDynamicDTIM = 3
+
+＃VHT的Tx / Rx MCS值
+＃有效值是0,1,2。如果注释掉，则默认值是0。
+＃0 = MCS0-7，1 = MCS0-8，2 = MCS0-9
+gVhtRxMCS = 2
+gVhtTxMCS = 2
+
+＃启用药物滥用资料中央档案室的监管支持设置默认的国家（地区）代码
+＃= gCrdaDefaultCountryCode TW
+
+＃扫描时序参数
+＃gPassiveMaxChannelTime = 110
+＃gPassiveMinChannelTime = 60
+＃gActiveMaxChannelTime = 40
+＃gActiveMinChannelTime = 20
+gPassiveMaxChannelTimeConc = 110
+gPassiveMinChannelTimeConc = 60
+gActiveMaxChannelTimeConc = 27
+gActiveMinChannelTimeConc = 20
+gRestTimeConc = 100
+gNumChanCombinedConc = 1
+
+＃如果设置为0，中冶是不允许的。
+gEnableMCCMode = 1
+
+＃1 =启用STBC; 0 =禁用STBC
+gEnableRXSTBC = 0
+
+完
+
+＃注：配置解析器将无法读取任何过去的结束标记
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb09-apq8096-v3.0-pmi8994-cdp.dtb
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/pa726.dtb
+
+
+
+vi ./out/target/product/q39/obj/KERNEL_OBJ/arch/arm64/boot/dts/.msm8939-v3.0-mtp-jdi.dtb.dts.tmp
+./kernel/arch/arm/boot/dts/qcom/q39-qrd.dtsi:101:		compatible = "gpio-keys";
+
+
+tlmm: top-level mode multiplexer顶层模式多路复用器
+DAI： 数字音频接口
+
+
+
+全局的capture和playback    "Capture Source"，"Capture Volume"，"Capture Switch"，它们用于全局的capture source，switch和volume。同理，"Playback Volume"，"Playback Switch"，它们用于全局的输出switch和volume。
+Tone-controles    音调控制的开关和音量命名为：Tone Control - XXX，例如，"Tone Control - Switch"，"Tone Control - Bass"，"Tone Control - Center"。
+3D controls    3D控件的命名规则：，"3D Control - Switch"，"3D Control - Center"，"3D Control - Space"。
+Mic boost    麦克风音量加强控件命名为："Mic Boost"或"Mic Boost(6dB)"。 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Dynamic Audio Power Management (DAPM)
+
+消除声音结束时的咔~异响
+kernel/msm-3.18$ vi sound/soc/msm/msm8952.c
+"SIM PA","LINEOUT";
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+AUDIO VOICE:
+
+ADM:
+ASM:
+mux（多路开关）
+ACDB:audio calibration data base音频校准数据库
+Multi-Button Headset Control (MBHC)多按钮耳机控制
+AFE: audio front end音频前端
+VoIP: Voice over Internet Protocol语音互联网协议
+PA: Power amplifier功率放大器
+A2DP: Advanced Audio Distribution Profile蓝牙高级音频分布
+ADB Android 调试桥(Android Debug Bridge)
+EFS 嵌入式文件系统(Embedded File System)
+FSID 功能集 ID(Feature Set ID)
+ANC 主动噪声消除(Active Noise Cancelation)
+AANC 自适应主动噪声消除(Adaptive ANC)
+RTC 实时校准(Real-Time Calibration)
+FTT Fluence 调试工具(Fluence Tuning Tool)
+RTM 实时监控(Real-Time Monitoring)
+耳机模式前馈主动噪声消除 (FF Headset ANC)
+耳机模式反馈主动噪声消除(FB Headset ANC)
+手持模式自适应 ANC (AANC) - AANC
+BBWE 盲带宽扩展
+NB 窄带
+WB 宽带
+CNI 舒适噪声注入
+LEC 线性回声消除器
+PL 产品线
+PoR 记录计划
+SWB 超宽带
+TCLw 加权终端耦合损耗
+Echo Canceller and Noise Suppression (ECNS)回声消除和噪声抑制
+DMECNS 噪声抑制
+WNR 风噪降低
+Fluence是Qualcomm的DMECNS算法的名称
+ALSA Advanced Linux Sound Architecture
+ASoC： ALSA System on Chip ()
+FE： Frontend
+BE： Backend
+SNR: 信噪比
+PCM:Pulse-code modulation 脉冲编码调制
+IIR: Infinite Impulse Response无限冲激响应滤波器（可调试频率响应）
+AWB (Automatic white balance)自动白平衡
+XO 晶体振荡器(XO & VCXO) 
+PLL时钟产生器 (GPLL general-purpose phase lock loop 通用锁相环 & PLL)
+
+
+SMECNS:Single Microphone Echo Canceller and 
+	Noise Suppressor –Performs echo and noise suppression for NB and WB voice on 
+	single-microphone topologies (non-Fluence™v5)
+
+DMECNS: Fluence V3 Dual-Mic Noise and Echo Suppression –Performs echo and noise suppression for NB and WB 	voice in dual-micro phone devices
+
+FV5ECNS_SM: Fluence V5 Single-Mic Echo Canceller and Noise Suppressor –Performs echo and noise suppression 	for NB and WB voice in single-microphone topologies. This can be used instead of SMECNS.
+
+FV5ECNS_DM: Fluence V5 Dual-Mic Echo Canceller and Noise Suppressor –Performs echo and noise suppression 	for NB and WB voice in dual-microphone topologies. This can be used instead of DMECNS.
+
+FPECNS_QM: Fluence Pro Quad-Mic Echo Canceller and Noise Suppressor –Performs echo and noise suppression 	for NB and WB voice in three or more mic use cases in Speakerphone mode
+
+FE PCM Filter: Front-End PCM Filter –Allows tuning of microphone frequency response before ECNS; mainly 	useful for matching microphone response for multimicrophone ECNS.
+
+FIR PCM Filter: Allows passing frequency response conformance and improvement
+	of overall intelligibilit(available on Tx and Rx paths)
+
+IIR PCM Filter: This allows passing frequency response conformance and improving overall intelligibility 	(available on Tx and Rx paths). It can be used simultaneously with the FIR PCM filter.
+
+AIG: Adaptive Input Gain –Performs slow gain adaptation prior to DRC, based on desired RMS level
+
+DRC: Dynamic Range Control –Allows automatic gain control for signal levels outside of a desired
+	range (available on Tx and Rx paths)
+
+AVC: Automatic Volume Control –Increases Rx volume based on the ambient noise level at the near-end device
+Note: If AVC is enabled, RVE cannot be used.允许自动增益控制所需的频率带，以及低失真限制器后的子带处理
+
+RVE: Receive Voice Enhancement –Uses subband processing to improve the Signal-to-Noise Ratio (SNR) of Rx voice
+Note: If RVE is enabled, AVC cannot be used.
+
+DTMF Detection: Performs processing on the Rx stream to detect DTMF tones
+
+WVE: Wide Voice Enhancement –Performs blind bandwidth extension to provide WB data (16kHz sampling rate) and improve the speech intelligibility
+
+Dynamic Range Control (DRC)动态范围控制
+Qualcomm Automatic Gain Control (AGC)高通的自动增益控制
+Multiband Dynamic Range Control (MBDRC)多波段动态范围控制
+Voice System ID (VSID)语音系统ID
+双麦克风端射  (Endfire)
+双麦克风边射  (Broadside)
+High-Pass Filtering (HPF)高通滤波器
+Far-End Noise Suppression (FENS)远端噪声抑制
+Echo Cancellation (EC)回声消除
+dynamic echo and noise suppression (DENS)动态回声与噪声抑制
+Voice Activity Detector (VAD)语音活动检测器\静音检测\语音激活检测
+PVC(Per Vocoder Calibration)语音频编解码器的校准
+发送频率响应（SFR）
+接收频率响应（RFR）
+侧音掩蔽评定值（STMR）SideTone
+发送失真（Sending Distortion）
+接收失真（Receiving Distortion）
+Receive Loudness Rating (RLR) 接收响度评定值
+Send Loudness Rating (SLR) 发送响度评定值
+Frequency Response频率响应
+Terminal Coupling Loss (TCL)终端耦合损耗
+Weighted Terminal Coupling Loss (TCLw)加权的终端耦合损耗
+Head And Torso Simulator (HATS) for telephonometry 头和躯干模拟器(HATS)通话时计
+
+ACDB是一个静态数据库,位于应用处理器中;其中包含DSP和WCD模拟编解码器的所有调试/校准参数,在设备切换过程中,音频HAL通过给定设备ID查询ACDB数据库,并将设备校准数据传送到内核的物理内存中。
+Global_cal.acdb面向所有全局音效的音频流级配置
+General_cal.acdb包含所有Rx和Tx音频设备的AudProc配置(例如EANS、MBDRC、IIR、HPF等);另外,还包含各音量级别的音量校准表
+Speaker_cal.acdb包含扬声器设备的音频和语音配置
+Handset_cal.acdb包含听筒设备的音频和语音配置
+Headset_cal.acdb包含耳机设备的音频和语音配置
+Bluetooth_cal.acdb包含蓝牙SCO设备的音频和语音配置
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CAMERA=======
+
+PDAF:相位检测自动对焦;“PhaseDetectionAutoFocus”
+cci: camera control interface(i2c+gpio)    qcom,cci-master = <0>;
+CAM_VANA – Supply voltage (模拟)           cam_vana-supply = <&pm8994_l29>; 
+CAM_VDIG – Supply voltage (数字)           qcom,gpio-vdig = <1>;
+CAM_VAF – Supply voltage (Actuator 电压)   cam_vaf-supply = <&pm8994_lvs1>;
+CAM_VIO – Input/output voltage (IO数字)    qcom,cam-vreg-name = "cam_vio";
+CAMIF 是 video front-end（VFE）硬件的的第一部分
+VFE video front end 视频前端
+CID (channel ID). Virtual Channel (VC)和Data Type (DT)
+UbiFocus 多纵深对焦，
+（1）Auto Exposure Control(AEC)自动曝光控制
+（2）Auto Gain Control AGC自动增益控制
+(3) Auto White Balance AWB自动白平衡（wbc 白平衡校准，afc AF校准，lsc Lens Shading校准，dpc 坏点校正）
+(4)Color Temperature:色温
+(5)Auto Focus AF自动对焦
+(6)Gamma Curve:伽马曲线
+(7)Color Matrix( RGB to RGB)色彩还原矩阵
+(8)RGB to YUV and RGB to YCbCr Matrix色彩空间转换矩阵
+(9)Edge enhancement边缘强化
+(10)Saturation饱和度
+(11)Brightness亮度
+(12) Special Image effects (W/B,sepia)特效
+(13)Image Interpolation algorithm:图像插值算法
+(14)Image Contrast:图像对比度
+(15)Lens shading compensation镜头暗影补偿
+(16)Hue:色调（色相）
+(17)Banding filter(Flicker):(50Hz&60Hz)水波纹
+(18)Rolling exposure mode:行曝光模式
+(19)Frame Exposure mode帧曝光模式
+(20)Bad Pixel(white bad pixel and black bad pixel wound pixel)坏像素
+(21)Image Resolution图像分辨率
+
+adb shell setprop persist.camera.stats.debug 49152  
+
+Snapdragon Sensors Core (SSC)
+Absolute motion detection(AMD)绝对运动检测
+Electronic image stabilization录像防抖功能(EIS)
+3A (A/F, AE, AWB)自动对焦、曝光、白平衡
+Auto frame rate (AFR)自动帧速
+Auto scene detection自动场景检测
+Sharpness control清晰度控制
+Bayer/YUV camera support拜耳YUV摄像头支持
+Exposure modes (Center, Spot, Multiwindow)曝光模式
+White LED flash support白色LED闪光灯支持
+EV/brightness control环境亮度控制
+Digital image stabilization数字图像稳定
+Macro mode with auto focus宏模式与自动对焦
+Digital zoom数字变焦
+Selectable zone auto focus 可选区域自动对焦
+Anti-banding (auto flicker correction)抗条带（自动闪烁校正）
+Best shot mode最佳拍摄模式
+Hue and saturation色调和饱和度
+Continuous AF for camera preview/video连续自动对焦的相机预览/视频
+ISO Frame drop from ISP   ISO的丢帧从ISP
+Special effects特殊效果
+Dual output from ISP从ISP双输出
+Red eye reduction减少红眼睛
+Adaptive spatial filter自适应空间滤波器
+EXIF/JFIF support   Exif是一种图像文件格式，EXIF信息,包括机身、镜头型号、拍摄时间、相机快门次数
+Row/Column sum
+Simultaneously save full resolution picture and thumbnail picture同时保存全分辨率图片和缩略图
+Black level linearization黑电平线性化
+High frame rate高帧速率
+Chroma suppression色度抑制
+End-to-end camera application端到端相机应用
+Color correction颜色校正
+Color conversion颜色转换
+Zero shutter Lag零快门滞后
+Contrast control对比度控制
+Raw snapshot capture原始快照捕获
+Defective pixel correction缺陷像素校正
+Camera APIs to support fast factory Boot mode支持快速工厂启动模式的摄像头接口
+Demosaic去马赛克
+Live snapshot (concurrent camcorder + camera)直播快照（同步摄像机+相机）
+Scalar and cropper
+Burst mode snapshot capture with exposure bracketing突发模式快照捕获与包围曝光
+Gamma correct伽玛校正
+Zero shutter Lag with wavelet noise reduction零快门滞后与小波降噪
+Luma adaptation亮度适应
+Burst mode snapshot capture突发模式快照捕获
+Memory color enhancement增强色彩记忆
+EZ-TUNE camera tuning
+ISP parameters change on the fly
+View-finder寻像器（取景器）
+Wavelet noise reduction小波降噪
+Facial processing面部处理
+Tintless LSC (lens shading correction)无色彩的LSC（镜头阴影校正）
+Rotation旋转
+High frame rate raw image dump to memory高帧速率的原始图像转储到内存
+Full screen viewfinder independent on captured resolution全屏幕取景自主拍摄分辨率
+Raw data interface support原始数据接口支持
+Manual white balance手动白平衡
+Insert GPS Lat/Long in EXIF header and make editable      插入GPS纬度/经度标题和编辑
+Viewfinder histogram取景器的直方图
+JPEG file size control    JPEG文件大小控制
+Front/Back camera support前/后摄像头支持
+JPEG encode scaling  JPEG编码尺度
+High dynamic range高动态范围
+GCC 全局时钟控制器
+High Frame Rate (HFR/HSR)高帧速率
+isp——(Image Signal Processor)——影视处理器
+
+Start of Transmission传输 (SoT) 和 End of Transmission (EoT)
+ CAM_VANA – Supply voltage (模拟)
+ CAM_VDIG – Supply voltage (数字)
+ CAM_VAF – Supply voltage (Actuator 电压)
+ CAM_VIO – Input/output voltage (IO数字)
+
+ABF Adaptive Bayer Filter 自适应Bayer滤波器
+ACE Advanced Chroma Enhancement 高级色度增强
+ASF Adaptive Spatial Filter 自适应空间滤波
+Luma Adaptive Spatial Filter 亮度自适应空间滤波
+BLC Black Level Correction 黑电平校正
+CAC Chromatic Aberration Correction 色差校正
+CCM Color Correction Matrix 色彩校正矩阵
+CCT Color Correction Table 色彩校正表
+CPP Camera Post Processing 相机后处理
+CS Chroma Suppression 浓度抑制
+DPC Defective Pixel Correction 缺陷像素校正
+FD Face Detection 人脸检测
+FIR Finite Impulse Response 有限冲击响应(频响曲线)
+GIC Green Imbalance Correction 绿色不平衡的校正
+IIR Infinite Impulse Response 无限脉冲响应
+LSC Lens Shading Correction 镜头阴影校正
+LTM Local Tone Mapping 本地色调映射
+MCTL Media Control 媒体控制
+FLIP 翻转
+Portrait 人像
+VCM 音圈马达(马达的一种, 还有:
+    1.音圈马达
+    2.超声波马达
+    3.步进马达
+    4.记忆合金马达
+    5.液体镜头对焦
+    6.液晶镜头对焦
+    7.MEMS镜头对焦
+    8.软件对焦（阵列式摄像头）)
+焦距: EFL (Effective Focal Length
+Color Filter Array彩色滤光器阵列 — CFA
+光电转换（CCD/CMOS）和电光转换（CRT/LCD）
+
+Values for effect settings.(浮雕,霓虹灯,素描)
+Values for auto exposure settings.自动曝光
+Values for scene mode settings.场景模式设置的值
+HDR High-Dynamic Range 高动态范围图像
+Formats for setPreviewFormat and setPictureFormat. 预览和图片格式
+Values for raw image formats  raw图格式
+Values for ISO Settings 感光度
+Values for DENOISE 小波降噪
+Values for selectable zone af Settings 可选区域自动对焦设置的值
+Values for HFR settings.高帧率设置
+Values for Refocus setting.重对焦
+Values for Chroma Flash setting.色度闪光灯设置
+Values for Opti Zoom setting.光学变焦设置值
+Values for True Portrait setting.肖像设置
+Values for FSSR setting.
+Value for Multi-touch Focus setting.多点对焦
+Values for FLIP settings.翻转
+TSF  改善Color Shading色差
+ZSL Zero Shutter Lag零快门延迟
+IR 红外 (Infra-red)
+AF 自动对焦 (Auto Focus)
+GM 标准模块 (Golden Module)
+AWB 自动白平衡 (Automatic White Balance)
+LSC 镜头阴影校准 (Lens Shading Calibration)
+VCM 虚拟连续内存 (Virtual Contiguous Memory)
+OTP 一次性可编程 (One-Time Programmable)
+MCC Macbeth 色卡 (Macbeth Color Checker)
+
+
+CPR (Core Power Reduction)
+
+
+S600项目
+camera 模组联系方式：
+
+乔建（销售）
+
+深圳博立信科技有限公司-上海办事处
+手机：13817540628
+jimmyqiao@brodsands.com
+上海：上海市徐汇区虹梅路2588弄1号楼903室
+深圳：深圳宝安龙华大浪华荣路联建工业园4栋2楼
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Wi-Fi Display (WFD)
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+添加模块
+Add libXXXX in user mode
+./s600.mk:144:PRODUCT_PACKAGES += libXXXX
+
+遍历子目录
+ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
+include $(call all-subdir-makefiles)
+endif
+
+遍历makefile
+ifneq (, $(filter s600, $(TARGET_PRODUCT)))
+include $(call all-subdir-makefiles)
+endif
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+开机logo
+1、使用ImageMagick自带的convert命令，进行raw格式转换（convert -depth 8 splash.png rgb:splash.raw）
+    注:imgageMagick安装包，执行sudo apt-get install imagemagick
+2、编译一下android自带的rgb2565工具，在build/tools/rgb2565下（gcc -O2 -Wall -Wno-unused-parameter -o rgb2565 to565.c）
+3、对raw文件进行rgb565格式转换（rgb2565 < splash.raw > splash.raw565）
+ 
+
+$ convert -depth 8 splash.png rgb:splash.raw
+$ rgb2565 < splash.raw > splash.raw565
+$ cp splash.raw565 splash.img
+$ fastboot flash splash splash.img
+$ fastboot reboot
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+打开adb root权限
+
+可以通过修改should_drip_privikegs()函数来打开adb root权限
+static int should_drop_privileges() {
+#ifndef ALLOW_ADBD_ROOT
+return 1;
+#else /* ALLOW_ADBD_ROOT */
+int secure = 0;
+char value[PROPERTY_VALUE_MAX];
+
+
+
+
+虚拟按键
+qemu.hw.mainkeys=0
+
+framework/base/core/res/res/values/config.xml文件中，有一个标签：
+<bool name="config_showNavigationBar">true</bool>，让其值设置为true，你就可以在你的android界面上看到3个虚拟按键了。
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+修改boot.img验证
+ifeq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),true)
+VERIFIED_BOOT := VERIFIED_BOOT=1	  VERIFIED_BOOT := VERIFIED_BOOT=0
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Android软件测试的日志文件抓取简介
+
+1    log文件分类简介
+           实时打印的主要有：logcat main，logcat radio，logcat events，tcpdump，还有高通平台的还会有QXDM日志
+         状态信息的有：adb shell cat /proc/kmsg ，adb shell dmesg，adb shell dumpstate，adb shell dumpsys，adb bugreport，工程模式等
+ 
+2    LOG抓取详解
+l  实时打印
+     adb logcat -b main -v time>app.log  打印应用程序的log
+    adb logcat -b radio -v time> radio.log 打印射频相关的log，SIM STK也会在里面，modem相关的ATcommand等，当然跟QXDM差的很远了。
+    adb logcat -b events -v time  打印系统事件的日志，比如触屏事件。。。
+    tcpdump 是很有用的，对于TCP/IP协议相关的都可以使用这个来抓，adb shell tcpdump -s 10000 -w /sdcard/capture.pcap，比如抓mms下载的时候的UA profile，browser上网的时候，使用proxy的APN下载，streaming的相关内容包括UA profile等。
+    最后是高通平台的QXDM，不管是不是Android，只要使用高通芯片，都会对它很熟悉，当然了，不是高通的芯片就不用提它了。这个不多讲，内容丰富，射频，电话，上网，...凡是高通提供的解决方案，这个都可以抓。(QXDM 的LOG抓取方法请参考QPST、QXDM的基本使用说明及作用)
+ 
+l  状态信息
+o   bugreport（命令adb bugreport>bugreport.log)。里面包含有dmesg，dumpstate和dumpsys。
+o   dumpstate是系统状态信息，里面比较全，包括手机当前的内存信息、cpu信息、logcat缓存，kernel缓存等等。
+o    adb shell dumpsys这个是关于系统service的内容都在这个里面，这个命令还有更详尽的用法，比如adb shell dumpsys meminfo system是查看system这个process的内存信息。
+o   kmsg抓取
+adb shell cat /proc/kmsg > kmsg.txt，打开后查msm_kgsl字段
+说明：用于检索用printk生成的内核消息。任何时刻只能有一个具有超级用户权限的进程可以读取这个文件。也可以用系统调用syslog检索这些消息。通常使用工具dmesg或守护进程klogd检索这些消息。proc是一个内存文件系统, 每次读文件kmsg实际是内核内部的循环缓冲区,每读过后,循环缓冲区的东西就被认为已经处理过了(也就是变成无效内容),所以你再次读为空是很正常的 为什么会这样处理呢,循环缓冲区大小有限,内核又随时可能往里面写东西,所以这样处理很正常. 你去查一下/proc/kmsg的信息有没有跟系统日志关联,如果有的话,你就可以读日志文件
+o   dmsg抓取
+adb shell dmesg > dmesg.txt
+说明：dmesg用来显示开机信息，kernel会将开机信息存储在ring buffer中。您若是开机时来不及查看信息，可利用dmesg来查看。dmesg是kernel的log，凡是跟kernel相关的，比如driver出了问题（相机，蓝牙，usb，启动，等等）开机信息亦保存在/var/log目录中，名称为dmesg的文件里。more /var/log/dmesg
+ 
+o   工程模式下log的抓取
+            对于Apollo手机请拨打*#*#8888#*#* ,然后勾选相应的LOG。待测试结束后，通过SD卡导出LOG到PC.
+ 
+3.Log分析：
+Get Log from Android System
+adb bugreport > bugreport.txt
+copy bugreport to the current directory.
+bugreport里面包含了各种log信息,大部分log也可以通过直接运行相关的程序来直接获得.
+步骤如下:
+1.adb shell 2.进入相关工具程式的目录 3.执行相关程式 4.得到相关信息
+下面以输出进程信息为例 1.adb shell 2.输入ps -P 3.可以看到相关进程信息
+Log Archive Analysis
+1.bugreport
+bugreport记录android启动过程的log,以及启动后的系统状态,包括进程列表，内存信息，VM信息等等到.
+2.bugreport结构分析
+(1)dumpstate
+MEMORY INFO
+获取该log:读取文件/proc/meminfo
+系统内存使用状态
+CPU INFO
+获取该log:执行/system/bin/top -n 1 -d 1 -m 30 -t
+系统CPU使用状态
+PROCRANK
+获取该log:执行/system/bin/procrank
+执行/system/xbin/procrank后输出的结果,查看一些内存使用状态
+VIRTUAL MEMORY STATS
+获取该log:读取文件/proc/vmstat
+虚拟内存分配情况
+vmalloc申请的内存则位于vmalloc_start～vmalloc_end之间，与物理地址没有简单的转换关系，虽然在逻辑上它们也是连续的，但是在物理上它们不要求连续。
+VMALLOC INFO
+获取该log:读取文件/proc/vmallocinfo
+虚拟内存分配情况
+SLAB INFO
+获取该log:读取文件/proc/slabinfo
+SLAB是一种内存分配器.这里输出该分配器的一些信息
+ZONEINFO
+获取该log:读取文件/proc/zoneinfo
+zone info
+SYSTEM LOG(需要着重分析)
+获取该log:执行/system/bin/logcat -v time -d *:v
+会输出在程序中输出的Log,用于分析系统的当前状态
+VM TRACES
+获取该log:读取文件/data/anr/traces.txt
+因为每个程序都是在各自的VM中运行的,这个Log是现实各自VM的一些traces
+EVENT LOG TAGS
+获取该log:读取文件/etc/event-log-tags
+EVENT LOG
+获取该log:执行/system/bin/logcat -b events -v time -d *:v
+输出一些Event的log
+RADIO LOG
+获取该log:执行/system/bin/logcat -b radio -v time -d *:v
+显示一些无线设备的链接状态,如GSM，PHONE,STK(Satellite Tool Kit)…
+NETWORK STATE
+获取该log:执行/system/bin/netcfg (得到网络链接状态)
+获取该log:读取文件/proc/net/route (得到路由状态)
+显示网络链接和路由
+SYSTEM PROPERTIES
+获取该log:参考代码实现
+显示一些系统属性,如Version,Services,network…
+KERNEL LOG
+获取该log:执行/system/bin/dmesg
+显示Android内核输出的Log
+KERNEL WAKELOCKS
+获取该log:读取文件/proc/wakelocks
+内核对一些程式和服务唤醒和休眠的一些记录
+KERNEL CPUFREQ
+(Linux kernel CPUfreq subsystem) Clock scaling allows you to change the clock speed of the CPUs on the fly.
+This is a nice method to save battery power, because the lower the clock speed is, the less power the CPU consumes.
+PROCESSES
+获取该log:执行ps -P
+显示当前进程
+PROCESSES AND THREADS
+获取该log:执行ps -t -p -P
+显示当前进程和线程
+LIBRANK
+获取该log:执行/system/xbin/librank
+剔除不必要的library
+BINDER FAILED TRANSACTION LOG
+获取该log:读取文件/proc/binder/failed_transaction_log
+BINDER TRANSACTION LOG
+获取该log:读取文件/proc/binder/transaction_log
+BINDER TRANSACTIONS
+获取该log:读取文件/proc/binder/transactions
+BINDER STATS
+获取该log:读取文件/proc/binder/stats
+BINDER PROCESS STATE
+获取该log:读取文件/proc/binder/proc/*
+bind相关的一些状态
+FILESYSTEMS
+获取该log:执行/system/bin/df
+主要文件的一些容量使用状态(cache,sqlite,dev…)
+PACKAGE SETTINGS
+获取该log:读取文件/data/system/packages.xml
+系统中package的一些状态(访问权限,路径…)，类似Windows里面的一些lnk文件吧.
+PACKAGE UID ERRORS
+获取该log:读取文件/data/system/uiderrors.txt
+错误信息
+KERNEL LAST KMSG LOG
+最新kernel message log
+LAST RADIO LOG
+最新radio log
+KERNEL PANIC CONSOLE LOG
+KERNEL PANIC THREADS LOG
+控制台/线程的一些错误信息log
+BACKLIGHTS
+获取该log:获取LCD brightness读/sys/class/leds/lcd-backlight/brightness
+获取该log:获取Button brightness读/sys/class/leds/button-backlight/brightness
+获取该log:获取Keyboard brightness读/sys/class/leds/keyboard-backlight/brightness
+获取该log:获取ALS mode读/sys/class/leds/lcd-backlight/als
+获取该log:获取LCD driver registers读/sys/class/leds/lcd-backlight/registers
+获取相关亮度的一些信息
+(2)build.prop
+VERSION INFO输出下列信息
+当前时间
+当前内核版本:可以读取文件(/proc/version)获得
+显示当前命令:可以读取文件夹(/proc/cmdline)获得
+显示系统build的一些属性:可以读取文件(/system/build.prop)获得
+输出系统一些属性
+gsm.version.ril-impl
+gsm.version.baseband
+gsm.imei
+gsm.sim.operator.numeric
+gsm.operator.alpha
+(3)dumpsys
+执行/system/bin/dumpsys后可以获得这个log.
+经常会发现该log输出不完整,因为代码里面要求该工具最多只执行60ms,可能会导致log无法完全输出来.
+可以通过修改时间参数来保证log完全输出.
+信息:
+Currently running services
+DUMP OF SERVICE services-name(running)
+Log Code Analysis
+Site: .\frameworks\base\cmds\dumpstate\
+相关Log程序的代码可以从上面目录获取
+Log Analysis Experience
+分析步骤
+1.查看一些版本信息
+确认问题的系统环境
+2.查看CPU/MEMORY的使用状况
+看是否有内存耗尽,CPU繁忙这样的背景情况出现.
+3.分析traces
+因为traces是系统出错以后输出的一些线程堆栈信息,可以很快定位到问题出在哪里. 
+4.分析SYSTEM LOG
+系统Log详细输出各种log,可以找出相关log进行逐一分析
+实例分析
+下面分析我写的一个测试例子,在OnCreate做一个死循环,这样主线程会被锁住，在按下硬件的Back之后会出现ANR的错误.
+在traces中发现该程序的堆栈信息如下:
+—– pid 20597 at 2010-03-15 01:29:53 —–
+Cmd line: com.android.test
+DALVIK THREADS:
+"main" prio=5 tid=3 TIMED_WAIT
+| group="main" sCount=1 dsCount=0 s=N obj=0x2aac6240 self=0xbda8
+| sysTid=20597 nice=0 sched=0/0 cgrp=default handle=1877232296
+at java.lang.VMThread.sleep(Native Method)
+at java.lang.Thread.sleep(Thread.java:1306)
+at java.lang.Thread.sleep(Thread.java:1286)
+at android.os.SystemClock.sleep(SystemClock.java:114)
+at com.android.test.main.onCreate(main.java:20)
+at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2459)
+at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2512)
+at android.app.ActivityThread.access$2200(ActivityThread.java:119)
+at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1863)
+at android.os.Handler.dispatchMessage(Handler.java:99)
+at android.os.Looper.loop(Looper.java:123)
+at android.app.ActivityThread.main(ActivityThread.java:4363)
+at java.lang.reflect.Method.invokeNative(Native Method)
+at java.lang.reflect.Method.invoke(Method.java:521)
+at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+at dalvik.system.NativeStart.main(Native Method)
+"Binder Thread #2" prio=5 tid=11 NATIVE
+| group="main" sCount=1 dsCount=0 s=N obj=0x2fb7c260 self=0×143860
+| sysTid=20601 nice=0 sched=0/0 cgrp=default handle=1211376
+at dalvik.system.NativeStart.run(Native Method)
+"Binder Thread #1" prio=5 tid=9 NATIVE
+| group="main" sCount=1 dsCount=0 s=N obj=0x2fb7c1a0 self=0x14c980
+| sysTid=20600 nice=0 sched=0/0 cgrp=default handle=1207920
+at dalvik.system.NativeStart.run(Native Method)
+"Signal Catcher" daemon prio=5 tid=7 RUNNABLE
+| group="system" sCount=0 dsCount=0 s=N obj=0x2fb7a1e8 self=0x126cc0
+| sysTid=20599 nice=0 sched=0/0 cgrp=default handle=1269048
+at dalvik.system.NativeStart.run(Native Method)
+"HeapWorker" daemon prio=5 tid=5 VMWAIT
+| group="system" sCount=1 dsCount=0 s=N obj=0x2e31daf0 self=0x135c08
+| sysTid=20598 nice=0 sched=0/0 cgrp=default handle=1268528
+at dalvik.system.NativeStart.run(Native Method)
+—– end 20597 —–
+该文件的堆栈结构从下往上进行分析
+(1)栈底at dalvik.system.NativeStart.run(Native Method)
+系统为当前的task(应用程式)启动一个专用的虚拟机 
+(2) at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2459)
+Activity Services是在后台负责管理Activity,它此时将测试例子的Activity启动起来了
+(3)at com.android.test.main.onCreate(main.java:20)
+启动测试程序
+(4)栈顶at java.lang.VMThread.sleep(Native Method)
+线程被sleep掉了,所以无法响应用户,出现ANR错误.
+上面是对一个非常简单的问题的分析.
+如果遇到比较复杂的问题还需要详细分析SYSTEM LOG.
+1.比如网络异常,要通过SYSTEM LOG里面输出的网络链接信息来判断网络状态
+2.数据传输,网络链接等耗时的操作需要分析SYSTEM LOG里面ActivityManager的响应时间
+3…
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+串口验证
+mount -t debugfs none /sys/kernel/debug -> mount debug fs
+cd /sys/kernel/debug/msm_serial_hsl
+echo 1 > loopback.#
+cat loopback.#
+b. 打开另一个 Shell 以转储 UART Rx 数据:
+adb shell
+cat /dev/ttyHSL#
+
+
+
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ 转自 http://blog.csdn.net/green1900/article/details/42496741#comments
+1、底电流调试（Rock Bottom Current Optimization）
+底电流在手机飞行模式下调试。每个平台的底电流数据可能不一样，具体可以参考release出来的Current Consumption Data文档或者release note。一般情况下的底电流参考数据上限是：
+512M RAM < 1.5mA; 1G RAM < 2mA; 2G RAM < 2.6mA
+1.1校准RF
+保证RF的PA、Antenna switch、Tuner、APT、GPIO工作在正常状态
+1.2飞行模式
+开启飞行模式、关闭GPS、关闭自动旋转屏幕、关闭自动亮度调节、关闭其他特效效果设置
+开启飞行模式，可以基本避免蓝牙、wifi、NFC、网络、FM等的一般影响；
+关闭GPS，可以基本排除开启GPS对底电流的影响；
+关闭自动旋转屏幕，可以基本排除sensor的影响；
+关闭自动亮度调节，可以基本排除距离感应到的影响；
+关闭其他特效效果设置，如指纹识别、黑屏手势、智能体感、手势隔空操作。。。。。。
+1.3使用perf_defconfig
+修改device/qcom/<TARGET>/AndroidBoard.mk。如果KERNEL_DEFCONFIG := <TARGET>_defconfig，那么改成KERNEL_DEFCONFIG := <TARGET>-perf_defconfig
+同时，kernel代码改用/kernel/arch/arm/configs/<TARGET>-perf_defconfig
+<TARGET>是平台名称或者项目名称
+1.4移除debugging APKs
+/system/app/Logkit.apk
+/system/app/com.qualcomm.qlogcat.apk
+/system/xbin/qlogd
+1.5把应用尽量删除
+在设置–>应用，禁用正在运行的应用
+1.6去掉CPU占用高的进程
+adb shell
+top
+查看CPU占用，去掉在休眠模式下CPU占用大于0的进程。kill掉该进程，若kill不掉则rm掉相关应用。对于占用CPU高的kwork，需要查找驱动原因。
+[ubuntu] top -i
+
+1.7手动移除所有可以移除的外设
+手机连上安捷伦电源，手机开机，然后让手机进入待机状态。手动移除TP、LCM、前camera、后camera、sensor、SD卡、SIM卡等可以手动移除的外围器件，同时观察并记录底电流变化。
+直接移除WLAN芯片可能会导致开不了机，所以在移除WLAN之前，先对软件做如下处理：
+# mount -o rw,remount -t vfat /dev/block/bootdevice/by-name/modem
+# cd /firmware/image
+# rm wcnss.*
+# reboot
+或者
+#lsmod
+#rmmod WLAN
+移除其他可以移除的芯片（sensor、NFC。。。）
+1.8移除驱动模块
+在/kernel/arch/arm/configs/<TARGET>-perf_defconfig中把sensor、TP、LCM、camera等的驱动模块移除；
+或者在对应驱动的Makefile里面，移除驱动代码
+然后编译bootimage，烧入手机观察底电流变化
+1.9配置不用的GPIO
+将不用的GPIO置为输入、拉低；配置成SPI、I2C的GPIO，若不用，置为悬空
+在boot_images/core/systemdrivers/tlmm/config/platform/TLMMChipset.xml，修改GPIO配置。该处配置GPIO的初始状态，驱动有可能会修改GPIO。
+对比项目原理图与平台参考原理图，项目原理图中多出的NC GPIO要处理掉。
+1.10检查power相关的NV items
+需要跟CE确认。一般如下：
+1027 = 0
+1895 = 0
+1892 = 0
+1962 = 0
+4679 = 16
+4201 = 0
+3851 = 0
+3852 = 6
+7157 = 1
+69745 rxd_enable = 0
+WCDMA NV:
+NV3581 = 0
+NV3852 = 6
+1.11排查GPIO、LDO、总线
+对比项目原理图与平台参考原理图，排查硬件不一样的GPIO、LDO、总线配置。
+量测各GPIO、LDO、I2C在休眠时候的电压，需用万用表准确测量。
+休眠时各路I2C GPIO的电压是多少v，用万用表准确测量。
+如果条件允许，测量所有LDO在休眠前和休眠后的准确电压。
+对于LDO，调试方法如下：
+（1）adb shell关闭LDO
+如关闭L3：
+cd /sys/kernel/debug/regulator/8916_l3/
+echo 0 > enable
+（2）LDO太多设备用到，不适合用adb shell来关。可以这样调试：
+cat /sys/kernel/debug/regulator/8916_l6/consumers
+shell@msm8916_32:/sys/kernel/debug/regulator/8916_l6 $ cat consumers
+Device-Supply EN Min_uV Max_uV load_uA
+0-000c-vio Y 1800000 1800000 0
+0-0068-vi2c N 1800000 1800000 0
+5-0038-vcc_i2c Y 1800000 1800000 0
+1a98000.qcom,mdss_dsi-vddio N 1800000 1800000 100
+1a98300.qcom,mdss_dsi_pll-vddio N 1800000 1800000 100
+8916_l6 N 0 0 0
+这样就可以看到是哪些设备请求了LDO6。然后 找到对应的代码，在休眠时关掉LDO，唤醒时再打开。
+0-000c: 挂在I2C0上地址为0xc
+5-0038: 挂在I2C0上地址为0x38
+查看这两个设备的驱动代码是否有执行regulator_enable。
+（3）通过寄存器地址关闭LDO
+如LDO6的地址是0x14546，则关闭方法是：
+# cd /sys/kernel/debug/spmi/spmi-0
+# echo 0x14546 > address
+# echo 1 > count
+# cat data 可以读寄存器
+# echo 0x00 > data 关LDO6 #在较新的平台是无法手动关闭LDO
+在S600项目LDO6和LDO17分别是提供主外设用的数字电压和模拟电压，分别是1.8v和2.8v，在cd /sys/kernel/debug/regulator/8916_l6中，cat use_count，如果值等于0表明引用计数没有使用LDO6.如果不等于0，分别将他们驱动去除，去除之后重新查看use_count的值，在S600项目中，因为icm20546陀螺仪驱动导致底电流过高，系统睡不下去。
+（4）关闭MPP
+在休眠前关闭MPP1、MPP2、MPP3、MPP4
+如PM8916的寄存器地址分别是0xA046、0xA146、0xA246、0xA346
+在关闭前先cat data以查看原来的值。
+GPIO状态读取的方法如下：
+（1）GPIO dump
+为了得到休眠时的GPIO状态，增加下面的打印:
+rpm_proc/core/power/sleep/src/lpr_definition_uber.c
+#include “tlmm_hwio.h”
+void deep_sleep_enter(void)
+{
+uint64 sleep_duration;
+…
+SWEVENT(SLEEP_DEEP_SLEEP_ENTER_COMPLETE, sleep_mode.deep_sleep_mode, sleep_duration);
+For test { int num; int i=11;/*LCM_I2C_SCL, GPIO_11*/ volatile uint32 cfg ,inout, val; num = 122; 8916 only. Need modify for 8974/8×10/8×26 etc.
+cfg = *(volatile uint32*)HWIO_TLMM_GPIO_CFGn_ADDR(i); (0x61000000 + i * 0x1000) inout = *(volatile uint32*)HWIO_TLMM_GPIO_IN_OUTn_ADDR(i);(0x61000004 + i * 0x1000)
+val = ((cfg « 16)&0xffff0000) | (inout&0xffff);
+SWEVENT(SLEEP_GPIO_DUMP, i, val);
+}
+mpm_sw_done(sleep_mode.deep_sleep_mode, sleep_duration);
+} while(FALSE);
+}
+增加for test下面这一段代码。
+然后再修改:
+rpm_proc\core\power\sleep\build\SConscript
+if 'USES_QDSS_SWE' in env:
+QDSS_IMG = ['QDSS_EN_IMG']
+events = [['SLEEP_DEEP_SLEEP_ENTER=320','deep sleep enter. (sleep mode: %d) (count: %d)'],
+['SLEEP_DEEP_SLEEP_EXIT','deep sleep exit (sleep mode: %d)'],
+['SLEEP_NO_DEEP_SLEEP','bail early from deep sleep. (sleep mode: %d) (reason: %d)'],
+['SLEEP_RPM_HALT_ENTER','rpm halt enter'],
+['SLEEP_RPM_HALT_EXIT','rpm halt exit'],
+['SLEEP_MPM_INTS','pending mpm interrupts at wakeup: (interrupt_status_1 %d), (interrupt_status_2 %d)'],
+['SLEEP_DEEP_SLEEP_ENTER_COMPLETE','deep sleep exit complete (sleep mode: %d)'],
+['SLEEP_DEEP_SLEEP_EXIT_COMPLETE','deep sleep exit (sleep mode: %d)'],
+['SLEEP_MPM_WAKEUP_TIME','mpm wake up time (wakeup time: 0x%0.8x%0.8x)'],
+['SLEEP_GPIO_DUMP','gpio [%d] configuration is %d'],
+['SLEEP_EVENT_LAST=383','sleep last event placeholder']
+增加SLEEP_GPIO_DUMP这一项。
+编译烧写rpm.mbn。
+让机器休眠，进入download，抓dump，然后将如下日志发给平台技术支持分析。
+CODERAM.bin
+MSGRAM.bin
+DATARAM.bin
+以及新编译出来的RPM_AAAAANAZR.elf。
+（2）GPIO寄存器读取
+在RPM可能不是很方便，也可以用busybox来读取寄存器，例如读GPIO11：
+Physical Address for GPIO_CFG11 = 0x100B000
+root@android:/data/busybox # ./busybox devmem 0x100B000 32
+./busybox devmem 0x100B000 32
+0x00000203
+GPIO_PULL = “11” PULL_UP
+FUNC_SEL = “0000” FUNCTION GPIO
+DRV_STRENGTH = “000” DRV_2_MA
+GPIO_OE = “1” Output Enable
+1.12 rpm dump
+抓rpm dump，然后把log提供给平台技术支持。
+方法如下：
+（1）ps_hold接地
+在休眠状态下，接ps_hold到地少于200mS，机器会进入紧急下载状态，插入USB，QPST会自动得到memory dump，然后上传以下几个文件：
+CODERAM.bin
+MSGRAM.bin
+DATARAM.bin
+以及RPM_AAAAANAZR.elf（必须与机器的编译时间一致匹配的elf)
+（2）改reset为download key
+发这些命令改reset为download key:
+# cd /sys/kernel/debug/spmi/spmi-0
+# echo 0x844 > address
+# echo 4 > count
+# cat data
+00840 – – – – 0F 07 04 00
+# echo 0x00 0x00 0x01 0x00 > data
+# cat data
+00840 – – – – 00 00 01 00
+# echo 0x00 0x00 0x01 0x80 > data
+# cat data
+00840 – – – – 00 00 01 80
+然后长按下键，会进入download。之后抓取log方法同上。
+如果进不了download，需要确认：
+CONFIG_MSM_DLOAD_MODE=y
+另外也有可能与nv 4399和905有关系。
+1.13检查rpm_stats
+检查rpm_stats是否进入vdd min或者xo/no shutdown。使用下面的命令检查rpm lower power mode count:
+cat /sys/kernel/debug/rpm_stats
+如果vmin的count是0，则表明设备从来没有进入vdd min；non-zero则说明设备进入过vdd_min。
+RPM Mode: xosd
+count:0
+time in last mode(msec):0
+time since last mode(sec):794
+actual last sleep(msec):0
+RPM Mode:vmin
+count:11
+time in last mode(msec):0
+time since last mode(sec):359
+actual last sleep(msec):110000
+1.14使用Trace32
+可以dump出来完整详细的gpio/clk/pmic信息，排除休眠时候的状态异常。
+2、待机电流优化（Standby Current Optimization）
+2.1通过adb log排查
+adb logcat -v time > YearMounthDayHourMinute_logcat.txt main log adb logcat -v time -b events > YearMounthDayHourMinute_logcat_event.txt event log
+adb logcat -v time -b radio > YearMounthDayHourMinute_logcat_radio.txt radio log adb shell dmesg > YearMounthDayHourMinute_dmesg.txt kernel log
+可以采用功耗问题时间追踪表来精确追踪功耗异常。
+可以使用如下命令来打开指定文件的kernel log（以qpnp-adc-tm.c和qpnp-adc-common.c为例）：
+adb shell mount -t debugfs none /sys/kernel/debug
+adb shell “echo 8 > /proc/sys/kernel/printk”
+adb shell “echo 'file qpnp-adc-tm.c +p' > /sys/kernel/debug/dynamic_debug/control”
+adb shell “echo 'file qpnp-adc-common.c +p' > /sys/kernel/debug/dynamic_debug/control”
+adb shell “echo 8 > /proc/sys/kernel/printk”
+为指定的函数开启log，以qpnpint_handle_irq为例：
+adb shell “echo 'func qpnpint_handle_irq +p' > /sys/kernel/debug/dynamic_debug/control”
+*#logkit#*调出logkit apk，可以保存logcat、dmesg、crash、QXDM、GPU log等日志信息到手机里面。
+2.2 top
+通过top命令，可以查询到cpu占用较高的应用。如果一个应用一直在占用cpu，而此时并没有打开该应用，那么该应用很可能会导致待机异常。
+adb shell
+top
+“该场景下CPU使用率”是User+System+IOW+IRQ
+“模块相关的CPU占用率”是模块相关进程占用CPU使用率的总和
+2.3正在运行
+设置–>应用–>正在运行，可以看到正在运行的应用或者服务。禁止掉应用或者服务，观察待机电流变化。
+2.4 wakeup debug mask
+调试wakeup问题，可以使能debug功能，然后抓取log。Log中会增加一些debug信息。
+mount -t debugfs none /sys/kernel/debug
+echo 1 > /sys/kernel/debug/clk/debug_suspend
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
+echo 4 > /sys/module/wakelock/parameters/debug_mask
+echo 1 > /sys/module/lpm_levels/parameters/debug_mask
+echo 0x16 > /sys/module/smd/parameters/debug_mask
+2.5 wakelock
+1、wakeup_sources
+kernel wakelock和userspace wakelock都有可能阻止系统睡眠。所有的wakeup_sources均保存在sys节点/sys/kernel/debug/wakeup_sources里面。
+该文件包含了如下信息：
+（1）the total amount of time a wakeup source has prevented suspend
+（2）the amount of time a wakelock has been active since the last activation etc. The unit of time is milliseconds.
+2、active_since
+active_since值可以用来确认wakelock是否正在阻止休眠。如果该值不是零，那么这个wakelock正在工作并且阻止休眠。
+3、获取wakeup_sources的命令
+adb root 67754400
+adb remount
+adb shell
+cat /sys/kernel/debug/wakeup_sources > /data/wakeup_sources.txt
+adb pull /data/wakeup_sources.txt
+
+获得wakeup_sources.txt以后，通过Excel打开，active_since不为0的项为wakeup source。以表2为例，msm_dwc3对应的active-since值481756>0，这意味着msm_dwc3驱动在阻止系统睡眠，下一步需要检查msm_dwc3驱动代码及相关log。
+表格 2 Wakeup source opened in Excel
+4、power:wakeup_source_activate and power:wakeup_source_deactivate events
+当一个wakeup source被acquire或者release时候，power:wakeup_source_activate和power:wakeup_source_deactivate event将随即被写到trace buffer里面，这样可以记录wakeup source被driver使用的频率。
+开启该功能的方法：
+echo “power:wakeup_source_activate power:wakeup_source_deactivate” > /sys/kernel/debug/tracing/set_event
+The power:wakeup_source_activate and power:wakeup_source_deactivate events are written to the trace buffer any time a wakeup source is acquired or released and it can provide information on how often a wakeup source is being used by a driver.
+To enable these events, you can enable following:
+echo “power:wakeup_source_activate power:wakeup_source_deactivate” > /sys/kernel/debug/tracing/set_event
+Once the above done, the traces will be present in /sys/kernel/debug/tracing/trace.
+2.6 powertop
+powertop用来看CPU的运行统计以协助调试power问题。powertop的用法如下：
+powertop –h
+Usage: powertop [OPTION…]
+n -d, –dump read wakeups once and print list of top offenders
+n -t, –time=DOUBLE default time to gather data in seconds
+n -r, –reset Reset PM stats data
+n -h, –help Show this help message
+n -v, –version Show version information and exit
+获取powertop log的方法：
+1. 通过USB连接手机到电脑
+2. adb shell，然后执行如下命令：
+sleep 10 && /data/powertop [-r] -d -t 30 > /data/powertop.log &
+3. 拔掉USB线，等待10秒后开始功耗测试
+4. 插上USB
+5. adb pull /data/powertop.log
+2.7 CPU freq log
+打开CPU freq change log：
+mount -t debugfs none /sys/kernel/debug
+cd /sys/kernel/debug
+echo -n 'file acpuclock-8×60.c +p' > dynamic_debug/control
+echo -n 'file acpuclock-krait.c +p' > dynamic_debug/control
+查看cpu freq stats:
+cat /sys/devices/system/cpu/cpu0/cpufreq/stats
+cat /sys/devices/system/cpu/cpu1/cpufreq/stats
+cat /sys/devices/system/cpu/cpu2/cpufreq/stats
+cat /sys/devices/system/cpu/cpu3/cpufreq/stats
+To lock cpu freg:
+echo the same freq to following sys mode will lock cpu freq to the setting freq.
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+To enable/disable specific freq for ACPU
+ACPU freq table is defined in acpu_freq_tbl_* structure of specific platform.
+arch/arm/mach-msm/acpuclock-<platform name>.c
+For 8974, it is defined in arch/arm/mach-msm/acpuclock-8974.c. the first column of following table used to enable/disable freq in the row: 1:enable, 0:disable
+static struct acpu_level acpu_freq_tbl_2p3g_pvs0[] __initdata = {
+{ 1, { 300000, PLL_0, 0, 0 }, L2(0), 800000, 72 },
+{ 0, { 345600, HFPLL, 2, 36 }, L2(1), 800000, 83 },
+{ 1, { 422400, HFPLL, 2, 44 }, L2(2), 800000, 101 },
+{ 0, { 499200, HFPLL, 2, 52 }, L2(2), 805000, 120 },
+{ 0, { 576000, HFPLL, 1, 30 }, L2(3), 815000, 139 },
+{ 1, { 652800, HFPLL, 1, 34 }, L2(3), 825000, 159 },
+{ 1, { 729600, HFPLL, 1, 38 }, L2(4), 835000, 180 },
+{ 0, { 806400, HFPLL, 1, 42 }, L2(4), 845000, 200 },
+{ 1, { 883200, HFPLL, 1, 46 }, L2(4), 855000, 221 },
+{ 1, { 960000, HFPLL, 1, 50 }, L2(9), 865000, 242 },
+{ 1, { 1036800, HFPLL, 1, 54 }, L2(10), 875000, 264 },
+{ 0, { 1113600, HFPLL, 1, 58 }, L2(10), 890000, 287 },
+{ 1, { 1190400, HFPLL, 1, 62 }, L2(10), 900000, 308 },
+…
+{ 1, { 1958400, HFPLL, 1, 102 }, L2(19), 1040000, 565 },
+{ 0, { 2035200, HFPLL, 1, 106 }, L2(19), 1055000, 596 },
+{ 0, { 2112000, HFPLL, 1, 110 }, L2(19), 1070000, 627 },
+{ 0, { 2188800, HFPLL, 1, 114 }, L2(19), 1085000, 659 },
+{ 1, { 2265600, HFPLL, 1, 118 }, L2(19), 1100000, 691 },
+{ 0, { 0 } }
+};
+2.8 Hoplug cores
+Core 0 can’t be hotplugged, Core 1/2/3 can be hotplugged,
+To remove core :
+echo 0 > /sys/devices/system/cpu/cpu1/online
+echo 0 > /sys/devices/system/cpu/cpu2/online
+echo 0 > /sys/devices/system/cpu/cpu3/online
+To add back core:
+echo 1 > /sys/devices/system/cpu/cpu1/online
+echo 1 > /sys/devices/system/cpu/cpu2/online
+echo 1 > /sys/devices/system/cpu/cpu3/online
+2.9 Scaling governor
+To check scaling governor：
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+To set new governor：
+echo <new_governor> > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+比如：
+echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+2.10 Mpdecision
+Use Mpdecison daemon to start/stop/enable debug with commands below:
+Start mpdecison：
+start mpdecision
+n
+Stop mpdecison：
+stop mpdecision
+Enable mpdecision debug ：
+start mpdecision –debug
+2.11 Power feature enable/disable
+Following sys node can be used to enable the lower resource,
+echo 2 > /sys/module/lpm_resources/enable_low_power/l2
+echo 1 > /sys/module/lpm_resources/enable_low_power/pxo
+echo 1 > /sys/module/lpm_resources/enable_low_power/vdd_dig
+echo 1 > /sys/module/lpm_resources/enable_low_power/vdd_mem
+echo 1 > /sys/module/pm_8x60/modes/cpu0/power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu1/power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu2/power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu3/power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu0/power_collapse/idle_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu0/standalone_power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu1/standalone_power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu2/standalone_power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu3/standalone_power_collapse/suspend_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu0/standalone_power_collapse/idle_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu1/standalone_power_collapse/idle_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu2/standalone_power_collapse/idle_enabled
+echo 1 > /sys/module/pm_8x60/modes/cpu3/standalone_power_collapse/idle_enabled
+echo 0 to above sys node will disable related low power mode.
+2.12 Check system alarm
+get android alarms and statistics:
+adb dumpsys alarm > alarms.txt
+enable android debug message in logcat：
+setprop persist.alarm.debug 1
+2.13 Kernel timer check
+Sys node /proc/timer_stats can be used to check kernel timer stastics, customer can use following command to get timer statics in specific scenario:
+echo 0 > /proc/timer_stats && sleep 10 && echo 1 > /proc/timer_stats && sleep 30 && cat /proc/timer_stats > /data/timer_stats &
+OEMs need to provide file /data/timer_stats to salesforce case for check.
+3、其他功耗项的优化
+3.1屏幕对功耗的影响
+屏幕亮度等级不同，功耗不同。亮度越低，功耗越低。调低屏幕默认背光亮度等级和屏幕最高亮度设置时候的背光亮度等级，可以优化手机整体功耗表现。
+LCD背光等级的设备节点：
+/sys/class/leds/lcd-backlight/brightness
+默认背光等级和最高亮度背光等级需要同时考虑到用户体验和功耗表现，需要一起评估。
+另外，调试LCD的fps帧率，也可以优化功耗。
+3.2 CPU/GPU DVFS
+CPU/GPU的动态调频调压可以优化手机的功耗表现。该影响是整体性的，系统性的。
+CPU降频主要通过两种方式实现，都可以达到降频的目标。
+1、设置CPU工作在powersave模式。设置该模式后，CPU将一直工作在最低频率（300000hz）。此时手机最省电，但是有可能会出现手机运行变卡顿。
+例如：将CPU0置为powersave模式，命令为：
+echo “powersave” > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+例如：将CPU1置为powersave模式，命令为：
+echo “powersave” > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ex780共有4个CPU（CPU0~CPU3），都可以这样处理
+2、限制CPU最高频率，以限制CPU的运行频率上限
+CPU（CPU0~CPU3）可以选择的频率值如下所列，即这些数值都可以用作CPU的频率上限。选择的频率上限可以根据实际场景需要来设置。在超级省电模式下，CPU工作的宗旨是：CPU工作频率低+运行不卡，两项都要保障。
+CPU可以选择的频率：
+300000 422400 652800 729600 883200 960000 1036800 1190400 1267200 1497600 1574400 1728000 1958400 2265600 2457600
+例如：将CPU0的频率上限设置为960000
+echo 960000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+例如：将CPU0的频率上限设置为422400
+echo 422400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+GPU相关调试与CPU类似，设备节点路径/sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0
+3.3 CPU占用率
+应用对cpu的占有率，如果占有率过高，则该应用一般会导致功耗较大。
+adb shell
+top -m 6
+3.4游戏功耗
+可以从下面几个方面优化：
+降低屏幕背光亮度等级；
+采用CPU、GPU动态调频调压，并调低CPU、GPU频率下限；
+采用thermal-engine.conf 。
+3.5 Camera功耗偏大
+降低camera帧率；
+降低屏幕背光亮度等级；
+采用CPU、GPU动态调频调压，并调低CPU、GPU频率下限；
+采用thermal-engine.conf 。 性能
+
+S700功耗控制,温度
+system/etc/thermal-engine.conf
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+camera debug 调试
+80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf
+
+xxx_lib.c
+enable below logs:
+msm_csid.c
+-- #define DBG_CSID 0
+++ #define DBG_CSID 1
+
+msm_isp_util.c
+-- /* #define CONFIG_MSM_ISP_DBG 1 */
+++#define CONFIG_MSM_ISP_DBG 1
+
+msm_isp40.c
+static uint32_t msm_vfe40_stats_get_frame_id(
+struct vfe_device *vfe_dev)
+{
+return vfe_dev->axi_data.src_info[VFE_PIX_0].frame_id; // print the frame_id
+} 
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#define IRQF_DISABLED       0x00000020    /*中断禁止*/
+#define IRQF_SAMPLE_RANDOM  0x00000040    /*供系统产生随机数使用*/
+#define IRQF_SHARED      0x00000080 /*在设备之间可共享*/
+#define IRQF_PROBE_SHARED   0x00000100/*探测共享中断*/
+#define IRQF_TIMER       0x00000200/*专用于时钟中断*/
+#define IRQF_PERCPU      0x00000400/*每CPU周期执行中断*/
+#define IRQF_NOBALANCING 0x00000800/*复位中断*/
+#define IRQF_IRQPOLL     0x00001000/*共享中断中根据注册时间判断*/
+#define IRQF_ONESHOT     0x00002000/*硬件中断处理完后触发*/
+#define IRQF_TRIGGER_NONE   0x00000000/*无触发中断*/
+#define IRQF_TRIGGER_RISING 0x00000001/*指定中断触发类型：上升沿有效*/
+#define IRQF_TRIGGER_FALLING 0x00000002/*中断触发类型：下降沿有效*/
+#define IRQF_TRIGGER_HIGH   0x00000004/*指定中断触发类型：高电平有效*/
+#define IRQF_TRIGGER_LOW 0x00000008/*指定中断触发类型：低电平有效*/
+#define IRQF_TRIGGER_MASK   (IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW | IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING)
+#define IRQF_TRIGGER_PROBE  0x00000010/*触发式检测中断*/ 
+
+
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Linux内核中关于字符串的相关操作，首先包含头文件：
+[cpp] view plaincopyprint?
+
+    #include <linux/string.h>  
+
+可用函数包括如下：
+lib/string.c
+[cpp] view plaincopyprint?
+
+    int strnicmp(const char *s1, const char *s2, size_t len)  
+    int strcasecmp(const char *s1, const char *s2)  
+    int strncasecmp(const char *s1, const char *s2, size_t n)  
+    char *strcpy(char *dest, const char *src)  
+    char *strncpy(char *dest, const char *src, size_t count)  
+    size_t strlcpy(char *dest, const char *src, size_t size)  
+    char *strcat(char *dest, const char *src)  
+    char *strncat(char *dest, const char *src, size_t count)  
+    size_t strlcat(char *dest, const char *src, size_t count)  
+    int strcmp(const char *cs, const char *ct)  
+    int strncmp(const char *cs, const char *ct, size_t count)  
+    char *strchr(const char *s, int c)  
+    char *strrchr(const char *s, int c)  
+    char *strnchr(const char *s, size_t count, int c)  
+    char *skip_spaces(const char *str)  
+    char *strim(char *s)  
+    size_t strlen(const char *s)  
+    size_t strnlen(const char *s, size_t count)  
+    char *strpbrk(const char *cs, const char *ct)  
+    char *strsep(char **s, const char *ct)  
+    bool sysfs_streq(const char *s1, const char *s2)  
+    void *memset(void *s, int c, size_t count)  
+    void *memcpy(void *dest, const void *src, size_t count)  
+    void *memmove(void *dest, const void *src, size_t count)  
+    int memcmp(const void *cs, const void *ct, size_t count)  
+    void *memscan(void *addr, int c, size_t size)  
+    char *strstr(const char *s1, const char *s2)  
+    char *strnstr(const char *s1, const char *s2, size_t len)  
+    void *memchr(const void *s, int c, size_t n)  
+
+用法说明：
+int strnicmp(const char *s1, const char *s2, size_t len)
+功能：比较字符串s1和s2的前len个字符串的大小，不区分字母大小写。
+返回：返回的是字符串s1与s2能比较出大小的那个字符转换成小写后两者的差值。相等返回0。
+
+int strcasecmp(const char *s1, const char *s2)
+功能：比较字符串s1和s2的大小，同样不区分大小写。
+返回：返回的是字符串s1与s2能比较出大小的那个字符转换成小写后两者的差值。相等返回0
+注意：这儿字符串s1的长度应该大于s2的长度。
+
+int strncasecmp(const char *s1, const char *s2, size_t n)
+功能：比较字符串s1和s2的前n个字符串的大小，不区分字母大小写。
+返回：返回的是字符串s1与s2能比较出大小的那个字符转换成小写后两者的差值。相等返回0 。
+
+char *strcpy(char *dest, const char *src)
+功能：把src所指的以NULL结束的字符串复制到dest所指的字符串中。
+返回：返回指向dest的指针。 
+注意：src和dest所指内存区域不可以重叠且dest必须有足够的空间来容纳src的字符串。 
+
+char *strncpy(char *dest, const char *src, size_t count)
+功能：将字符串src中最多count个字符复制到字符数组dest中(它并不像strcpy一样遇到NULL才停止复制，而是等凑够count个字符才停止复制)，返回指向dest的指针。 
+返回：返回指向dest的指针。
+注意： 
+如果count > dest串长度，dest栈空间溢出产生崩溃异常。 
+否则： 
+1）src串长度<=dest串长度,(这里的串长度不包含串尾NULL字符) 
+如果count = [0, src串长度]，src的前count个字符复制到dest中。但是由于没有NULL字符，所以直接访问dest串会发生栈溢出的异常情况。 
+这种情况一般这样使用：
+count = src串长度+1，连src的NULL字符一起复制。 
+count = dest串长度，[0,src串长度]处存放src字串，[src串长度, dest串长度]处存放NULL。 
+2）src串长度 > dest串长度 
+如果count = dest串长度，则dest串没有NULL字符，会导致输出会有乱码。如果不考虑src串复制完整性，可以将dest最后一字符置为NULL。
+ 
+size_t strlcpy(char *dest, const char *src, size_t size)
+功能：把src所指的由NULL结束的字符串最多size个字符复制到dest所指的字符串中。
+返回：返回指向dest的指针。
+注意：strlcpy比strncpy能更好的处理NULL事件，然而strlcpy不是ANSI C函数，一般在linux下使用
+因此建议在linux驱动中使用strlcpy函数。
+
+char *strcat(char *dest, const char *src)
+功能：把src所指字符串添加到dest结尾处(覆盖dest结尾处的’\0’)并添加'\0'。 
+返回：返回指向dest的指针。
+注意：src和dest所指内存区域不可以重叠且dest必须有足够的空间来容纳src的字符串。  
+
+char *strncat(char *dest, const char *src, size_t count)
+功能：把src所指字符串的前count个字符添加到dest结尾处（覆盖dest结尾处的'\0'）并添加'\0'。
+返回：返回指向dest的指针。 
+注意：src和dest所指内存区域不可以重叠且dest必须有足够的空间来容纳src的字符串。 
+
+size_t strlcat(char *dest, const char *src, size_t count)
+功能：把src所指字符串的前count个字符添加到dest结尾处(覆盖dest结尾处的'\0')并添加'\0'。
+返回：返回指向dest的指针。 
+注意：src和dest所指内存区域不可以重叠且dest必须有足够的空间来容纳src的字符串。同样建议使用strlcat而不是strncat。
+
+int strcmp(const char *cs, const char *ct)
+功能：比较字符串cs和ct的大小，区分大小写。 
+返回：返回的是字符串s1与s2能比较出大小的那个字符两者的差值。相等返回0。
+注意：比较的最长长度为字符串cs的长度。
+
+int strncmp(const char *cs, const char *ct, size_t count)
+功能：比较字符串cs和ct前n个字符串的大小，区分大小写。 
+返回：返回的是字符串s1与s2能比较出大小的那个字符两者的差值。相等返回0。
+注意：比较的最长长度为字符串cs的长度。
+
+char *strchr(const char *s, int c)
+功能：查找字符串s中首次出现字符c的位置 。
+返回：如果字符c出现在字符串s中，则返回首次出现c的位置的指针，如果没有出现，则返回NULL。
+
+char *strrchr(const char *s, int c)
+功能：查找字符c在字符串s中末次出现的位置。
+返回：从字符串s中的最后出现出字符c位置的指针，如果没出现，返回NULL。
+
+char *strnchr(const char *s, size_t count, int c)
+功能：查找字符c在字符串s前count个字符中首次出现的位置。
+返回：从字符串s中的前count字符中出现出字符c位置的指针，如果没出现，返回NULL。
+
+char *skip_spaces(const char *str)
+功能：除去字符串str首部的空格字符。
+返回：除去空格字符的字符串指针。
+
+char *strim(char *s)
+功能：除去字符串str首部与尾部的空格字符。
+返回：除去空格字符的字符串指针。
+
+size_t strlen(const char *s)
+功能：计算字符串s的长度，不包括'\0'在内。
+返回：返回s的长度，不包括结束符NULL。
+
+size_t strnlen(const char *s, size_t count)
+功能：计算字符串s的长度，这个长度最大计数为count，不包括'\0'在内。
+返回：返回s的长度，不包括结束符NULL。
+
+char *strpbrk(const char *cs, const char *ct)
+功能：在字符串cs中寻找字符串ct中任何一个字符相匹配的第一个字符的位置，空字符NULL不包括在内。
+返回：返回字符串cs中指向第一个位置字符串指针。
+
+char *strsep(char **s, const char *ct)
+功能：以字符串ct分解字符串s指向字符串指针所指向的字符串。
+返回：返回s指向的字符串按ct分解的前面字符串（不包含ct），s指向了按ct分解的后面字符串（不包含ct）。
+
+bool sysfs_streq(const char *s1, const char *s2)
+功用：判断字符串s1与字符串s2是否相等。
+返回：如果相等，返回真；否则返回假。
+注意：本函数更多用于linux 通过sysfs输入的字符串，当使用echo命令时，如：echo 1024 > /sys/module/e1000/parameters/copybreak，echo命令通常会在尾部附加一个’\n’字符。举例，s1 = “abdc\n”，s2 = “abdc”，则判定s1与s2是相等的。而s1 = “abdc\nd”，s2 = “abdc”，则s1 != s2。
+
+void *memset(void *s, int c, size_t count)
+功能：将s指向的count单位（一个字节为一个单位）内存空间以字符c填充。
+返回：无。
+注意：memset用于常规内存。如果要对IO内存操作，则用memset_io(void *s,int c,size_t count)
+
+void *memcpy(void *dest, const void *src, size_t count)
+功能：从src指向的内存的内容复制count单位（一个字节为一个单位）到dest指向的内存区域。
+返回：无。
+注意：两个内存区域不能重叠，如果要对IO内存使用，则用memcpy_fromio( )。
+
+void *memmove(void *dest, const void *src, size_t count)
+功能：从src指向的内存的内容复制count单位（一个字节为一个单位）到dest指向的内存区域。
+返回：无。
+注意：两个内存区域可以重叠，如果要对IO内存使用，则用memcpy_fromio( )。
+
+int memcmp(const void *cs, const void *ct, size_t count)
+功能：比较两个内存区域的前count单位（字节）。
+返回：当cs < ct时，返回值<0 ；当cs = ct时，返回值=0；当cs > ct时，返回值>0。返回的具体值为两个内存区域能比较大小的内存单元的内容的差值，比较还是以char比较的。
+
+void *memscan(void *addr, int c, size_t size)
+功能：在内存区域中查找第一次出现字符c的位置，最多查找size单位。
+返回：返回位置指针；如果没有出现，返回size单位后的内存指针。
+
+char *strstr(const char *s1, const char *s2)
+功能：在字符串s1查找第一次出现字符串s2（包含s2除NULL的其他全部内容）的位置。
+返回：返回位置指针；如果没有出现，返回NULL。
+
+char *strnstr(const char *s1, const char *s2, size_t len)
+功能：在字符串s1查找第一次出现字符串s2（包含s2除NULL的其他全部内容）的位置，最多查找len长度。
+返回：返回位置指针；如果没有出现，返回NULL。
+
+void *memchr(const void *s, int c, size_t n)
+功能：在内存区域中查找第一次出现字符c的位置，最多查找size单位。
+返回：返回位置指针；如果没有出现，返回NULL。
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+Engineering Verification Test (EVTn) 工程验证测试（evtn）
+Development Verification Test(DVTn) 开发验证测试（dvtn）
+Product Verification Test (PVT)产品验证测试（PVT）
+DMT（Design Maturity Test）成熟度验证
+MVT（ Mass-Production Verification Test）量产验证测试
+Technical Acceptance (TA)技术验收（助教）
+PP小批量
+MP量产阶段
+
+
+文件系统,文件
+out/target/product/s600/installed-files.txt
+selinux文件配置
+out/target/product/s600/obj/PACKAGING/target_files_intermediates/target_files-S600_V0.5-eng/META/filesystem_config.txt
+
+
+android气泡消息,弹气泡,弹消息,java
+makeText
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb shell am start org.codeaurora.snapcam/com.android.camera.CameraLauncher
+adb shell am start -n com.android.calculator2/com.android.calculator2.Calculator
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+滑动屏幕
+adb shell input swipe 25 25 25 500
+adb shell input swipe 25 500 25 0
+
+触发点击:
+adb shell input tap 250 250
+
+拍照
+adb shell input keyevent 27 #camera key pressed
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+检测是否是硬件绘图，如果有kgsl触发就是硬件触发
+while true; do adb shell cat /proc/interrupts | grep kgsl; sleep 0.5; done
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+应用层＼上层.c文件反编译
+arm-linux-androideabi-addr2line
+http://zhidao.baidu.com/link?url=3M7pBL0SSRXLVr_GLoEOWZiBiQs1egTa59TLiU1_oRWgVFS-oDXEfsQHt3jE3gH_Ie9NWcU1CvI1IkmPHbEpo0i8Y4AgZ4_3crLE5GiHEVu
+
+q@pc:~/project/2.1_msm8939_q39_s201$ ~/NDK/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-addr2line -p -i -a -f -e  libExpScanner.so 0003168d
+0x0003168d: Java_com_intsig_nativelib_ExpScanner_DetectBarCode at ??:?
+
+内核panic分析反编译
+arm-none-eabi-objdump -Dz-S vmlinux >linux.dump
+http://blog.csdn.net/hunhunzi/article/details/7052032
+
+
+    android ndk中的工具使用
+    1. 动态so处理：
+    arm-linux-androideabi-readelf.exe -a XX.so   > xx.txt
+    输出所有函数
+    arm-linux-androideabi-objdump.exe -dx XX.so > xx.txt
+    反汇编so包，此时使用 $(JNI_PROJ_PATH)/obj\local\armeabi下面带符号表的so包。JNI_PROJ_PATH为编译so包时jni文件夹的根目录
+
+    2. 静态a处理：
+    arm-linux-androideabi-ar.exe -t xx.a > xx.txt
+    输出.a内所有函数
+    arm-linux-androideabi-nm.exe xx.a > xx.txt
+    输出.a内所有函数
+
+    3. ndk编译
+    上面两种库文件，.a和.so都可以直接通过 arm-linux-androideabi-g++.exe 工具编译，编译语法跟linux上的g++一致。 也可以直接使用ndk-build命令！
+    4. crash定位
+    1）使用addr2line将地址转化成代码行数，输入的so为带符号表的，即为strip过的：
+    arm-linux-androideabi-addr2line.exe -f -e E:\dev_code\Sosomap-old\Sosomap-jni\obj\local\armeabi\libXX.so 000263ae
+
+    2）使用ndk-stack.exe还原堆栈：
+    ndk-stack -sym E:\dev_code\Sosomap-old\Sosomap-jni\obj\local\armeabi -dump D:\android-ndk-r9b-windows-x86\txmap_log.txt
+    -sym为带符号表的so路径， -dump为crash的堆栈信息，必须包含：********** Crash　dump: ********** 
+
+
+旧指令：
+1. 修改源代码的顶层  Makefile
+   CC =$(CROSSCOM_PILE)gcc            -->
+   CC =$(CROSSCOM_PILE)gcc   -g
+   使成生的vmlinux中含有debug信息
+2. 所有生成.o的rule中再加一条    
+   CC   -E  -dD -C $< > /preprocessing/$(shell pwd)/$<
+   生成预处理文件从这个文件里面能很容易找到c源文件的宏定义
+3. objdump -h vmlinux > vmlinux.txt
+   显示  linux 内核段信息，如段的开始虚拟地址，段的长度
+4. objdump -S -l -z vmlinux > vmlinux.txt
+   反汇编vmlinux到vmlinux.txt，vmlinux.txt含有汇编和c源文件的混合代码，看起来很方便。而且能一步步看linux怎么一步步运行的。
+5. objdump -S -l -z -j xxxx(section name) vmlinux > vmlinux.txt
+   反汇编linux内核段xxxx到文件vmlinux.txt中。
+6. objdump -x vmlinux > x.txt
+   vmliux中所有段的头信息，其中包口vmlinux的入口地址等
+7. objdump --debugging vmlinux > debugging.txt
+   很多有用的debug信息，如函数名，结构体定义等
+   我觉的用根据以上信息，ultraedit看很方便。尤其在vmlinux.txt中选中文件名，
+   用ultraedit右键的open能马上打开文件，很方便。
+
+objdump -j .text -S vmlinux > vmlinux.txt
+-S尽可能反汇编出源代码，尤其当编译的时候指定了-g这种调试参数时，效果比较明显。隐含了-d参数。
+-l用文件名和行号标注相应的目标代码，仅仅和-d、-D或者-r一起使用使用-ld和使用-d的区别不是很大，在源码级调试的时候有用，要求编译时使用了-g之类的调试编译选项。
+[-l | --line-numbers]
+[-S | --source]    混合汇编
+[-z | --disassemble-zeroes]
+[-j section | --section=section]
+[--prefix-addresses]
+反编译vmlinux
+arm-none-eabi-objdump -Dz -S vmlinux > linux.dump
+反编译一个文件
+arm-none-eabi-objdump -Dz -S  *.o > *.txt
+
+
+1)   prebuilts/gcc/linux-x86/arm/gcc-linaro-aarch64-linux-gnu/bin/aarch64-linux-android-objdump  vmlinux > 1.txt
+
+aarch64-linux-android-objdump  -Dz -S vmlinux > port6.txt
+可把内核镜像反汇编，可以根据oops打印出的PC搜索在哪里出错了；
+该文件夹下还有一个工具可以根据地址指出在哪个文件的哪一行出错，使用方法如下：
+2)    prebuilts/gcc/linux-x86/arm/gcc-linaro-aarch64-linux-gnu/bin/aarch64-linux-android-addr2line -a  要查询的地址  -e vmlinux
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+AOSP: Android Open-Source Project
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Android.mk
+拷贝
+LOCAL_POST_PROCESS_COMMAND :=$(shell cp -r $(LOCAL_PATH)/*.apk $(TARGET_OUT)/app/)
+
+PRODUCT_COPY_FILES += $(TARGET_OUT)/lib/liba.so:system/lib/liba/liba.so
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+直接建多级目录
+mkdir -p
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ADAPT		AT&T Device Advance Platform Testing
+AGPS		Assisted GPS
+APQ		Application-only processor – Qualcomm
+AT 		Atlas
+BO		Bolt
+CDMA	CDMA	Code Division Multiple Access
+CMCC		China Mobile Communications Corporation
+CT		China Telecom
+CU		China Unicom
+DCN		Document Control Number 
+DI		Dime
+DPM		DimPlusMinus
+FDD		Frequency Division Duplex
+GCF		Global Certification Forum
+GPS		Global Positioning System
+IOT		interoperability testing
+JO		Jolokia
+LC		Lab Conformance 
+LTE		Long Term Evolution
+LTE		Long Term Evolution
+MDM		Mobile Data Modem
+MPSS		Modem Peripheral Subsystem Software
+MSM		Mobile Station Modem
+NA		Not Available 
+NI		Nikel
+PICS		Protocol Implementation Conformance Statement
+PL		Product Line
+PTCRB		PCS Type Certification Review Board
+PTN		Protect The Network 
+ROW		Rest Of the World
+SFN		Safe Network 
+SP		Software Product
+SUPL		Secure User Plane Location
+TA		Tabasco
+TBD		To Be Determined
+TDD		Time Division Duplex
+TH		Thor
+TR		Triton
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Bus Interface Memory Controller (BIMC),
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+C++语言
+
+1.释放内存
+char* alpha_ptr;
+delete[] alpha_ptr;
+
+Alpha *ptr = new Beta;
+delete ptr;
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+按键修改===
+frameworks/native/include/android/keycodes.h
+frameworks/native/include/input/InputEventLabels.h
+
+frameworks/base/core/java/android/view/KeyEvent.java
+frameworks/base/core/res/res/values/attrs.xml
+frameworks/base/data/keyboards/Generic.kl
+
+device/qcom/s700/gpio-keys.kl
+kernel/arch/arm/boot/dts/qcom/s700-qrd.dtsi
+
+按键唤醒===
+core/java/android/view/KeyEvent.java
+isWakeKey()
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+80-NV396-2_MSM8996 SENSORS OVERVIEW.pdf
+Application Note: Software Glossary for Customers CL93-V3077-1
+Snapdragon Sensors Core (SSC) Debugging Tools 80-N6957-1
+Snapdragon Sensors Core Compatible Sensor Drivers List 80-NB925-1
+Snapdragon Sensors Core (SSC) New Sensor Driver Integration Guide for
+Linux Android 80-N7635-1
+Sensors Algorithm Manager 2.0 Interface Specification 80-N6890-2
+Adding a Custom Sensors Algorithm using Sensors Algorithm Manager (SAM) 2.0 80-NA811-2
+Snapdragon Sensors Core (SSC) Factory Test Framework 80-N7859-1
+Sensors Core Client API Framework 80-N1617-2
+
+ Output Data Rate (ODR)
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+UFS
+UFS Transport Protocol(UTP)
+UTP transports messages through UFS protocol information unit(UPIU).
+Inline Crypto Engine (ICE)内置加密引擎
+Overall Command Status OCS
+Core Power Reduction (CPR)
+QTI高通公司
+QTI Secure Execution Environment (QSEE)
+Application Primary Boot Loader (apps PBL)
+On-Chip Internal Memory (OCIMEM)
+High-Level Operating System (HLOS)
+HLOS kernel loads the Modem Boot Authenticator (MBA) to DDR via the Peripheral Image Loader (PIL).
+Tightly-Coupled Memory (TCM)紧耦合存储
+Secure Message Call (SMC)安全消息调用
+FDE full disk encryption 全磁盘加密
+Advanced Encryption Standard (AES)
+cipher-block chaining (CBC)
+Per File Encryption (PFE)
+UFS Protocol Information Unit(UPIU
+
+The main goals of UFS is to provide,
+ * Optimized performance:
+   For UFS version 1.0 and 1.1 the target performance is as follows,
+   Support for Gear1 is mandatory (rate A: 1248Mbps, rate B: 1457.6Mbps)
+   Support for Gear2 is optional (rate A: 2496Mbps, rate B: 2915.2Mbps)
+   Future version of the standard,
+   Gear3 (rate A: 4992Mbps, rate B: 5830.4Mbps)
+ * Low power consumption
+ * High random IOPs and low latency
+
+
+
+
+./sys/kernel/debug/ufshcd0/qcom/dbg_print_en
+./sys/kernel/debug/ufshcd0/dbg_print_en
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+重启原因保存在QSEE DDR, 如热启动还是系统重启
+Cold boot
+ Apps PBL→XBL→QSEE→QHEE→RPM_FW→APPSBL
+ QSEE configures the reset address (RVBAR)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+xbl.elf Boot loader binary
+Pmic.elf Binary code containing PMIC configuration data
+DeviceProgrammerDDR.elf Flash programmer to be used in emergency Dload mode; PBL jumps to this
+ELF in EDL mode for flashing images. This relies on DDR memory being
+configured.
+DeviceProgrammerLite.elf Same image as DeviceProgrammerDDR.elf in functionality except does not
+use DDR
+JtagProgrammer.elf Used for flashing images via JTAG
+prog_emmc_firehose_8996_ddr.elf eMMC flashing with DDR initialization
+prog_emmc_firehose_8996_lite.elf eMMC flashing without DDR initialization
+prog_ufs_firehose_8996_ddr.elf UFS flashing with DDR initialization
+prog_ufs_firehose_8996_lite.elf UFS flashing without DDR initialization
+uefi.mbn Same as XBL core segment; maintained to aid debug, legacy binary;
+applicable only for Windows Phone build
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+架构
+
+SWID
+MSM8996 images
+SWID
+MSM8996 images
+0x0 XBL                          0XE Video hash table
+0x1 MBA                          0xF Reserved
+0x2 AMSS_HASH_TABLE              0x12 Reserved
+0x3 EHOSTDL                      0x13 Reserved
+0x4 DSP_HASH_TABLE               0x14 GPU microcode
+0x5 Device configuration image   0x15 QHEE
+0x6 Reserved                     0x16 PMIC
+0x7 QSEE                         0x17 Reserved
+0x8 Reserved                     0x18 SLPI
+0x9 APPSBL                       0x19 EOS firmware image
+0xA RPM firmware                 0x1A Validated image programmer (VIP)
+0xB Reserved                     0x1B EFS TAR
+0xC TZ exec hash table (Apps)    0x1C Reserved
+0xD Reserved                     0x200 Debug Policy
+In the MSM8996 chipset, the modem is reset by the HLOS, but the modem has
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Venus image :VIDEO_HASH_TABLE = 0xE,
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Wireless Battery Charging (WBC)
+A4WP Alliance for Wireless Power
+BLE (BT) Bluetooth Low Energy
+EoC End of Charge
+EM Embedded Mode
+DIV/2 divide by 2
+HM Host Mode
+OWI One Wire Interface
+PRU Power Receiving Unit
+PTU Power Transmitting Unit
+QCA Qualcomm Atheros
+SBL Secondary Boot Loader
+WBC Wireless Battery Charging (Qualcomm Proprietary Software Module)
+SI---Signal Integrity 信号完整性(辐射干扰)
+PI---Power Integrity 电源完整性(传导干扰)
+EMC---Electromagnetic Compatibility 电磁兼容
+EMI---电磁干扰(Electro Magnetic Interference)
+EMC=EMI+EMS(Electromagnetic Susceptibility电磁敏感性)
+EMI(电磁辐射）=传导干扰(conduction)+辐射干扰(emission)
+
+所谓“地弹”，是指芯片内部“地”电平相对于电路板“地”电平的变化现象。以电路板“地”为参考，就像是芯片内部的“地”电平不断的跳动，因此形象的称之为地弹（groundbounce）。当器件输出端由一个状态跳变到另一个状态时，地弹现象会导致器件逻辑输入端产生毛刺。对于任何封装的芯片，其引脚会存在电感电容等寄生参数。而地弹正是由于引脚上的电感引起的。现在，集成电路的规模越来越大，开关速度不断提高，地弹噪声如果控制不好就会影响电路的功能，因此有必要深入理解地弹的概念并研究它的规律。
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+添加软件项目:
+LK:
+platform/msm_shared/smem.h
+HW_PLATFORM_CB09 = 17,
+
+target/cb09/init.c
+board->platform_hw = 0x11; //十进制 = 17
+board->platform_subtype = 0x00;
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+浮充充电器
+
+Floated Charger Detection for MSM Chipsets
+80-P1330-1 D
+
+http://www.mobile-open.com/2015/92106.html
+
+/kernel/drivers/usb/phy/ phy-msm-usb.c把floated_charger_enable赋值为1就可以解决此问题，也就是：
+
+static bool floated_charger_enable =1;
+
+相关的代码见msm_chg_detect_work()的USB_CHG_STATE_DCD_DONE这个case下的：
+
+if (line_state) /* DP > VLGC or/and DM> VLGC */
+                            motg->chg_type= USB_PROPRIETARY_CHARGER;
+                     elseif (!dcd && floated_charger_enable)
+                            motg->chg_type= USB_FLOATED_CHARGER;
+                     else
+                            motg->chg_type= USB_SDP_CHARGER;
+ 
+                     motg->chg_state= USB_CHG_STATE_DETECTED;
+                     delay= 0;
+
+使能floated charger，对应的chg_type为USB_FLOATED_CHARGER，如果是此类型，通过msm_otg_notify_chg_type()重新映射为POWER_SUPPLY_TYPE_USB_DCP,/* Dedicated Charging Port */，然后再发给用户层。
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+USB端口查看USB
+adb shell ls /sys/devices/soc |grep usb 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+otp参数
+MID / Unit Gain / Gold Gain / macro af、infi af /  pd data 和 pdaf 功能ok， LSC 部分还在确认中
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+电池配置文档:
+80-VT310-24_E_battery_characterization_process.pdf
+
+QTI now has three different fuel gauging modules, each of which requires its own battery profile.
+
+Battery monitoring system               – The BMS is available on PM8921, PM8038, PM8941, PM8x26, and PM8110. 
+Voltage mode battery monitoring system  – The VBMS and is currently available on PM8916 and PM8909. 
+Hardware fuel gauge                     – This is the fuel gauge that is currently available on PMI8994, PMI8952, and SMB1360. 
+
+
+80-NU716-1_FUEL GAUGE DATA COLLECTOR.pdf
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Device Under Test (DUT)
+Android Debug Bridge (ADB)
+ADC Analog-to-digital converter
+BSI Battery serial interface
+CC_to_CV Constant charge to constant voltage
+DTSI Linux device tree include file
+EOC End of charge
+ESR Equivalent series resistance
+FG Fuel gauge
+LA Linux Android
+SBL Secondary boot loader
+SOC State of charge
+SRAM Static random access memory
+
+OL open loop
+Advanced open loop (AOL)
+Idle closed loop (iCL)
+Enhanced closed loop (ECL)
+Advanced closed loop (ACL)
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+APQ8096电池校准,邮寄地址:
+Case 02748487
+
+Created By: Hongxu Lu (12/20/2016 5:05 PM)
+Hi Customer,
+
+please create a case with <case record type>="Battery Characterization", attached the batter pack spec(including the setting of the protect IC).
+
+Mark the case# on the battery, and ship 3 batteries for each model to:
+北京市东城区北三环东路36号, 环球贸易中心C座6层
+鹿洪旭
+邮编100013
+010-57760322
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+HDMI显示  
+adb reboot bootloader
+fastboot oem select-display-panel hdmi
+fastboot reboot 
+
+
+HDMI旋转
+frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ADB连接方式： wifi与usb
+ 1. 默认情况下，ADB是通过USB来进行连接的。
+不需要USB线，直接在android设备上安装一个超级终端，在终端里运行以下代码即可：
+su
+setprop service.adb.tcp.port 5555
+stop adbd
+start adbd
+之后，在PC端打开cmd命令行，输入：adb connect android设备IP地址（如：adb connect 192.168.137.144）
+android设备的ip地址，在设备上的wifi连接里面，可以查看到。
+注意：用wifi连接使用adb的时候，USB连接是没法使用ADB的。
+
+2. 如果有USB线，并且通过USB线已经和PC端连接了。如何转换到使用wifi连接：（android设备端不需要超级终端）
+手机USB线连接到PC端，打开USB调试。
+在cmd中输入：adb tcpip 5555 
+可以断开USB线。
+再输入：adb connect android设备IP地址（如：adb connect 192.168.137.144）
+即可使用wifi连接了。
+要断开wifi连接：adb disconnect
+
+3.从wifi连接，转换成USB连接：
+不需要USB线，只需要在android设备的超级终端里面运行如下代码：
+su
+setprop service.adb.tcp.port -1
+stop adbd
+start adbd
+之后，就从wifi连接转换成USB连接。
+
+4. wifi已经连接，如何切换成usb连接：（不需要usb线，在PC端的cmd里运行）
+在cmd中输入：adb usb
+即可转换成usb连接。接上usb线即可使用了。
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+修改ldo电压
+rpm_proc/core/systemdrivers/pmic/config/msm8953/pm_config_target.c
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WIFI MAC
+地址到 /persist/wlan_mac.bin, 下面是格式, 符合格式就可以了
+
+Intf0MacAddress=00037faabb00
+Intf1MacAddress=08037faabbdd
+END
+
+80-Y7674-2 文档
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+内核中的open,read,write
+vim kernel/include/linux/fs.h +2075
+
+*file_open(const char*, int, umode_t);
+kernel_read
+kernel_write
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+工厂CIT标志位
+NV2499 [18] 80成功 85默认
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+宏定义中的特殊参数(#、##、...和__VA_ARGS__) 
+http://blog.csdn.net/cqupt_chen/article/details/8055215
+1.  ...和__VA_ARGS__
+#define CHECK3(...) { printf(__VA_ARGS__); }
+CHECK3("here %s %s %s", "are", "some", "varargs3(5)\n");
+2.  #
+    #include <stdio.h>  
+    #define TEST(x) printf("square of  " #x " is %d.\n",(x)*(x))  
+    void main()  
+    {  
+        int y =4;  
+        TEST(y);  
+        TEST(6-3);  
+        TEST(y+3);  
+    }  
+
+    square of  y is 16.  
+    square of  6-3 is 9.  
+    square of  y+3 is 49.  
+3.  ##
+#define XNAME(n) x##n  
+执行宏调用:  
+int XNAME(4)  
+展开后:  
+x4;//相当于直接定义 int x4 这里也就体现了两个语言符号的拼接.不过在android经常看到有关##拼接语言符号的情况.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ubuntu 查看dns
+nm-tool
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+打印中断唤醒的log
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera eeprom 的格式
+80-N5126-1SC_2D Camera Module Calibration (Simplified Chinese)
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+充电电流文件
+boot_images/QcomPkg/Library/PmicLib/config/msm8996/pm_config_target.c
+pm_smbchg_specific_data_type
+smbchg_specific_data[1] = 
+{
+   {   
+      //Configuration Value,                             Enable config
+      {PM_SMBCHG_BAT_IF_LOW_BATTERY_THRESH_3P25,         PM_DISABLE_CONFIG },  //Vlowbatt Threshold
+      {PM_SMBCHG_BAT_IF_LOW_BATTERY_THRESH_2P6,          PM_ENABLE_CONFIG  },  //APSD rerun Vlowbatt Threshold
+      {PM_SMBCHG_USBCHGPTH_INPUT_PRIORITY_USBIN,         PM_DISABLE_CONFIG },  //Charger Path Input Priority
+      {PM_SMBCHG_BAT_IF_BAT_MISS_DETECT_SRC_BMD_PIN,     PM_DISABLE_CONFIG },  //Battery Missing Detection Source
+      {PM_SMBCHG_MISC_WD_TMOUT_18S,                      PM_DISABLE_CONFIG },  //WDOG Timeout
+      {FALSE,                                            PM_DISABLE_CONFIG },  //Enable WDOG
+      {1000,                                             PM_DISABLE_CONFIG },  //FAST Charging Current
+      {180,                                              PM_DISABLE_CONFIG },  //PRE Charge Current
+      {3000,                                             PM_DISABLE_CONFIG },  //PRE to Fast Charge Current
+      {4200,                                             PM_DISABLE_CONFIG },  //Float Voltage
+      {2100,                                             PM_DISABLE_CONFIG },  //USBIN Input Current Limit
+      {1000,                                             PM_DISABLE_CONFIG },  //DCIN Input Current Limit
+      3600,                                                                    //bootup_battery_theshold_mv
+      3800,                                                                    //wipowr bootup battery thesholdmv
+      3050,                                                                    //apsd_reset_threshold_mv:  APSD reset only applicable if initial Vbatt level is less than this threshold
+      2800,                                                                    //apsd_reset_theshold_no_uvlo_mv: Used if last reset reason is NOT UVLO
+      3200,                                                                    //apsd_reset_theshold_uvlo_mv: Used if last reset reason is                                UVLO                                                                              
+      FALSE,                                                                   //Enable/Disable JEITA Hard Temp Limit Check in SBL
+      FALSE,                                                                   // dbc_high_current_mode
+   }   
+};
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    编译 CB04 编译 OTA 包:
+
+    1. make update-api -j4
+    2. make -j4
+    3. make otapackage -j4
+        out目录下或生成 OTA 包: full_cb04_6735_35u-ota-1490867303.zip
+
+    以上方法编译出来的是整包的OTA. 差分包 需要编译两个不同版本的OTA包, 再使用 build/tools/releasetools/ota_from_target_files 工具制作出来
+        ./build/tools/releasetools/ota_from_target_files --block –k <key_path> -i V1_org.zip V2_org.zip V1_2.zip
+
+
+    OTA 包可本地通过recovery升级, 也可以远程升级.
+    CB04现有的OTA客户端已经实现(vendor/mediatek/proprietary/packages/apps /SystemUpdate, Settings->About phone->System software update进入), 需要修改APP的服务器地址.
+    用CB04自带的OTA升级APP升级系统, 直接编译出来的OTA不能使用, 需要按照APP对升级包的检测规范 向包中添加一些文件如 configure.xml等, 再手动打包签名才能通过服务器下载更新.
+    MTK 有 MOTA 文档, 有详细的服务器和客户端搭建方式.
+
+---------------------------------------------
+    软启进入 recovery 直接刷机的方法:
+    在 /cache/recovery/ 创建文件 command, 文件中写入 --update_package=/cache/package.zip
+        注: /cache/package.zip 为OTA包路径, 文件内容不能换行
+
+    APP 启动到 recovery:
+    PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+    pm.reboot(PowerManager.REBOOT_RECOVERY);
+
+    权限 <uses-permission android:name="android.permission.RECOVERY"/>
+
+
+    OTA包可以放到外置 SDCard , 如果一定要放到 机身存储, 就放到 cache 目录下, 否则recovery 找不到 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+创建文件节点
+cb05 daimiao
+http://172.16.6.72:8080/#/c/3670/1/sound/soc/msm/msm8952.c
+	static int ext_spk_pa_init_f (struct platform_device *pdev)	2988
+			{	2989
+			»       int ret = 0;	2990
+			»       ext_spk_pa_s.ext_spk_pa_gpio = of_get_named_gpio(	2991
+			»       »       »       pdev->dev.of_node,	2992
+			»       »       »       "spk-pa-en-gpio",	2993
+			»       »       »       0);	2994
+			»       if (ext_spk_gpio_request_f(ext_spk_pa_s.ext_spk_pa_gpio)) {	2995
+			»       »       »       return -EINVAL;	2996
+			»       }	2997
+			»       cdev_init (&(ext_spk_pa_s.cdev), &ext_spk_pa_ops_s);	2998
+			»       ext_spk_pa_s.cdev.owner = THIS_MODULE;	2999
+			»       ret = alloc_chrdev_region (&(ext_spk_pa_s.devno), 0, 1, "spk_pa");	3000
+			»       if (ret < 0) {	3001
+			»       »       pr_err("%s :alloc_chrdev is err\n",__func__);	3002
+			»       »       return ret;	3003
+			»       }	3004
+			»       ret = cdev_add(&(ext_spk_pa_s.cdev), ext_spk_pa_s.devno, 1);	3005
+			»       if (ret) {	3006
+			»       »       return -EINVAL;	3007
+			»       }	3008
+				3009
+			»       ext_spk_pa_s.class = class_create (THIS_MODULE, "spk_pa");	3010
+			»       device_create (ext_spk_pa_s.class, NULL, ext_spk_pa_s.devno,NULL,"spk_pa");	3011
+			»       return 0;
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+KBA-160511044137_User manual of camera persist properties.pdf
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+modem 知识 NV项
+NV 26693 – RFNV_ATUNER_ALGO_TYPE
+0 – AOL only
+2 – OL only <no 200 ms timer tunecode update>
+4 – ECL + AOL
+5 – ECL + OL
+6 – ACL + AOL (static NV default)
+7 – ACL + OL
+Setting 6 – ACL + AOL is the highest hierarchy. All other algo types can be
+supported and changed per band.
+
+NV 25788 to 25860 – RFNV_<Tech>_<Band>_CHAIN_<CHAIN#>_
+ANT_TUNER_CL (Version B)
+Supports starting scenario, Rx offset optimization, lock and unlock thresholds,
+CA mask, and so on
+<Band> is tied to PCC
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+降低屏幕亮度：
+
+adb shell echo 1 >  /sys/class/leds/lcd-blacklight/brightness
+
+
+干掉thermal机制：
+
+请先把手机里面的/system/etc/.tp/下面的.ht120.mtc拉出来,重新命名为thermal.conf
+
+然后再替换到/system/etc/.tp/,把原本的thermal.conf替换掉。然后重启手机就能生效。
+
+
+测试方法：
+
+查看底层log中的CPU_thermal信息，当CPU温度达到115摄氏度就会触发硬件不保护。
+
+adb shell top -m 6 查看cpu的使用率。
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+80-P7139-1 A Linux Android Stability Issue Analysis
+高通rumdump分析网站
+
+QCAP：https://cap.qti.qualcomm.com
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+github
+Username for 'https://github.com': qqcc0000
+q***q**C19**
+
+echo "# test" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/qqcc0000/test.git
+git push -u origin master
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+设置抓ramdump进data目录
+setprop persist.sys.ssr.enable_ramdumps 1
+在线ramdump, QCAP入门指南
+80-NR964-54SC版本F
+https://cap.qti.qualcomm.com/default.aspx
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+qt打包
+[root@localhost hello]# qmake –project
+//执行qmake –project,因为目录是hello,因此在hello目录下生成一个与平台无关的项目文件hello.pro，
+[root@localhost hello]# qmake hello.pro
+ //执行qmake hello.pro项目文件后，在hello目录下生成一个与平台有关的Makefile文件。
+[root@localhost hello]# make
+ //执行make进行编译源代码，并生成main.o目标文件及hello执行文件。
+[root@localhost hello]# ./hello
+//执行hello，就会弹出Hello Qt窗口，到此说明成功了。
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+调屏
+MSMS8996 Linux Android Display Overview (80-NV396-14)
+
+Use the DSI Timing Parameters User Interactive Spreadsheet (80-NH713-1 Rev F) to calculate
+the PHY timing. The DSI PHY 2.0.0 timing setting tab is applicable to MSM8996 command and
+video mode panels.
+
+80-NU323-31
+生成dtsi和lk的.h文件
+#perl parser.pl panel_nt35596_1080p_video.xml panel
+
+To generate the .dtsi and header files, update the display and platform in the XML files:
+1. Go to @//~/device/qcom/common/display/tools/parser.pl to use the parser script.
+Use Perl as the conversion language and enter the following command to run the script:
+#perl parser.pl <”oem_panel_input_file”.xml> <panel/platform>
+2. Generate the panel .dtsi and header files. The following command generates dsi-panel-
+cmd.dtsi and panel_cmd.h :
+#perl parser.pl panel_cmd.xml panel
+3. Copy the .dtsi file to the dts folder @//~/kernel/arch/arm/boot/dts/qcom for a 32bit
+chip or ~/kernel/arch/arm64/boot/dts/qcom for a 64bit chip.
+4. Copy the header file to the bootloader GCDB header file database @//~/bootable/
+bootloader/lk/dev/gcdb/display/include .
+5. See @//~/device/qcom/common/display/tools/README.txt for more information.
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+android权限管理[大杂烩]
+frameworks$ vim base/data/etc/platform.xml
+
+ 71     <permission name="android.permission.NET_ADMIN" >
+ 72         <group gid="net_admin" />
+ 73     </permission>
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+
+

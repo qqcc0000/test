@@ -1,0 +1,470 @@
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CB04: 后摄OV8858,OV2710 ov4689广角，　前摄gc2355和CVBS ?550(转换芯片tw9992) tp:当前用的gt9xx(GT915L)
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+SIMCOM6735_65C_L---SIMCOM6735_65C_L	MOLY.LR9.W1444.MD.LWTG.MP.V2---MOLY.LR9.W1444.MD.LWTG.CMCC.MP.V1
+modemVersion
+MOLY.LR9.W1444.MD.LWTG.MP.V2---MOLY.LR9.W1444.MD.LWTG.CMCC.MP.V1
+
+swVersion
+ALPS.L0.MP8.V2
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BUILD menuconfig
+
+make O=out1/ ARCH=arm cb04_6735_35u_defconfig
+make O=out1/  menuconfig
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BUILD image
+device/mediatek/build/build/mk
+build/core/main.mk
+
+make bootimage
+cacheimage
+ramdisk
+recoveryimage
+secroimage
+systemimage
+userdataimage
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+MTK关机充电
+./lk/platform/mt6735/mt_battery.c:979:    dprintf(CRITICAL, "[BATTERY] If you want to enable power off charging, \n\r");
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+GPIO工具DCT
+/home/q/sshfs_mount/mt6735/kernel-3.10/tools/dct/DrvGen.exe
+
+DCT编译后的位置：
+/home/q/sshfs_mount/mt6735/out/target/product/cb04_6735_35u/obj/KERNEL_OBJ/drivers/misc/mediatek/mach/mt6735/cb04_6735_35u/dct/dct/inc/cust_gpio_boot.h       cust_gpio_usage.h
+
+
+dapm全称是dynamic audio power management
+
+Speaker音量的tuning:
+        请参考FAQ08356『[Audio Volume]来电\闹钟\短信提示\铃声预览\拍照音等，在播放过程中插入或者拔出耳机，外放中的铃声音异常』，参考其中调整Headset_LoudSpeaker mode的方式来调整两个Speaker的音量。
+
+
+
+
+查看dct,dws,GPIO配置
+out.../obj/KERNEL_OBJ/drivers/misc/mediatek/mach/mt6735/cb04_6735_35u/dct/dct/inc/cust_eint.h
+cust_gpio_usage.h GPIO表
+
+音频配置文件：
+vendor/mediatek/proprietary/custom/cb04_6735_35u/./hal/audioflinger/audio/Audio_Customization_Common.h
+
+
+
+cat /sys/class/misc/mtgpio/pin
+查看GPIO状态
+root@cb04_6735_35u:/sys/class/misc/mtgpio # cat pin
+      功能   是否上拉拉高  输入   输出   上拉使能  默认方向  
+PIN: [MODE] [PULL_SEL] [DIN] [DOUT] [PULL EN] [DIR] [IES] [SMT]
+  0:11101010
+  1:00000110
+  2:00001010
+
+	
+
+MTK GPIO操作函数
+	mt_set_gpio_mode(GPIO_FSA8049_PIN, GPIO_FSA8049_PIN_M_GPIO);
+	mt_set_gpio_dir(GPIO_FSA8049_PIN, GPIO_DIR_OUT);
+	mt_set_gpio_out(GPIO_FSA8049_PIN, GPIO_OUT_ONE);
+	mt_set_gpio_pull_enable(GPIO_GSE_1_EINT_PIN, GPIO_PULL_DISABLE); //To disable GPIO PULL.
+
+mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN, GPIO_MODE_00);
+mt_set_gpio_dir(GPIO_OTG_DRVVBUS_PIN, GPIO_DIR_OUT);
+mt_set_gpio_out(GPIO_OTG_DRVVBUS_PIN, GPIO_OUT_ONE);
+mt_set_gpio_pull_enable(GPIO_OTG_DRVVBUS_PIN, GPIO_PULL_DISABLE);
+
+mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN, GPIO_MODE_00);
+mt_set_gpio_dir(GPIO_OTG_DRVVBUS_PIN, GPIO_DIR_OUT);
+mt_set_gpio_out(GPIO_OTG_DRVVBUS_PIN, GPIO_OUT_ZERO);
+mt_set_gpio_pull_enable(GPIO_OTG_DRVVBUS_PIN, GPIO_PULL_DISABLE);
+
+mt_gpio_to_irq(iddig_gpio)
+
+
+
+cb04客户代码目录
+/home/q/project/lipeng/mt6735
+
+
+
+
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+[DESCRIPTION]
+ 增大speech通话时的音量
+ audio_ver1_volume_custom_default.h
+ ./vendor/mediatek/proprietary/custom/common/cgen/cfgdefault/audio_volume_custom_default.h
+ 
+[SOLUTION]
+ 
+
+如果是本地听到对方的说话音量较小（即下行音量较小）
+./modem/custom/driver/audio/_Default_BB/MT6735/nvram_default_audio.c
+1.在nvram_default_audio.c文件中将如下宏定义的值加大（以16为单位往上加，最大为255）
+
+ 如果是免提通话声音小
+
+#define GAIN_HND_SPH_VOL   3               //默认通话使用第三阶音量
+
+#define GAIN_HND_SPH_VOL0                                                40
+
+#define GAIN_HND_SPH_VOL1                                                52
+
+#define GAIN_HND_SPH_VOL2                                                64
+
+#define GAIN_HND_SPH_VOL3                                                76
+
+#define GAIN_HND_SPH_VOL4                                                88
+
+#define GAIN_HND_SPH_VOL5                                                100
+
+#define GAIN_HND_SPH_VOL6                                                112
+
+ 
+
+如果是听筒声音小：
+
+#define GAIN_NOR_SPH_VOL0                                80
+
+#define GAIN_NOR_SPH_VOL1                                96
+
+#define GAIN_NOR_SPH_VOL2                112      
+
+#define GAIN_NOR_SPH_VOL3                                128
+
+#define GAIN_NOR_SPH_VOL4                                144
+
+#define GAIN_NOR_SPH_VOL5                                160
+
+#define GAIN_NOR_SPH_VOL6                                176
+
+如果是耳机声音小：
+
+#define GAIN_HED_SPH_VOL0                 16
+
+#define GAIN_HED_SPH_VOL1                 32
+
+#define GAIN_HED_SPH_VOL2                 48
+
+#define GAIN_HED_SPH_VOL3                 64
+
+#define GAIN_HED_SPH_VOL4                 80
+
+#define GAIN_HED_SPH_VOL5                 96
+
+#define GAIN_HED_SPH_VOL6                 112
+
+2.将audcoeff.c文件中的变量值做修改：
+
+       const unsigned short   DG_DL_Speech   = 0xE3D;
+
+ 可以将该值增大，最好不要超过0x1000，这是将SPEECH 下行的数字增益加大
+
+3.请将AFE_6261.C文件中的函数AFE_Chip_Init()的如下位置寄存器的值做更改：
+
+   *AFE_VMCU_CON2   = 0x082C;
+
+     *AFE_AMCU_CON2   = 0x002C; //请更改此寄存器的值，最大为0x003f，这个为SDM gain，也是一类数字增益
+
+
+
+
+
+camera:
+setprop camera.acdkdump.enable 4
+adb shell setprop camera.acdkdump.raw 4
+debug.camera.previewclient.loglevel=1  显示log
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+===========音频=========
+tunning音频调试
+看文档<<音频调试.ppt>>
+
+数字增益和模拟增益试试：
+工模（*#*#3646633#*#*）->Audio->Normal Mode->type选择（Media），然后把各个level的数字增益都改大Max Vol也改大。
+
+音频参数调试方法：
+输入*#3646633#进入工程模式，进入第三项“音频”。
+菜单中  “正常”是普通使用不插耳机、不开免提的情况下的参数，
+“LoudSp Mode”是通话时开免提的情况下的参数，
+“Headset Mode”是插入耳机时的参数；
+每个模式中又有6个具体参数：
+“speech”是通话音量，在“正常”模式下调speech就是调receiver，在“LoudSp Mode” 模式下调speech就是调speaker，在“Headset Mode” 模式下调speech就是调耳机通话音量；“speech”共7级（0-6），对应7格音量。
+“Melody”是播放MP3时调用的参数，调MP3音量时要调“16 Level Setting”下的数值，“Max Analog Gain”是最大音量的值，“Step”是每格音量之间的差，16级音量是等差的。例：“Max Analog Gain”是144，“Step”是4，那就说明放MP3时最大音量（16格）144，次级音量（15格）140，再小一级音量（14格）136……以此类推。在“正常”模式下调Melody就是调speaker，在“Headset Mode” 模式下调Melody就是调耳机MP3音量。
+        “FM Radio”是调播放FM时的音量，共7级，对应7格音量，也是在“正常”、“Headset Mode”下对应。
+        “Microphone”是调麦克的参数，7级音量中音量3是调通话音量的，音量4时调录音音量的。
+        “Side Tone”是调侧音音量的，侧音就是手机端自己耳朵听见自己说话的音量，量产时各种模式下的Side Tone都要调成0。
+     调音频参数时，凡调整receiver和耳机听筒时参数不要超过208，凡调整speaker时参数不要超过148，调整mic时参数不要超过232。
+      另外，如果mic、receiver音量还是达不到要求，可以在“音频”菜单的“语音增强”选项的“正常”下，调整参数7，参数7是由两位16进制数转换的10进制数，两位16进制数的前一位是receiver参数，后一位是mic参数。如：想给receiver增大6、mic增大11，则对应16进制数为6B，转换为10进制数是107，那参数7中就输入107；再如想给receiver增大4、mic增大3，则对应16进制数为43，转换为10进制数是67，那参数7中就输入67。
+
+
+系统提示音（拨号、铃声等）调loudspeakermode 下的ring
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+蓝牙地址(默认):
+vendor/mediatek/proprietary/custom/common/cgen/cfgdefault/CFG_BT_Default.h:223:static ap_nvram_btradio_struct stBtDefault_6735_0337 =
+vendor/mediatek/proprietary/external/nvram/libcustom_nvram/CFG_file_info.c
+{"BT_Addr",AP_CFG_RDEB_FILE_BT_ADDR_LID},
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+We could also use MM Command to turn on/off Loopback functions
+Enable MM Command first
+
+adb shell setprop persist.sys.usb.config mtp,adb,acm //set this only after first boot up. need to wait for a while.
+adb shell start audio-daemon //set this after each time phone boot up
+Then, open hyper-terminal / TeraTerm /… （在开始->程序->附件->communication->超级终端里分别输入下面命令，回车，就可以打开通路）
+
+MM+SLBK=1,2 // 1代表：loopback_t, Turn on AP_MAIN_MIC_AFE_LOOPBACK
+//2代表：loopback_output_device_t, Turn on earphone
+// 这一句的意思就是打开手机主麦克到耳机
+MM+SLBK=2,3 // 这一句的意思就是打开耳机麦克到手机扬声器
+MM+SLBK=2,1 // 这一句的意思就是打开耳机麦克到手机听筒(受话器)
+MM+SLBK=0 // turn off AP_MAIN_MIC_AFE_LOOPBACK（关闭）
+
+thanks！
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+[FAQ07381][Aduio Common]APP层如何控制loopback开启或关闭
+[DESCRIPTION]
+ 部分客户需要在APP层实现听筒，耳机，喇叭loopback测试，在JB2及之后的版本上相关接口已经实现，只需发对应的command即可
+  
+[SOLUTION] 
+AudioManager audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+audiomanager.setParameters("SET_LOOPBACK_TYPE=1,3");
+其中中传入的两个参数意义如下：
+第一个参数表示input device，1，2，3分别代码main mic，耳机mic，sub mic(dual mic项目才有效)
+第二个参数表示output device，1，2，3分别表示听筒，耳机，喇叭
+根据需要进行组合即可
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+贵司描述的 status_t AudioALSAHardwareResourceManager::OpenSpeakerPath(const uint32_t SampleRate)  好像没有走到，请贵司check 一下。
+2：在保证底部驱动中kernel-3.10/sound/soc/mediatek/mt_soc_audio_v3/mt_soc_codec_63xx.c
+#ifdef CONFIG_MTK_SPEAKER 此宏打开，同时按照贵司所述  Ext_speaker_amp_change() 函数中针对 外部pa 使能管脚也正常使能。
+3： 在2的基础上 如果把\alps\vendor\mediatek\proprietary\platform\mt6752\hardware\audio\aud_drv\ AudioALSAHardwareResourceManager.cpp 
+中的 #ifndef USING_EXTAMP_HP 。。。。。#else。。。。。#endif全部注销掉：//#ifndef USING_EXTAMP_HP 。。。。。//#else。。。。。//#endif
+可以正常编译通过，同时因为： AudioALSAHardwareResourceManager::startOutputDevice      status_t AudioALSAHardwareResourceManager::stopOutputDevice()函数中的：内置和外置都打开了//#ifndef USING_EXTAMP_HP
+
+    AudioALSACodecDeviceOutSpeakerPMIC::getInstance()->open();
+
+//#else
+
+    AudioALSACodecDeviceOutEarphonePMIC::getInstance()->open();
+
+    AudioALSACodecDeviceOutExtSpeakerAmp::getInstance()->open();
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+[FAQ08704][uart]在MT6589上，如何彻底关闭uart log，让出uart1和uart4给其它外设使用？
+1、把文件bootable/bootloader/lk/app/mt_boot/mt_boot.c的printk.disable_uart都设置成1
+2、system/core/rootdir/init.rc
+#注释掉以下几行
+#on property:ro.debuggable=1
+# start console
+
+Thanks
+Mediatek Support
+
+CHEN_DEGANG_SIMCOM Posted at 2015-10-09 15:30:31
+您好：
+按你这样修改的话log会不会从uart2打印出来，我们两个串口都在使用控制外设，现在的情况是只出现如下log：
+Uncompressing Linux... done, booting the kernel.
+如何让其不从uart1和uart2吐出？
+Mediatek Replied at 2015-10-09 13:50:15
+Dear Customer,
+
+您好！可以直接在/mediatek/custom/{project_name}/preloader/cust_bldr.mak中修改
+CFG_UART_LOG :=UART2
+请将此处修改为除UART1外的其他UART口
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+增加dmesg的buffer大小
+CONFIG_LOG_BUF_SHIFT=21
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+清除内核, 内核清理
+$mmm kernel-3.10:clean-kernel -j8
+$mmm kernel-3.10:kernel -j8
+$make bootimage-nodeps -j8
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+如果这块缓冲区很小（目前只有256k），
+确实会将其他的log覆盖掉，所以可以通过以下方法修改缓冲区的大小。
+1: 修改cb04/device/simcom/cb04_6735_35u/ProjectConfig.mk
+    中的TARGET_USES_LOGD将这个由false改成true
+ 
+2: 修改路径：cb04/system/core/logd/LogBuffer.cpp
+   
+    修改项：#define LOG_BUFFER_SIZE
+38: #define LOG_BUFFER_SIZE (256 * 1024) // Tuned on a per-platform basis here?
+目前是256 * 1024  =  256k，所以改这个的大小就可以了，
+
+以上是修改Android log机制的大小，如果Kernel的log也被覆盖，可以修改Kernel的缓冲区的大小。
+在 cb04/kernel-3.10/arch/arm/configs/cb04_6735_35u_debug_defconfig
+修该CONFIG_LOG_BUF_SHIF=21，这个21其实2的 21次方
+
+vi device/simcom/cb04_6735_35u/ProjectConfig.mk
+qiancheng@BU5-SERVER04:~/UVC_mt6735$ grep -rns HAVE_XLOG_FEATURE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Max Bitrate  = H264: 6Mbps  (720*480@30fps) ; MPEG4/H263: 20Mbps (864*480@30fps)
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+camera反复开关崩溃(APK反复切换)
+改mclk驱动能力
+drivers/misc/mediatek/imgsensor/src/mt6735/ov2710_mipi_raw/ov2710mipi_Sensor.c
+
+1. isp_driving_current = ISP_DRIVING_8MA (改其他值尝试), 改小可降低触发沿高度,硬件相当于加电阻;
+
+2. mipi_data_lp2hs_settle_dc = 80(改14、30、85尝试)
+    mipi_settle_delay_mode = MIPI_SETTLEDELAY_AUTO
+(改为MIPI_SETTLEDELAY_MANNUAL) 可延迟MIPI信号触发边沿,硬件相当于加电容(22pf皮法)
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+power长按(重启?)
+~/project/mt6735_cb04/modem$ grep -nrsi "power key"  .
+./interface/driver/peripheral/dcl_rtc.h:168:    RTC_CMD_SET_PWR_KEY, /* To Set Power Key */
+./interface/driver/peripheral/keypad_sw.h:495:   /*power key  position*/
+./interface/driver/peripheral/DclH_kbd.h:82:	HKBD_CMD_GET_POWER_KEY_STATUS,/*Query the power key status*/
+./interface/driver/peripheral/DclH_kbd.h:101:	HKBD_CTRL_POWKEY_T                 	rKBDCtrlPowerKeySta;/*power key status structure*/
+./modem/l4/uem/src/uem_proc_msg.c:1555:    /* Before this point, releasing power key does not consider as "abnormal poweroff" */
+./driver/peripheral/inc/bmt_sw.h:220:/* Power key position */
+./driver/peripheral/src/pw_bl.c:126:	// check power key pressed
+./driver/peripheral/src/rtc.c:2381:	//#if defined(DRV_RTC_XOSC_DEF_10) // for MT6253 XOSC need to set before set power key.
+./driver/peripheral/src/rtc.c:2393:	#if defined(DRV_RTC_XOSC_DEF_10) // for MT6253 XOSC need to set before set power key.
+./driver/peripheral/src/rtc.c:2400:	// some chips need to set XOSC after set power key.
+./driver/peripheral/src/rtc.c:2489:*   	Setup RTC power key
+./driver/peripheral/src/DclH_kbd.c:265:*   	This function is to check if power key is pressed 
+./driver/peripheral/src/dcl_pw.c:941:	// check power key pressed
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+http://www.soso.io/article/99189.html
+
+Android使用Buffer拔高相机的处理能力
+2016-04-03 21:56　|　477人阅读　|　来源
+Android使用Buffer提高相机的处理能力
+
+Android上使用相机的的Preview的时候，如果不使用Buffer，相机程序会反复创建销毁Byte数组，造成系统频繁垃圾回收，非常影响体验，这时可以用Buffer来进行处理。
+
+首先，在调用相机的回调时，用如下代码：
+
+for (int i = 0; i < 3; i++) {
+				camera.addCallbackBuffer(new byte[((previewWidth * previewHeight) * bitsPerPixel) / 8 ]);
+			}
+camera.setPreviewCallbackWithBuffer(this);
+
+
+
+在Callback中加了3个Buffer，一般2个应该够用，保险起见加3个。
+
+在OnPreviewFrame处理完毕后，再把Buffer加回去。
+
+public void onPreviewFrame(byte[] data, Camera camera) {
+camera.addCallbackBuffer(data);
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+http://www.hackbase.com/article-210892-1.html
+
+2、图片二次处理
+
+上面说到了，Camera中虽然有两个可以设置方向的方法，但是一个是设置预览方向的方法，一个是设置拍照图片的方向，没有设置每一帧原始数据的方向，所以这里我们转化得到的一张图片应该是横着的，因为Camera默认的模式是：横屏+0度旋转，所以这里如果想让图片方向正确的话，应该做一次图片旋转，而且前置摄像头和后置摄像头旋转的角度不一样，不过好理解的是，前置摄像头和后置摄像头就相差180。旋转之后得到正确方向的图片之后，开始添加水印效果了，添加水印效果非常简单：
+
+直接使用Canvas画布即可。
+
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+电池电压更改,默认4.2V, 打开宏是4.35V
+~/project/mt6735_cb04/kernel-3.10/drivers/misc/mediatek/mach/mt6735/cb04_6735_35u/power/cust_charging.h
+/* High battery support */
+//#define HIGH_BATTERY_VOLTAGE_SUPPORT
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+如何查询i2c注册的设备, TP: gt9,
+root@cb04_6735_35u:/sys/bus/i2c/drivers # ll
+drwxr-xr-x root     root              2010-01-01 08:18 AD5820AF
+drwxr-xr-x root     root              2010-01-01 08:18 DW9714AF
+drwxr-xr-x root     root              2010-01-01 08:18 EPL259x
+drwxr-xr-x root     root              2010-01-01 08:18 MPU6050G
+drwxr-xr-x root     root              2010-01-01 08:18 MPU6050GY
+drwxr-xr-x root     root              2010-01-01 08:18 TS3A225E
+drwxr-xr-x root     root              2010-01-01 08:18 akm09911
+drwxr-xr-x root     root              2010-01-01 08:18 dummy
+drwxr-xr-x root     root              2010-01-01 08:18 gt9xx
+drwxr-xr-x root     root              2010-01-01 08:18 kd_camera_hw
+drwxr-xr-x root     root              2010-01-01 08:18 kd_camera_hw_bus2
+drwxr-xr-x root     root              2010-01-01 08:18 leds-LM3642
+drwxr-xr-x root     root              2010-01-01 08:18 mt6311
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+LCD LCM 型号 1-otm1287a_hd720_dsi_vdo_boyi
+root@cb04_6735_35u:/ # cat proc/cmdline                                    
+console=tty0 console=ttyMT0,921600n1 root=/dev/ram vmalloc=496M slub_max_order=0 slub_debug=O  vmalloc=496M androidboot.hardware=mt6735 slub_max_order=0 slub_debug=O bootopt=64S3,32N2,32N2 lcm=1-otm1287a_hd720_dsi_vdo_boyi fps=6316 vram=13172736 printk.disable_uart=1 bootprof.pl_t=2249 bootprof.lk_t=2765 boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
