@@ -1,23 +1,94 @@
+KTools安卓控件源码示例
 
-项目：camera
-Q39：远大（1供）后摄3m2，前摄4h5 shiyin（2供）
-S700(kc20):后摄imx214(新模组供应商)，前摄imx219 TP:gt1x 合力泰-张帅 Mobile:13761264956 s700屏幕: R63315; hst1006a-gt5688; NT35596; S700B-gt1x
-S600: 后摄SP5409      屏幕:二供屏st7789v   RGB转MIPI:tc358762
-S201: 前摄gc2355 和 后摄ov5648
-W80: 后摄3m2 前摄4h5(老的 前摄ov5648 imx135 )
-CB04: 后摄OV8858,OV2710 ov4689广角，　前摄gc2355和CVBS ?550(转换芯片tw9992) tp:当前用的gt9xx(GT915L) [=====板子上面的UART1~3一一对应软件的ttyMT1~3=====] 
+
+adb uninstall com.example.oemscandemo
+
+
+
+CH501:		PSAM卡		Colbert Jin 靳松 colbert.jin@wpi-group.com
+						yang.lu@nxp.com
+						
+						
+						
+
+
+
+
+中科/高通联系人: (pmic软件)Yue Liu 010-56322756; (camera软件)Xianchao Zhang 010-58324384 ; (pmic硬件)Wenjing Chen 021-61105336
+
+
+N3601 jacky.liu3@honeywell.com
+ 
+CB03:
+S101 ： FSATMMI/Android 切换； GPIO_52 高电平进FASTMMI，低电平进Android
+音频： SPK；REC；2个MIC；耳机
+SENSOR：  陀螺仪ICM-20645；光距感CM36682M3OE；指南针AK09911
+CAMERA：  镜头旭业的XA-0157B-H5508, 后摄、前摄ov8856 格科的GC5005/新GC5025
+
+Sensor    
+LCM/TP
+充电IC：  BQ24296 U601
+SCAN：   SE4500/SE955
+NFC:    PN547  U1001
+GPIO扩展IC：   XRA1201_100
+
+
+Q18: usb网卡RTL8152
+
+S700(kc20): 后摄imx214(新模组供应商)，前摄imx219 TP:gt1x 合力泰-张帅 Mobile:13761264956 s700屏幕: R63315; hst1006a-gt5688; NT35596; S700B-gt1x
+S600:   后摄SP5409      屏幕:二供屏st7789v   RGB转MIPI:tc358762
+S201:   前摄gc2355 和 后摄ov5648
+W80:    后摄3m2 前摄4h5(老的 前摄ov5648 imx135 )
+CB04:   后摄OV8858,OV2710 ov4689广角，　前摄gc2355(200万, 1600*1200)和CVBS ?550(转换芯片tw9992) tp:当前用的gt9xx(GT915L) 
+        [=====板子上面的UART1~3一一对应软件的ttyMT1~3=====] 
              LCD:顺盟  ili9342c     宏电/拓途  icn6202
 
 
-PBS01: 前后摄相同imx214 马达AF:DW9714
-CB05: 后s5k3m2xx 前s5k4h8
-精联PA726: s5k3p3sm        1D:se655 (barcode gpio: [0]3.3V, [12,13]uart [41]level-shift , [47]MCU-wake , [50]PWD , [59]trigger)
+PBS01:  前后摄相同imx214 马达AF:DW9714
 
-2D:SE4750 (1280 x 960)
 
+精联PA726: 后s5k3p3sm  前ov5670信利      1D:se655 (barcode gpio: [0]3.3V, [12,13]uart [41]level-shift , [47]MCU-wake , [50]PWD , [59]trigger)
+           2D:SE4750 (1280 x 960)
 SE4750: Top = 955, Bottom = 959, Left = 1271, Right = 1279
 SE4750  1280 x 960  640 x 480  320 x 240
 (CB05 gpio25-EN gpio2/3-i2c)
+
+
+CB05:   远大后s5k3m2xx 1300M 前s5k4h8 800M
+
+列顿ch501: 	屏ST7703   TP GT9110P
+			Iris front camera虹膜前置摄像头: MCNEX MC-OV_OV2281 (2M-FF)
+			Iris back camera后置虹膜摄像头: IriShield MO-2121
+			远大 s5k4h8 s5k3m2
+			
+
+D39 后摄ov16880佳立数码 前摄s5k4h8远大（4h8统统没烧otp） s5k3p9四季春（FAE联系没给，OTP啥都不知道） 霍尼韦尔n6603 斑马se4710
+
+
+B4 霍尼韦尔N3601 option? S5K3L8XX远大
+
+
+
+H33 OV16885
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+Non-HLOS/SDM450.LA.3.2/trustzone_images/core/buses/qup_accesscontrol/bear/config/QUPAC_8953_Access.xml
 
 
 
@@ -27,7 +98,7 @@ SE4750  1280 x 960  640 x 480  320 x 240
 
 整项目:
 [CB09 APQ8096]
-前摄 s5k4h8 5MP 后摄s5k3m2xx 16MP AF电控dw9714 双屏h381dln01
+前摄 s5k4h8 5MP 后摄s5k3m2xx/gc2755 16MP AF电控dw9714 双屏h381dln01
 FM:RDA5820NS; APQ Application-only processor; (camera postion 1前摄, 0后摄)
 铭源:gc2755
 sensor: 光感/接近ap3426 地磁AKM09911 icm206xx(ICM-20608D /客户Ivensense 20602)
@@ -36,6 +107,15 @@ GPS：WGR7640 两路LDO供电： VREG-L32-1P8 和 VREG-L4-1P225;  RFCLK1-----PM8
 矩阵键盘芯片: 驱动pca953x, 型号XRA1201P
 USB TYPE-C PTN5150
 LCD: 铭源  夏普双屏h381dln01 和 三星ams567jd09
+
+
+[G2] SDM660 s5k4h8
+MSM8976 plus
+光感ALS/PS-sensor STK3321-35A
+
+
+
+
 
 
 
@@ -49,6 +129,70 @@ Due to which ffs unable to enable again
 晨讯科技集团：希姆通信息技术(上海)有限公司/上海罗捷斯迪电子有限公司/麦维讯电子(上海)有限公司/上海思必得通讯技术有限公司/基信康信息技术（上海）有限公司/芯讯通无线科技（上海）有限公司
 上海市长宁区金钟路633号晨讯科技大楼/上海青浦区胜利路888号/上海市外高桥保税区希雅路69号16号厂房4D/上海市外高桥保税区希雅路69号16号厂房4B
 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+http://crm.ovt.com/ovtcrm/
+账户  jun.jin@sim.com
+
+不过密码是6个0, 我试了两次登进去了, 没错
+123456会提示错误.
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+联系方式:
+一维扫描头
+李彬 Lance Li
+Cell: (86) 138 1009 6089
+Phone: (86) 010 5662 2021
+Email: BKDF76@zebra.com
+
+
+MSM8953 PN547 PN548 NFC FAE
+*********************************
+Jackie Deng / 邓代勇
+大联大商贸有限公司   世平企业群
+cid:image002.png@01CE42BC.C0B64A60
+上海应用技术一部          
+Office: 021-23099388  Ext: 31949
+Mobile :  +86-13916808930
+E-mail: Jackie.deng@wpi-group.com
+地址：上海市嘉定区金沙江西路 1555 弄 37 号 D 栋 8 楼
+
+*********************************
+1、MMC3680KJ 孙建新 PM 13564566119、18616937693 alex.sun@rich-power.com.cn
+*********************************
+2、屏 LCM和TP：
+孔令锋 / Frank
+营销中心 FAE部​
+维信诺科技股份有限公司
+E-mail: konglf@visionox.com
+Mobile: 137-3266-9406
+*********************************
+3、compass
+谷牧/ Ryan Gu
+MEMSIC Semiconductor (Wuxi) Co., Ltd.
+上海市浦东新区郭守敬路498号浦东软件园14号楼506室，邮编：201203
+Mobile: +86 18621117518
+
+谷牧/ Ryan Gu
+MEMSIC Semiconductor (Wuxi) Co., Ltd.
+上海市浦东新区郭守敬路498号浦东软件园14号楼506室，邮编：201203
+Mobile: +86 18621117518
+*********************************
+列顿 库仑计 Bq27542
+蔡晓滨        市场二部
+珠海市嘉德电能科技有限公司
+Mobile：13421321949                   Tel ：+86-756-8287186-8897
+E-mail：caixiaobin@blbattery.com
+地址：珠海市金湾区三灶镇定湾七路9号嘉德科技工业园
+*********************************
+马达驱动IC AW8690
+戴丹 Danny Dai
+Tel: +86(21)54271166 ext.6918  Mobile: +86 180-1785-2216
+上海市闵行区秀文路908号中铁诺德国际中心B栋15层
+daidan@awinic.com.cn  www.awinic.com.cn
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +247,15 @@ http://www.zhihu.com/question/27985854
 http://sswz.spb.gov.cn/index.do
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+__android_log_print(ANDROID_LOG_INFO, "qiancheng", "I am : %d/n", n);
 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#undef CDBG
+#define CDBG(fmt, args...) printk(fmt, ##args)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 固定帧率
 vi ./QCamera2/HAL/QCamera2HWICallbacks.cpp +2155
 adb shell setprop persist.debug.sf.showfps 1
@@ -153,13 +305,33 @@ M	3949	    return NO_ERROR;	    return setWaveletDenoise(DENOISE_ON);//return NO
 vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/sensor_libs/imx214_s700/imx214_s700_lib.c
 #define IMX214_S700_LOAD_CHROMATIX(n) \
    "libchromatix_"SENSOR_MODEL_NO_IMX214_S700"_"#n".so"
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+full sweep AF
+#!/bin/sh
+sudo adb root;
+adb wait-for-device;
+sudo adb remount;
+adb wait-for-device;
+adb shell setprop debug.camera.af_fullsweep 1
 
+adb shell setprop persist.camera.stats.debug.mask 4
 
+echo "Full Sweep now"
+adb shell logcat |grep "FULL Sweep AF ENDs here - success"
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 camera debug 抓AF log
-adb shell setprop persist.camera.debug.mask 4 (抓前3项为7)
+
+adb shell setprop persist.camera.stats.af.debug 5
+adb shell setprop debug.camera.af_fullsweep 1
+
+					////adb shell setprop persist.vendor.camera.global.debug  5 (这个必须开,安卓8.1)
+					////adb shell setprop persist.camera.global.debug 5 (CH501)
+////adb shell setprop persist.camera.stats.debug.mask 4
+////adb shell setprop persist.camera.debug.mask 4 (抓前3项为7, 可能废弃了)
+
 typedef enum {  
 STATS_DEBUG_MASK_AEC_LOG   = (1 << 0),   //<value> 1   //曝光
 STATS_DEBUG_MASK_AWB_LOG   = (1 << 1),   //2  //白平衡
@@ -214,9 +386,13 @@ adb shell setprop persist.camera.imglib.dump 1
 adb shell sync
 
 
-5. camera dump抓图像
+5. camera dump抓图像,dump图像,debugdebug,dumpdump
 adb shell chmod 777 /data
 adb shell setprop persist.camera.dumpimg 655615
+
+adb shell setprop persist.vendor.camera.dumpimg 655615  (8.1)
+b4:/ # ls -l data/vendor/camera/
+
 
 root@cb09:/ # ls -l data/misc/camera/                                          
 -rw-r--r-- media    audio      447771 2017-01-01 09:35 0_16777216.jp
@@ -253,6 +429,8 @@ CONFIG_LOG_BUF_SHIFT=21
 Collecting kernel and userspace log in single file:
 adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
 
+mm > file 2>&1
+
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 USB找不到端口
@@ -275,7 +453,69 @@ PS:
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+device/qcom/cb09/init.target.rc
+在on boot段里添加
+write /sys/devices/system/cpu/cpu0/online 1                           //开核
+write /sys/devices/system/cpu/cpu1/online 1
+write /sys/devices/system/cpu/cpu2/online 1
+write /sys/devices/system/cpu/cpu3/online 1
+write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor performance   //开性能模式
 
+
+//To put all CPU in performance mode
+(below commands can be applied for 8 cores platforms, like MSM8998/SDM660/SDM630/
+MSM8976/MSM8953/MSM8937)
+//stop perfd first to avoid perflock impact
+adb shell stop perfd
+//To put all CPU in performance mode
+adb shell "echo 1 > /sys/devices/system/cpu/cpu0/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu1/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu2/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu3/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu4/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu5/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu6/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu7/online"
+adb shell "echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor"
+(below commands can be applied for 4 cores platforms, like MSM8920/MSM8917/MSM8909)
+//stop perfd first to avoid perflock impact
+adb shell stop perfd
+//To put all CPU in performance mode
+adb shell "echo 1 > /sys/devices/system/cpu/cpu0/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu1/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu2/online"
+adb shell "echo 1 > /sys/devices/system/cpu/cpu3/online"
+adb shell "echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
+adb shell "echo performance > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor"
+//To put GPU in performance mode
+adb shell "echo performance > /sys/class/kgsl/kgsl-3d0/devfreq/governor"
+//To put Bus in performance mode
+adb shell "echo performance > /sys/class/devfreq/soc:qcom,cpubw/governor"
+adb shell "echo performance > /sys/class/devfreq/soc:qcom,mincpubw/governor"
+adb shell "echo performance > /sys/class/devfreq/soc:qcom,memlat-cpu0/governor"
+adb shell "echo performance > /sys/class/devfreq/soc:qcom, memlat-cpu4/governor"
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+adb shell stop perfd
+adb shell stop thermald
+adb shell stop thermal-engine
+
+要加上 下面命令 才能彻底关掉温控底层干预。
+echo -n disable > /sys/kernel/debug/msm_thermal/config/data 
+
+代码中的修改在device/qcom/cb09/init.target.rc中
+perfd和thermal-engine服务相关代码删除.
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 debug log
@@ -294,6 +534,8 @@ Clean the build – build_8936.bat -c
 grep排除哪个目录，不搜索:
 --exclude-dir=
 
+搜索当前目录
+grep -i XXX *
 
 VI:
 1.全词匹配搜索
@@ -412,7 +654,17 @@ SoC = RUC/(FCC-UUC)
 计算剩余电量：
 calculate_ocv_charge
 
+LUT指显示查找表（Look-Up-Table)
 
+qcom,ibat-acc-lut :   ibat_acc_lut
+ACC: apparent charge capacity 表观电荷容量
+An “apparent charge capacity” was introduced todescribe the electrochemical performance. 
+介绍了用电化学性能 
+
+
+
+Boot Thermal Monitor (BTM) – Optional
+Kernel Thermal Monitor (KTM) – Mandatory
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 中国移动、联通、电信的3G网络制式分别是什么？哪种会比较好？大多数手机支持哪种网络？
@@ -1139,16 +1391,43 @@ gEnableRXSTBC = 0
 ＃注：配置解析器将无法读取任何过去的结束标记
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm/boot/dts/msm8909-1gb-qrd-skue-cb03.dtb
 ./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb09-apq8096-v3.0-pmi8994-cdp.dtb
 ./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/pa726.dtb
+./obj/KERNEL_OBJ/scripts/dtc/dtc -I dtb -O dts -o abc.dts obj/KERNEL_OBJ/arch/arm64/boot/dts/qcom/q18-apq8096-v3.0-pmi8994-cdp.dtb
 
+./obj/KERNEL_OBJ/scripts/dtc/dtc -I dtb -O dts -o abc.dts  obj/KERNEL_OBJ/arch/arm64/boot/dts/qcom/cb05.dtb
 
+./obj/KERNEL_OBJ/scripts/dtc/dtc -I dtb -O dts -o abc.dts  obj/KERNEL_OBJ/arch/arm64/boot/dts/qcom/cb05-sdm450.dtb
+
+./obj/kernel/msm-3.18/scripts/dtc/dtc -I dtb -O dts -o abc.dts obj/kernel/msm-3.18/arch/arm64/boot/dts/qcom/ch501.dtb
+
+./obj/kernel/msm-4.4/scripts/dtc/dtc -I dtb -O dts -o abc.dts obj/kernel/msm-4.4/arch/arm64/boot/dts/qcom/g2.dtb
 
 vi ./out/target/product/q39/obj/KERNEL_OBJ/arch/arm64/boot/dts/.msm8939-v3.0-mtp-jdi.dtb.dts.tmp
 ./kernel/arch/arm/boot/dts/qcom/q39-qrd.dtsi:101:		compatible = "gpio-keys";
 
+其他
+adb push  vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/configs/msm8953_camera.xml system/etc/camera/camera_config.xml
 
+B4
+adb push  vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/configs/msm8953_camera.xml /vendor/etc/camera/camera_config.xml
+
+adb shell "echo 95 > /sys/class/leds/ir-led/brightness"
+
+vi out/target/product/b4/obj/kernel/msm-4.9/arch/arm64/boot/dts/qcom/.b4-qrd-sku4-overlay.dtbo.dts.tmp
+
+DTC
+./obj/kernel/msm-4.9/scripts/dtc/dtc -I dtb -O dts -o abc.dts  obj/kernel/msm-4.9/arch/arm64/boot/dts/qcom/b4-qrd-sku4-overlay.dtbo
+
+
+
+H33
+DTC
+./obj/kernel/msm-4.9/scripts/dtc/dtc -I dtb -O dts -o abc.dts  obj/kernel/msm-4.9/arch/arm64/boot/dts/qcom/h33-qrd-sku4-overlay.dtbo
+
+adb shell rm -r ./storage/emulated/0/iritech/IriCameraTuner/unknown/*
+adb pull sdcard/iritech/IriCameraTuner/unknown/
 tlmm: top-level mode multiplexer顶层模式多路复用器
 DAI： 数字音频接口
 
@@ -1161,13 +1440,33 @@ Mic boost    麦克风音量加强控件命名为："Mic Boost"或"Mic Boost(6dB
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+音频调试手册Audio Tuning Handbook(English/Simplified Chinese)
+80-NV213-1EC B  audio_tuning_handbook.pdf
+msm8953_linux_android_audio_overview.pdf
+
 Dynamic Audio Power Management (DAPM)
 
 消除声音结束时的咔~异响
 kernel/msm-3.18$ vi sound/soc/msm/msm8952.c
 "SIM PA","LINEOUT";
-
-
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb命令:
+设置成单MIC:
+adb shell setprop ro.qc.sdk.audio.fluencetype none
+设置成双MIC:
+adb shell setprop ro.qc.sdk.audio.fluencetype fluence
+adb shell setprop persist.audio.fluence.voicecall true
+adb shell setprop persist.audio.fluence.voicerec true
+adb shell setprop persist.audio.fluence.speaker true
+
+代码修改:
+/device/qcom/msmxxxx/system.prop
+rc.qc.sdk.audio.fluencetype=fluencepro-->select different fluence type
+persist.audio.fluence.voicecall=true  select true/false for your selection
+persist.audio.fluence.voicerec=false -> select true/false for your selection
+persist.audio.fluence.speaker=true -> select true/false for your selection
+重新编译并更新system.img
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 AUDIO VOICE:
@@ -1196,7 +1495,7 @@ BBWE 盲带宽扩展
 NB 窄带
 WB 宽带
 CNI 舒适噪声注入
-LEC 线性回声消除器
+linear echo canceller LEC 线性回声消除器
 PL 产品线
 PoR 记录计划
 SWB 超宽带
@@ -1251,6 +1550,10 @@ DTMF Detection: Performs processing on the Rx stream to detect DTMF tones
 
 WVE: Wide Voice Enhancement –Performs blind bandwidth extension to provide WB data (16kHz sampling rate) and improve the speech intelligibility
 
+Path Change Detector (PCD)路径变化检测器
+Speech Detector (SPDET)语音检测器
+Dynamic Echo and Noise Suppressor (DENS)动态回声和噪声抑制器
+
 Dynamic Range Control (DRC)动态范围控制
 Qualcomm Automatic Gain Control (AGC)高通的自动增益控制
 Multiband Dynamic Range Control (MBDRC)多波段动态范围控制
@@ -1286,14 +1589,18 @@ Bluetooth_cal.acdb包含蓝牙SCO设备的音频和语音配置
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
+kba-170501033706_pdaf_tuning_note.pdf
+adb shell setprop persist.vendor.camera.global.debug  4  //(安卓8.1 persist.vendor.camera.global.debug)  persist.camera.global.debug 5 (ch501用)
+adb shell setprop persist.camera.pdaf_logging 1
+adb shell setprop persist.camera.pdaf_dump 1
+adb shell setprop persist.camera.pdaf_profiling 1
 
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 CAMERA=======
-
+OB（光学黑）
 PDAF:相位检测自动对焦;“PhaseDetectionAutoFocus”
 cci: camera control interface(i2c+gpio)    qcom,cci-master = <0>;
 CAM_VANA – Supply voltage (模拟)           cam_vana-supply = <&pm8994_l29>; 
@@ -1422,6 +1729,29 @@ LTM Local Tone Mapping 本地色调映射
 MCTL Media Control 媒体控制
 FLIP 翻转
 Portrait 人像
+
+RDI Raw Data Interface
+CAMIF Camera Interface Hardware
+CCI Camera Control Interface
+CPP Camera Postprocessor
+FIFO First-In-First Out
+LLP Low-Light Photo
+LTM Local Tone Mapping
+MCTL Media Controller
+PDAF Phase Detection Auto Focus
+PoC Point of Contact
+PVL Preferred Vendor List
+RDI Raw Dump Interface
+ROI Region of Interest
+
+
+
+
+
+
+
+
+
 VCM 音圈马达(马达的一种, 还有:
     1.音圈马达
     2.超声波马达
@@ -1467,21 +1797,71 @@ MCC Macbeth 色卡 (Macbeth Color Checker)
 CPR (Core Power Reduction)
 
 
-S600项目
-camera 模组联系方式：
-
-乔建（销售）
-
-深圳博立信科技有限公司-上海办事处
-手机：13817540628
-jimmyqiao@brodsands.com
-上海：上海市徐汇区虹梅路2588弄1号楼903室
-深圳：深圳宝安龙华大浪华荣路联建工业园4栋2楼
+White LED Flash
+Support for camera flash using LED. This feature also provides pre-flash before the actual image capture, for 3As (Auto Focus, Auto Exposure, Auto White Balance) to stabilize. Supported modes are Flash on/off/auto
+Digital Zoom
+In most cases, the software supports up to 4x zooming in during camera/camcorder operations. It's a crop based digital zoom. When upscaling is needed for camera, it's done on JPEG encoder. For case of video, it's done via CPP.
+Zero Shutter Lag
+In this mode, camera sensor is configured in full size mode of operation. VFE outputs NV21 frames and stores in memory. HAL maintains circular queue of these buffers. When new buffers arrive, HAL overwrites the oldest buffer in this queue. When the takePicture() call is initiated by the application, HAL picks up a NV21 buffer from this queue based on persist.camera.zsl.backlookcnt value, and sends it to CPP for post processing, and later to JPEG encoder for encoding. Final JPEG is then forwarded to the application via callback. The backlookcnt value can be set based on typical user reaction time + time from UI icon press till the HAL receives the takePicture() call, and converting it to frame rate (output frame rate from VFE is half of the sensor output frame rate in ZSL mode; to reduce the bus traffic/power impact). By default, backlookcnt is set to 2 frames, means, ZSL will pick up n-2 frame for any snapshot operation.
+EXIF 2.2/JFIF 1.1
+This refers to the JPEG header standard supported. (most decoders can support these nowadays)
+Raw snapshot capture in Non-ZSL mode
+Support to capture full size raw images needed for color tuning of Bayer format camera sensors. These images will be stored in QC raw format (not MIPI raw format), and used as input by Chromatix to perform color tuning.
+Raw Data Interface (RDI) support
+This feature bypasses the VFE and directly dumps MIPI raw format output from camera to external memory. Such RDI dumped data can be tapped into mm-camera backend code.
+High speed raw dump refers to the configuration where data from sensor is dumped directly to memory via RDI, instead of going through VFE. In this mode, the data rate could go as high as total throughput supported by MIPI lanes from camera to MSM, as VFE max clk speed is not the upper bound here.
+Live snapshot
+Enables snapshot capture during video recording
+Software can support full size or video size live snapshot. Search for 'persist.camera.opt.livepic' in Linux Camera Debugging Application Note 80-NL239-33 referred at 00028470 for more info.
+High Frame Rate
+Support for frame rates higher than 30 (e.g. 720p@60, WVGA@90, WVGA@120 etc). This feature is often used during video recording, to achieve slow motion effect by encoding these frames at 30fps. Audio is generally not enabled for such slow motion recording.
+Digital Image Stabilization (DIS)
+This feature helps stabilize the video during camcorder operation. Camera driver is expected to support output resolution that's 10% bigger in height and width compared to the largest native video recording resolution supported by the device, for best results. For example, device supporting 1080p (1920 x 1080) video recording should have the resolution bigger than 2112 x 1188 configured in camera driver for video recording mode of operation. Camera software configures sensor to output such 10% x 10% bigger frame to VFE. DIS algorithm analyzes motion between successive frames and selects 1080p (or the given resolution) resolution sub frame from each frame that has the highest correlation with the previous frame. This reduces motion artifacts in video mode. This stabilized frames are sent to both video encoder, and to display.
+Anti-banding (Auto flicker correction)
+Avoids banding artifacts in florescent light conditions like 50Hz or 60Hz. Algorithm supports 50Hz, 60Hz and Auto detection modes. Internally, the feature sets camera exposure steps to align with 50Hz or 60Hz (as detected or set) frequency timing, so the total exposure for each successive frame is equal, which avoids banding. Banding can't be avoided in very bright scenes where the highest exposure possible (to maintain proper brightness in scene.. using luma target) requires the frame exposure to be less than the 1 cycle timing of the florescent light frequency the device is in. (e..g banding is seen in 50Hz, if the frame exposure needs to be less than 50Hz cycle time. In this case, all successive frames can't be guaranteed to have same exposure, in multiple of 1 cycle time)
+Viewfinder Histogram
+Enables histogram overlay presentation of the given frame data on UI, during camera preview operation
+ISO
+Sensor sensitivity setting for camera snapshots. Typical support includes ISO-100, ISO-200, ISO-400, ISO-800, ISO-1600 etc
+Video HDR
+Support for HDR video during camcorder mode of operation. Current solution requires that the tone mapping is done outside the MSM using an external chip (which could be present on sensor itself, e.g. in Sony IMX135), and pre-tone-mapped exposure statistics are output by camera as metadata over MIPI virtual channels.
+Special Effects
+Support for viewfinder/snapshot effects like Mono, Sepia, Negative, Solarize, Posterize, Aqua, Emboss, Sketch, Neon; done via modified VFE settings like color correction, color conversion, gamma etc.
+WNR (Wavelet noise reduction)
+Noise reduction feature. For the chipsets where CPP has WNR, noise reduction is done in real time for non-ZSL camera preview and camcorder preview/video; in addition to the noise reduction done in camera snapshot.
+Tintless LSC (lens shading correction)
+Uses rolloff stats in real time to dynamically adjust shading table based on the lighting conditions. This enables very smooth and minimal error lens shading correction experience.
+EZ-TUNE
+Support for connection with Chromatix Light software on PC to enable real time tuning parameter updates for easy tuning
+Auto Frame Rate (AFR)
+When enabled, camera frame rate is adjusted in real time to achieve best noise performance. For example, in low light, frame rate needs to be low in order to capture more light per frame exposure, so that less digital gain needs to be applied. This reduces noise in the image.
+Sharpness control
+Enables controlling the amount of sharpness applied to camera frames. This feature adjusts sharpness settings in ISP blocks like ASF.
+Red Eye Reduction
+Enables series of short low intensity pre-flashes to contract eye pupil before the actual image is captured at high intensity flash. Contracted pupil reduces appearance of red eye in captured image. This feature is effective under low light, when the flash is either set to ON or Auto.
+Exposure modes
+Allows setting exposure metering mode. Options are Center, Spot, Multiwindow metering.
+EV/brightness control
+EV stands for exposure compensation. EV is achieved by adjusting camera exposure to be slightly higher than luma target. Brightness is achieved by applying higher digital gain in ISP.
+Macro Mode with Auto Focus
+Macro mode enables complete focus range sweep, for better focus on closely located objects.
+Best Shot mode
+Setting specific scene mode for captured snapshot, similar to scene mode supported by typical DSLR cameras. Latest software supports modes like Action, Night, Auto, Sunset, Party, ASD, Portrait, Landscape, Night portrait, Theatre, Beach, Snow, Steady Photo, Fireworks, Sports, Candle Light, Back Light, Flowers, AR (Augmented Reality) etc
+Continuous AF for camera preview/video
+Focus is automatically triggered based on the scene change, so that the viewfinder and video are always in focus, and focus time is reduced during image capture.
+LED assisted AF
+In low light, this feature enables LED flash for better focusing before image capture.
+Face Detection
+Performs automatic detection of human faces during camera preview, and notifies the coordinates of detected faces to the application. Application can use this information to put exposure, focus priority on the faces for better camera experience.
+Facial features
+Enables detection of smile, eye blink, eye gaze etc during real time preview, and provides the information to application, so that it can be used to provide better camera experience (e.g. hold image capture command issue till the person smiles, or looks straight into camera; do intelligent processing when the person is gazing in a specific direction etc..)
+AOST Smart Camera Features:
+These are value added features like UbiFocus, ChomaFlash etc, available to licensees for these features. For any inquiries, customers should contact their TAM or QTI product management team.
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Wi-Fi Display (WFD)
-
+Reliance Jio Infocomm Limited (RJIL).  信实信息有限公司 
 
 
 
@@ -1498,7 +1878,7 @@ ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
 include $(call all-subdir-makefiles)
 endif
 
-遍历makefile
+遍历makefile, 包括不包括,筛选
 ifneq (, $(filter s600, $(TARGET_PRODUCT)))
 include $(call all-subdir-makefiles)
 endif
@@ -1533,7 +1913,7 @@ return 1;
 int secure = 0;
 char value[PROPERTY_VALUE_MAX];
 
-
+adb shell su root setenforce 0 
 
 
 虚拟按键
@@ -1792,9 +2172,16 @@ cat /dev/ttyHSL#
 
 
 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+使用 sysfs
+~~~~~~~~~~~
 
+只要内核配置中定义了 CONFIG_SYSFS ，sysfs 总是被编译进内核。你可
+通过以下命令挂载它: 
 
+    mount -t sysfs sysfs /sys
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2203,8 +2590,12 @@ system/etc/thermal-engine.conf
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-camera debug 调试
+[]camera debug 调试
 80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf
+
+打开全部log
+mm-camera/mm-camera2/media-controller/modules/sensors/module/sensor_dbg.h
+#define SLOG_LOW
 
 xxx_lib.c
 enable below logs:
@@ -2431,8 +2822,16 @@ void *memchr(const void *s, int c, size_t n)
 功能：在内存区域中查找第一次出现字符c的位置，最多查找size单位。
 返回：返回位置指针；如果没有出现，返回NULL。
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+selinux 工具
+chcon
 
 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Engineering Verification Test (EVTn) 工程验证测试（evtn）
 Development Verification Test(DVTn) 开发验证测试（dvtn）
 Product Verification Test (PVT)产品验证测试（PVT）
@@ -2614,7 +3013,7 @@ TR		Triton
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Bus Interface Memory Controller (BIMC),
-
+在USB通讯协议中，Start-of-Frame(SOF) 为 帧开始 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2895,6 +3294,8 @@ adb reboot bootloader
 fastboot oem select-display-panel hdmi
 fastboot reboot 
 
+#set hdmi display portrait (rotates 90 degrees旋转90度)
+persist.demo.hdmirotation=portrait
 
 HDMI旋转
 frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
@@ -2948,7 +3349,11 @@ END
 
 80-Y7674-2 文档
 
-
+设置BT MAC
+关闭蓝牙功能
+adb shell rm persist/bluetooth/.bt_nv.bin
+adb shell btnvtool -b 22.22.22.22.22.22
+打开蓝牙功能即生效
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3007,6 +3412,13 @@ nm-tool
 echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
 
 
+调试wakeup问题，可以使能debug功能，然后抓取log。Log中会增加一些debug信息。
+mount -t debugfs none /sys/kernel/debug
+echo 1 > /sys/kernel/debug/clk/debug_suspend
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debugmask
+echo 4 > /sys/module/wakelock/parameters/debug_mask
+echo 1 > /sys/module/lpmlevels/parameters/debugmask
+echo 0x16 > /sys/module/smd/parameters/debug_mask
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 camera eeprom 的格式
@@ -3157,7 +3569,7 @@ adb shell top -m 6 查看cpu的使用率。
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 80-P7139-1 A Linux Android Stability Issue Analysis
-高通rumdump分析网站
+高通ramdump分析网站
 
 QCAP：https://cap.qti.qualcomm.com
 
@@ -3176,6 +3588,10 @@ git remote add origin https://github.com/qqcc0000/test.git
 git push -u origin master
 
 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+切换分支 切换branch
+repo forall -c git checkout -b c01 sim/MSM8996_C01
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3239,6 +3655,1325 @@ frameworks$ vim base/data/etc/platform.xml
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+假电池电阻
+fake battery voter, if battery id-resistance around 7.5 Kohm
+FAKE_BATTERY_EN_VOTER
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+KBA-160511044137
+[]Camera persist使用手册
+基于MSM8996平台PL1.0
+Contents
+一. Log部分... 9
+1. persist.camera.global.debug. 9
+2. persist.camera.mct.debug. 9
+3. persist.camera.sensor.debug. 9
+4. persist.camera.iface.logs. 10
+5. persist.camera.isp.debug. 10
+6. persist.camera.stats.debug. 10
+7. persist.camera.stats.af.debug. 10
+8. persist.camera.stats.aec.debug. 10
+9. persist.camera.stats.awb.debug. 10
+10. persist.camera.stats.asd.debug. 11
+11. persist.camera.stats.afd.debug. 11
+12. persist.camera.stats.q3a.debug. 11
+13. persist.camera.stats.is.debug. 11
+14. persist.camera.stats.haf.debug. 11
+15. persist.camera.pproc.debug.mask. 11
+16. persist.camera.cpp.debug.mask. 12
+17. persist.camera.c2d.debug.mask. 12
+18. persist.camera.imglib.logs. 12
+19. persist.camera.hal.debug. 1220. persist.camera.mmstill.logs. 12
+二. Module部分... 13
+1. SENSOR模块... 13
+1) persist.camera.sensor.gain. 13
+2) persist.camera.sensor.linecount. 13
+3) persist.dual.gain_tune. 13
+4) persist.dual.line_tune. 13
+5) persist.camera.fastaec. 13
+6) persist.camera.iso100. 14
+7) persist.camera.csid.payload. 14
+8) persist.camera.sensorliveconnect. 14
+9) persist.partial.skip. 14
+10) persist.camera.led.rerdbg. 14
+11) persist.camera.cal.af. 14
+12) persist.camera.cal.awb. 15
+13) persist.camera.cal.lsc. 15
+14) persist.camera.cal.dp. 15
+15) persist.camera.cal.dual 15
+16) persist.camera.dumpmetadata. 15
+2. IFACE2模块... 16
+1) persist.camera.isp.testgen. 16
+2) persist.camera.isp.dump. 16
+3) persist.camera.isp.dump_cnt. 164) persist.camera.isp.ppbypass. 16
+5) persist.camera.isp.buf_cnt. 16
+6) persist.camera.hvx_lib_1. 17
+7) persist.camera.hvx_lib_2. 17
+3. ISP2模块... 18
+1) persist.camera.isp.turbo. 18
+2) persist.camera.isp.dualisp. 18
+3) persist.camera.dumpmetadata. 18
+4) persist.camera.tintless.skip. 18
+5) persist.camera.saturationext. 18
+6) persist.camera.isp.regdump. 19
+7) persist.camera.isp.offregdump. 19
+8) persist.camera.isp.cac_disable. 19
+9) persist.camera.isp.ltm_disable. 19
+10) persist.camera.ltm.sw.. 19
+11) persist.camera.ltm.filteroff. 19
+12) persist.camera.ltm.out. 19
+13) persist.camera.ltm.overlap. 20
+4. STATS模块... 21
+1) persist.camera.ledcalib.enabled. 21
+2) persist.camera.mobicat. 21
+5. PPROC-NEW模块... 22
+1) persist.enable.max.pending.buf. 22
+2) persist.camera.c2d.disable. 223) persist.camera.tnr.force_enable. 22
+4) persist.camera.enable_vpu. 22
+5) persist.camera.dumpmetadata. 22
+6. IMGLIB模块... 23
+1) persist.camera.imglib.hdr.dump. 23
+2) persist.camera.imglib.cac.dump. 23
+3) persist.camera.mobicat. 23
+4) persist.camera.imglib.cf.ver. 23
+5) persist.imglib.cf.tune. 23
+6) persist.imglib.cf.deghost. 24
+7) persist.imglib.cf.flash_weight. 24
+8) persist.camera.imglib.dump. 24
+9) persist.camera.fd.dump. 24
+10) persist.camera.imglib.face_sw.. 24
+11) persist.camera.imglib.face_all 24
+12) persist.camera.fd_region_filter. 25
+13) persist.camera.imglib.bsgc. 25
+14) persist.camera.imglib.fd_arm.. 25
+15) persist.camera.imglib.tp.mask. 25
+16) persist.camera.imglib.tp.effect. 25
+17) persist.camera.imglib.tp.power. 26
+18) persist.camera.imglib.fddsp. 26
+19) persist.camera.imglib.cds. 2620) persist.camera.dumpmetadata. 26
+7. MCT模块... 27
+1) persist.camera.max_prev.enable. 27
+2) persist.camera.max.snapshot. 27
+3) persist.camera.logsync. 27
+4) persist.camera.logsync.interval 27
+5) persist.camera.debugfs_root. 27
+6) persist.camera.debug.exit. 27
+8. MM-STILL模块... 28
+1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable. 28
+2) persist.camera.kpi.debug. 28
+9. QCAMERA2模块... 29
+1) persist.camera.longshot.save. 29
+2) persist.camera.jpeg_burst. 29
+3) persist.camera.tn.disable. 29
+4) persist.camera.zsl_raw.. 29
+5) persist.camera.zsl_yuv. 29
+6) persist.camera.zsl_matching. 29
+7) persist.camera.nonzsl.yuv. 30
+8) persist.camera.preview_raw.. 30
+9) persist.camera. video_raw.. 30
+10) persist.camera.snapshot_raw.. 30
+11) persist.camera.dumpimg. 30
+12) persist.camera.preview_yuv. 3013) persist.camera.raw_yuv. 31
+14) persist.camera.mem.usepool 31
+15) persist.camera.imglib.stillmore. 31
+16) persist.camera.raw.format. 31
+17) persist.camera.feature.cac. 31
+18) persist.camera.feature.restart. 31
+19) persist.sys.exif.make. 32
+20) ro.product.manufacturer. 32
+21) persist.sys.exif.model 32
+22) ro.product.model 32
+23) persist.sys.exif.model 32
+24) persist.camera.feature.shutter. 32
+25) persist.camera.kpi.debug. 33
+26) persist.debug.sf.showfps. 33
+27) persist.camera.thermal.mode. 33
+28) persist.camera.ltmforseemore. 33
+29) persist.camera.batchcount. 33
+30) persist.camera.aux.preview.size. 33
+31) persist.camera.aux.picture.size. 34
+32) persist.camera.opt.livepic. 34
+33) persist.camera.liveshot.size. 34
+34) persist.camera.preview.ubwc. 34
+35) persist.camera.led.on.period. 3436) persist.camera.retro.number. 34
+37) persist.camera.effect. 35
+38) persist.camera.stats.af.paaf. 35
+39) persist.camera.continuous.iso. 35
+40) persist.camera.auto.hdr.enable. 35
+41) persist.capture.burst.exposures. 35
+42) persist.camera.no-display. 35
+43) persist.camera.tnr_cds. 36
+44) persist.camera.tnr.video. 36
+45) persist.camera.tnr.preview.. 36
+46) persist.camera.tnr.snapshot. 36
+47) persist.camera.rdi.mode. 36
+48) persist.camera.secure.mode. 36
+49) persist.camera.zsl.interval 36
+50) persist.camera.zsl.backlookcnt. 37
+51) persist.camera.zsl.queuedepth. 37
+52) persist.camera.snapshot.number. 37
+53) persist.camera.snapshot.fd. 37
+54) persist.camera.mobicat. 37
+55) persist.capture.burst.exposures. 37
+56) persist.camera.hdr.outcrop. 38
+57) persist.camera.zsl.mode. 38
+58) persist.debug.set.fixedfps. 38
+59) persist.camera.zzhdr.enable. 3860) persist.camera.zzhdr.video. 38
+61) persist.camera.tintless. 38
+62) persist.camera.video.CDS. 39
+63) persist.camera.CDS. 39
+64) persist.camera.ois.disable. 39
+65) persist.camera.set.afd. 39
+66) persist.camera.mem.usecache. 39
+67) persist.denoise.process.plates. 39
+68) persist.camera.snap.format. 40
+69) persist.camera.video.ubwc. 40
+70) persist.camera.exif.rotation. 40
+71) persist.camera.dcrf.enable. 40
+72) persist.camera.eztune.enable. 40
+73) persist.camera.is_type. 40
+74) persist.camera.preview.seemore. 41
+75) persist.camera.offlineraw.. 41
+76) persist.camera.multi_pass. 41
+77) persist.camera.pp_scaling. 41
+78) persist.camera.llnoise. 41
+79) persist.camera.video.batchsize. 41
+80) persist.camera.longshot.stages. 42
+81) persist.camera.llc. 42
+82) persist.camera.fdvideo. 4283) persist.camera.dual.camera.dump. 42
+84) persist.camera.dual.camera.mpo. 42
+85) persist.camera.aux.camera. 42
+86) persist.camera.dc.frame.sync. 43
+87) persist.camera.HAL3.enabled. 43
+88) persist.camera.dual.camera. 43
+89) persist.camera.perflock.enable. 43
+90) persist.camera.perflock.enable. 43
+91) persist.camera.disp.num_vsync. 43
+92) persist.camera.disp.ms_to_vsync. 44
+93) persist.camera.disp.filter_max. 44
+94) persist.camera.disp.filter_min. 44
+95) persist.camera.disp.fps. 44
+96) persist.camera.dumpmetadata. 44
+一. Log部分
+8996 重新定义了自己的log规则,使用起来更加方便简洁,相关代码的主要实现部分在
+camera_dbg.c文件中。框架定义了如下6个log级别:
+名称 数值
+NONE 0
+ERROR 1
+WARN 2HIGH 3
+DBG 4
+LOW 5
+INFO 6
+注:INFO级别不可控,是一定会打印的。
+查看当前系统使能了哪些级别的log,可以使用参考命令:
+adb shell getprop | grep "camera"
+下面是开启各个模块log级别的简单描述。
+1. persist.camera.global.debug(安卓8.1 persist.vendor.camera.global.debug)
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性是总的log级别开关。
+注意: 若子模块的log级别小于该属性设置值,则以该属性为准;若子模块的log
+级别大于该属性设置值,则以子模块设置的log级别为准。
+示例:adb shell setprop persist.vendor.camera.global.debug 5
+2. persist.camera.mct.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制MCT模块的log级别。
+示例:adb shell setprop persist.camera.mct.debug 5
+3. persist.camera.sensor.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制SENSOR模块的log级别。示例:adb shell setprop persist.camera.sensor.debug 5
+4. persist.camera.iface.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IFACE模块的log级别。
+示例:adb shell setprop persist.camera.iface.logs 5
+5. persist.camera.isp.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ISP模块的log级别。
+示例:adb shell setprop persist.camera.isp.debug 5
+6. persist.camera.stats.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制STATS模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.debug 5
+7. persist.camera.stats.af.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AF模块的log级别。
+示例:adb shell setprop persist.camera.stats.af.debug 5
+8. persist.camera.stats.aec.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AEC模块的log级别。
+示例:adb shell setprop persist.camera.stats.aec.debug 5
+9. persist.camera.stats.awb.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AWB模块的log级别。
+示例:adb shell setprop persist.camera.stats.awb.debug 5
+10. persist.camera.stats.asd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ASD模块的log级别。
+示例:adb shell setprop persist.camera.stats.asd.debug 5
+11. persist.camera.stats.afd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AFD模块的log级别。
+示例:adb shell setprop persist.camera.stats.afd.debug 5
+12. persist.camera.stats.q3a.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制Q3A模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.q3a.debug 5
+13. persist.camera.stats.is.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IS模块的log级别。
+示例:adb shell setprop persist.camera.stats.is.debug 5
+14. persist.camera.stats.haf.debug数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制HAF模块的log级别。
+示例:adb shell setprop persist.camera.stats.haf.debug 5
+15. persist.camera.pproc.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制PPROC模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.pproc.debug.mask 5
+16. persist.camera.cpp.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制CPP模块的log级别。
+示例:adb shell setprop persist.camera.cpp.debug.mask 5
+17. persist.camera.c2d.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制C2D的log级别。
+示例:adb shell setprop persist.camera.c2d.debug.mask 5
+18. persist.camera.imglib.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IMGLIB模块的log级别。
+示例:adb shell setprop persist.camera.imglib.logs 5
+19. persist.camera.hal.debug
+数值:0-5功能: 设置不同的数值,将打印对应级别的log。该属性控制HAL的log级别。
+示例:adb shell setprop persist.camera.hal.debug 5
+20. persist.camera.mmstill.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制mm-still的log级别。
+示例:adb shell setprop persist.camera.mmstill.logs 5
+二. Module部分
+以module为单位,简述各个module中persist使用方法。
+1. SENSOR模块
+1) persist.camera.sensor.gain
+数值: 非负数
+功能: 手动设置real gain到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.gain 1
+2) persist.camera.sensor.linecount
+数值: 非负数
+功能: 手动设置line count到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.linecount 1024
+3) persist.dual.gain_tune
+数值: 非负数
+功能: 手动设置双摄像头gain factor。注意: 该属性在双摄像头使用场景中生效。
+示例:
+4) persist.dual.line_tune
+数值: 非负数
+功能: 手动设置双摄像头line count factor。
+注意: 该属性在双摄像头使用场景中生效。
+示例:
+5) persist.camera.fastaec
+数值: 非负整数
+功能:fast aec模式下,手动设置frame skip数目。
+示例:adb shell setprop persist.camera.fastaec 2
+6) persist.camera.iso100
+数值: 非负数
+功能: 手动设置iso100的gain数值。
+示例:adb shell setprop persist.camera.iso100 1
+7) persist.camera.csid.payload
+数值:0或4
+功能: test模式下,将csid设置为0或4模式,以便产生相应的测试pattern。
+示例:adb shell setprop persist.camera.csid.payload 4
+8) persist.camera.sensorliveconnect
+数值:0或1
+功能: 设置为1,则在代码中开启sensor live connect线程,方便调试工具实时控制AF。
+示例:adb shell setprop persist.camera.sensorliveconnect 19) persist.partial.skip
+数值:0或1
+功能: 设置为1,则使能闪光灯下的frame skip模式。
+示例:adb shell setprop persist.partial.skip 1
+10) persist.camera.led.rerdbg
+数值:0或1
+功能: 开启闪光灯去红眼功能后,若将该属性设置为1,则会打印预闪电流、持续时间、
+脉冲数目等调试信息。
+示例:adb shell setprop persist.camera.led.rerdbg 1
+11) persist.camera.cal.af
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中af校准数据。
+示例:adb shell setprop persist.camera.cal.af 1
+12) persist.camera.cal.awb
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中awb校准数据。
+示例:adb shell setprop persist.camera.cal.awb 1
+13) persist.camera.cal.lsc
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中lsc校准数据。
+示例:adb shell setprop persist.camera.cal.lsc 1
+14) persist.camera.cal.dp
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中dp校准数据。示例:adb shell setprop persist.camera.cal.dp 1
+15) persist.camera.cal.dual
+数值:0或1
+功能: 如果设置为0,则不做dual camera校准。
+示例:adb shell setprop persist.camera.cal.dual 1
+16) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,则将sensor中的meta数据发送到MCT BUS,然后通过
+mct_stream_fill_metadata_v1接口将信息传递给HAL。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+2. IFACE2模块
+1) persist.camera.isp.testgen
+数值:0或1
+功能: 若设置为1,折预览将呈现七彩条纹图像。
+示例:adb shell setprop persist.camera.isp.testgen 1
+2) persist.camera.isp.dump
+数值: 需要dump的stream type所对应的enum数值。
+功能: 使能后,会根据设置的stream type去dump相应的帧数据。路径:/data/misc/camera/
+示例:adb shell setprop persist.camera.isp.dump 2
+3) persist.camera.isp.dump_cnt
+数值: 非负整数功能: 该属性定义persist.camera.isp.dump需要dump的帧数。
+示例:adb shell setprop persist.camera.isp.dump_cnt 10
+4) persist.camera.isp.ppbypass
+数值:0或1
+功能: 使能该属性后,isp不再自己申请native buffer,而是使用从HAL map过来的buffer,并且
+buffer将不做pproc处理。
+注意: 生效前提是HAL已经申请过足够数量的buffer。
+示例:adb shell setprop persist.camera.isp.ppbypass 1
+5) persist.camera.isp.buf_cnt
+数值: 非零正整数
+功能:stream on后,会request image buffer,有两种方式,一是map HAL的buffer,
+二是自己在本地申请native buffer。如果选择方式二,则该属性将定义native buffer的数量。
+注意: 生效前提是ISP自己在本地申请native buffer。
+示例:adb shell setprop persist.camera.isp.buf_cnt 4
+6) persist.camera.hvx_lib_1
+数值:external chromatix lib名称
+功能: 手动指定加载的后置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_1 libchromatix_xxx.so
+7) persist.camera.hvx_lib_2
+数值:external chromatix lib名称
+功能: 手动指定加载的前置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_2 libchromatix_xxx.so3. ISP2模块
+1) persist.camera.isp.turbo
+数值:0或1
+功能: 若设置为1,则将turbo clk设置为ISP默认工作clk。
+注意: 设置完成后,需要重启手机才会生效。
+示例:adb shell setprop persist.camera.isp.turbo 1
+2) persist.camera.isp.dualisp
+数值:0或1
+功能: 若设置为1,将强制使用两个VFE工作。若设置为0,则将根据默认clk与user请求clk
+的大小关系来决定使用VFE数量。
+注意: 若channel中有raw stream存在,该属性将失效。
+示例:adb shell setprop persist.camera.isp.dualisp 1
+3) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,将分配meta dump的资源。同时,将打印mesh_roll、tintless_algo等sub isp
+module中的调试信息或在/data/misc/camera/路径下生成相关调试信息文件。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+4) persist.camera.tintless.skip
+数值: 非负整数
+功能: 设置tintless所需要skip的frame数目,默认是skip 2帧。
+示例:adb shell setprop persist.camera.tintless.skip 2
+5) persist.camera.saturationext数值:true或false
+功能:
+示例:
+6) persist.camera.isp.regdump
+数值: 非负整数
+功能:isp online process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.regdump 30
+7) persist.camera.isp.offregdump
+数值: 非负整数
+功能:isp offline process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.offregdump 30
+8) persist.camera.isp.cac_disable
+数值:0或1
+功能: 手动开/关CAC功能。
+示例:adb shell setprop persist.camera.isp.cac_disable 1
+9) persist.camera.isp.ltm_disable
+数值:0或1
+功能: 手动开/关LTM功能。
+示例:adb shell setprop persist.camera.isp.ltm_disable 1
+10) persist.camera.ltm.sw
+数值:
+功能:
+示例:11) persist.camera.ltm.filteroff
+数值:0或1
+功能:
+示例:
+12) persist.camera.ltm.out
+数值:
+功能:
+示例:
+13) persist.camera.ltm.overlap
+数值:0-50
+功能: 手动定义cell overlap factor的大小。
+示例:adb shell setprop persist.camera.isp.ltm_disable 10
+4. STATS模块
+1) persist.camera.ledcalib.enabled
+数值:0或1
+功能: 手动开/关双色温LED校准功能。
+示例:adb shell setprop persist.camera.ledcalib.enabled 1
+2) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat。
+示例:adb shell setprop persist.camera.mobicat 1
+5. PPROC-NEW模块
+1) persist.enable.max.pending.buf数值:1或2
+功能: 定义cpp硬件一次操作所处理的buffer数量。
+示例:adb shell setprop persist.enable.max.pending.buf 1
+2) persist.camera.c2d.disable
+数值:0或1
+功能: 手动开/关C2D。
+示例:adb shell setprop persist.camera.c2d.disable 1
+3) persist.camera.tnr.force_enable
+数值:0或1
+功能: 手动开/关TNR。
+示例:adb shell setprop persist.camera.tnr.force_enable 1
+4) persist.camera.enable_vpu
+数值:0或1
+功能: 手动开/关VPU。
+示例:adb shell setprop persist.camera.enable_vpu 1
+5) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump PPROC的Metadata到/data/misc/camera/路径下。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+6. IMGLIB模块
+1) persist.camera.imglib.hdr.dump
+数值:no/in/out/in out功能: 设置为no,关闭HDR dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.hdr.dump in
+2) persist.camera.imglib.cac.dump
+数值:no/in/out/inout
+功能: 设置为no,关闭CAC dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.cac.dump no
+3) persist.camera.mobicat
+数值:0与非0
+功能: 设置为0,关闭这个功能;设置为其他值,将在返回给HAL的meta信息中添加mobicat
+相关的调试信息。
+注意: 该属性需要配合HAL中的同名属性使用。
+示例:adb shell setprop persist.camera.mobicat 0
+4) persist.camera.imglib.cf.ver
+数值: chroma flash 库的版本号
+功能: 返回使用的chroma flash 库版本号给chroma flash初始化提供版本信息。
+注意: 该属性一般有系统设置,此处仅做读取操作。
+示例:adb shell getprop persist.camera.imglib.cf.ver
+5) persist.imglib.cf.tune
+数值:0或1
+功能: "手动设置chroma flash参数"的总开关,使能后,才能通过其他属性手动修改相应参数。
+示例:adb shell setprop persist.imglib.cf.tune 1
+6) persist.imglib.cf.deghost数值:0或1
+功能: 手动开/关deghost功能。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.deghost 1
+7) persist.imglib.cf.flash_weight
+数值:1-15
+功能: 手动设置chroma flash 亮度等级。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.flash_weight 1
+8) persist.camera.imglib.dump
+数值:0或1
+功能: imglib模块frame dump总开关。
+示例:adb shell setprop persist.camera.imglib.dump 1
+9) persist.camera.fd.dump
+数值:0-4
+功能: 设置为0,将关闭face frame dump功能;设置为1,将dump non-tracked faces帧数据;
+设置为2,将dump tracked faces帧数据;设置为3,将dump non-detected faces帧数据;设置为4,
+将dump所有的帧数据。
+注意: 该属性只有在persist.camera.imglib.dump为1的前提下才能生效。
+示例:adb shell setprop persist.camera.fd.dump 1
+10) persist.camera.imglib.face_sw
+数值:0或1
+功能: 手动开/关软件辅助人脸识别功能。
+示例:adb shell setprop persist.camera.imglib.face_sw 111) persist.camera.imglib.face_all
+数值:0或1
+功能: 手动开/关全角度搜寻人脸功能。使能该功能后,在识别人脸时,将不考虑手机的方向。
+示例:adb shell setprop persist.camera.imglib.face_all 1
+12) persist.camera.fd_region_filter
+数值:0或1
+功能: 使能后,将根据region来执行相应的滤波设定。相应region参数,由chromatix加载进来。
+示例:adb shell setprop persist.camera.fd_region_filter 1
+13) persist.camera.imglib.bsgc
+数值:0或1
+功能: 设置为1,将Enable blink, smile, gaze, contour detection。
+示例:adb shell setprop persist.camera.imglib.bsgc 1
+14) persist.camera.imglib.fd_arm
+数值:0或1
+功能: 设置为0,将优先申请HW FD资源。设置为1,将不优先使用HW FD资源,将会优先去申请
+DSP FD资源。
+示例:adb shell setprop persist.camera.imglib.fd_arm 1
+15) persist.camera.imglib.tp.mask
+数值:0或1
+功能: 在TruePortrait模式下,设置为1,将使能bodymask。
+示例:adb shell setprop persist.camera.imglib.tp.mask 1
+16) persist.camera.imglib.tp.effect
+数值:0-2功能: 在TruePortrait模式下,手动设置effect,0代表boke effect,1代表halo effect,2代表notion
+blur effect。
+示例:adb shell setprop persist.camera.imglib.tp.effect 1
+17) persist.camera.imglib.tp.power
+数值: 正整数
+功能: 在TruePortrait模式下,手动设置effect的强度,数值越大,强度越大。
+示例:adb shell setprop persist.camera.imglib.tp.power 1
+18) persist.camera.imglib.fddsp
+数值:0或1
+功能: 设置为1,将强制使用FD DSP资源。
+示例:adb shell setprop persist.camera.imglib.fddsp 1
+19) persist.camera.imglib.cds
+数值:0-5
+功能: 手动选择CDS的运行模式:C、NEON、NENO_ASM、DSP、GPU、FCV。
+示例:adb shell setprop persist.camera.imglib.cds 1
+20) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将meta中填充CAC相关调试信息。并且,可以dump WNR相关参数到/data/misc/
+camera/路径下
+示例:adb shell setprop persist.camera.dumpmetadata 1
+7. MCT模块
+1) persist.camera.max_prev.enable
+数值:0或1功能: 使能后,将使用符合条件的最大尺寸来做preview。
+示例:adb shell setprop persist.camera.max_prev.enable 1
+2) persist.camera.max.snapshot
+数值:0或1
+功能: 使能后,将使用符合条件的最大尺寸来做sanpshot。
+示例:adb shell setprop persist.camera.max.snapshot 1
+3) persist.camera.logsync
+数值:0或1
+功能:
+示例:
+4) persist.camera.logsync.interval
+数值:
+功能:
+示例:
+5) persist.camera.debugfs_root
+数值:
+功能:
+示例:
+6) persist.camera.debug.exit
+数值:
+功能:
+示例:
+8. MM-STILL模块1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable
+数值:0或1
+功能: 开启后,将打印jpeg的quality table调试信息。
+示例:adb shell setprop persist.camera.jpeg.dumpqtable 1
+2) persist.camera.kpi.debug
+数值:1或2
+功能: 设置KPI调试信息的级别,设置为1表示KPI_APT,设置为2表示KPI_DBG级别。
+示例:adb shell setprop persist.camera.kpi.debug 1
+9. QCAMERA2模块
+1) persist.camera.longshot.save
+数值:0或1
+功能: 是否启动在HAL存储连拍照片的routine。
+示例:adb shell setprop persist.camera.longshot.save 1
+2) persist.camera.jpeg_burst
+数值:0或1
+功能: 手动开/关jpeg burst模式。
+注意: 若有设置persist.camera.longshot.save,该属性将失效。
+示例:adb shell setprop persist.camera.jpeg_burst 1
+3) persist.camera.tn.disable
+数值:0或1
+功能: 手动开/关jpeg thumbnail编码功能。
+示例:adb shell setprop persist.camera.tn.disable 1
+4) persist.camera.zsl_raw数值:0或1
+功能: 使能后,将dump zsl channel 中的raw stream到文件。
+示例:adb shell setprop persist.camera.zsl_raw 1
+5) persist.camera.zsl_yuv
+数值:0或1
+功能: 使能后,将dump zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.zsl_yuv 1
+6) persist.camera.zsl_matching
+数值:0或1
+功能: 开启后,将打印ZSL super buffer里面每块子buffer的编号、对应的frame_idx、属于的stream
+类型、时间戳等信息。
+示例:adb shell setprop persist.camera.zsl_matching 1
+7) persist.camera.nonzsl.yuv
+数值:0或1
+功能: 使能后,将dump non-zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.nonzsl.yuv 1
+8) persist.camera.preview_raw
+数值:0-63
+功能: 开启后,将dump preview raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera.preview_raw 5
+9) persist.camera. video_raw
+数值:0-63功能: 开启后,将dump video raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera. video_raw 5
+10) persist.camera.snapshot_raw
+数值:0或1
+功能: 开启后,将dump snapshot raw stream到文件。
+示例:adb shell setprop persist.camera.snapshot_raw 1
+11) persist.camera.dumpimg
+数值:0或1
+功能: 开启后,将dump jpeg编码之前的YUV数据和编码之后的jpeg图像到文件。
+示例:adb shell setprop persist.camera.dumpimg 1
+12) persist.camera.preview_yuv
+数值:0-63
+功能: 手动定义preview stream中的buffer数量。
+示例:adb shell setprop persist.camera.preview_yuv 5
+13) persist.camera.raw_yuv
+数值:0或1
+功能: 开启后,将在preview/zsl/capture channel中强制添加raw stream。
+示例:adb shell setprop persist.camera.raw_yuv 1
+14) persist.camera.mem.usepool
+数值:0或1
+功能: 开启后,在申请分配stream buffer的时候,优先从内存池中分配。
+示例:adb shell setprop persist.camera.mem.usepool 115) persist.camera.imglib.stillmore
+数值: 非负整数
+功能: 手动设置stillmore功能所需要的buffer数量。
+注意: 设置的数值要在stillmore 这个功能做支持的min与max buffer cnt之间时,才能生效。
+示例:adb shell setprop persist.camera.imglib.stillmore 1
+16) persist.camera.raw.format
+数值: 根据宏
+功能:设置raw stream的图像格式,例如,设置为宏格式CAM_FORMAT_BAYER_QCOM
+_RAW_10BPP_GBRG。
+示例:adb shell setprop persist.camera.raw.format 1
+17) persist.camera.feature.cac
+数值:0或1
+功能: 手动开/关CAC。
+示例:adb shell setprop persist.camera.feature.cac 1
+18) persist.camera.feature.restart
+数值:0或1
+功能:定义image capture期间,是否需要重启preview。
+示例:adb shell setprop persist.camera.feature.restart 1
+19) persist.sys.exif.make
+数值: null或任意str
+功能: 手动定制写的exif信息(manufacturer)内容的开关。
+示例:adb shell setprop persist.sys.exif.make null
+20) ro.product.manufacturer数值:str
+功能: 手动定制写的exif信息(manufacturer)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.manufacturer qcom
+21) persist.sys.exif.model
+数值: null或任意str
+功能: 手动定制写的exif信息(model)内容的开关。
+示例:adb shell setprop persist.sys.exif.model null
+22) ro.product.model
+数值:str
+功能: 手动定制写的exif信息(model)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.model qcom
+23) persist.sys.exif.model
+数值:str
+功能: 手动定制写的exif信息(description)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop persist.sys.exif.model qcom
+24) persist.camera.feature.shutter
+数值:0或1
+功能: 开启后,将在capture结束后立刻播放快门声音。
+示例:adb shell setprop persist.camera.feature.shutter 1
+25) persist.camera.kpi.debug数值:1或2
+功能: 设置1,则打印KPI log级别为KPI_ONLY;设置2,则打印KPI log级别为KPI_DBG。
+示例:adb shell setprop persist.camera.kpi.debug 1
+26) persist.debug.sf.showfps
+数值:0或1
+功能: 开启后,将在log中实时打印preview的帧率。
+示例:adb shell setprop persist.debug.sf.showfps 1
+27) persist.camera.thermal.mode
+数值: frameskip或fps
+功能: 若设置为frameskip模式,则thermal将按照指定的frame skip pattern来丢帧;若设置为fps(
+默认模式),则thermal将按照默认设定来动态调整帧率。
+示例:adb shell setprop persist.camera.thermal.mode fps
+28) persist.camera.ltmforseemore
+数值:0或1
+功能: 在seeemore功能下开启/关闭LTM。
+示例:adb shell setprop persist.camera.ltmforseemore 1
+29) persist.camera.batchcount
+数值: 非0整数
+功能: 手动定义KEY_QC_VIDEO_BATCH_SIZE的数值。
+示例:adb shell setprop persist.camera.batchcount 1
+30) persist.camera.aux.preview.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的预览size。
+示例:adb shell setprop persist.camera.aux.preview.size 320x4031) persist.camera.aux.picture.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的照片size。
+示例:adb shell setprop persist.camera.aux.picture.size 320x240
+32) persist.camera.opt.livepic
+数值:0或1
+功能: 使能后,live snapshot时将自动选用最优的照片尺寸。
+示例:adb shell setprop persist.camera.opt.livepic 1
+33) persist.camera.liveshot.size
+数值: widthxheight,例如320x240
+功能: 手动设置live snapshot的照片尺寸。
+示例:adb shell setprop persist.camera.liveshot.size 320x240
+34) persist.camera.preview.ubwc
+数值:0或1
+功能: 开启后,将preview format强制设置为CAM_FORMAT_YUV_420_NV12_UBWC格式。
+示例:adb shell setprop persist.camera.preview.ubwc 1
+35) persist.camera.led.on.period
+数值:0-800
+功能:设置 burst LED on的持续时间,如果设置数值为小于0,则使用默认值(300)。
+示例:adb shell setprop persist.camera.led.on.period 300
+36) persist.camera.retro.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_NUM_RETRO_BURST_PER_SHUTTER。示例:adb shell setprop persist.camera.retro.number 1
+37) persist.camera.effect
+数值:"none"/ "mono"/ "negative"/ "solarize"/ "sepia"/ "posterize"/ "whiteboard"/ "blackboard"/ "aqua
+"
+功能: 手动设置effect。
+示例:adb shell setprop persist.camera.effect none
+38) persist.camera.stats.af.paaf
+数值:0或1
+功能: 手动开/关PAAF。
+示例:adb shell setprop persist.camera.stats.af.paaf 1
+39) persist.camera.continuous.iso
+数值: 非0正整数
+功能: 手动设置KEY_QC_CONTINUOUS_ISO。
+示例:adb shell setprop persist.camera.continuous.iso 100
+40) persist.camera.auto.hdr.enable
+数值:0或1
+功能: 手动开/关Auto HDR。
+示例:adb shell setprop persist.camera.auto.hdr.enable 1
+41) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 10
+42) persist.camera.no-display数值:0或1
+功能: 手动开/关No Display Preview功能。
+示例:adb shell setprop persist.camera.no-display 1
+43) persist.camera.tnr_cds
+数值:0或1
+功能: 手动开/关TNR with CDS功能。
+示例:adb shell setprop persist.camera.tnr_cds 1
+44) persist.camera.tnr.video
+数值:0或1
+功能: 手动开/关TNR Video功能。
+示例:adb shell setprop persist.camera.tnr.video 1
+45) persist.camera.tnr.preview
+数值:0或1
+功能: 手动开/关TNR Preview功能。
+示例:adb shell setprop persist.camera.tnr.preview 1
+46) persist.camera.tnr.snapshot
+数值:0或1
+功能: 手动开/关TNR Sanpshot功能。
+示例:adb shell setprop persist.camera.tnr.snapshot 1
+47) persist.camera.rdi.mode
+数值:0或1
+功能: 手动开/关ISP的RDI接口。
+示例:adb shell setprop persist.camera.rdi.mode 148) persist.camera.secure.mode
+数值:0或1
+功能: 手动开/关Secure模式。
+示例:adb shell setprop persist.camera.secure.mode 1
+49) persist.camera.zsl.interval
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_INTERVAL。
+示例:adb shell setprop persist.camera.zsl.interval 1
+50) persist.camera.zsl.backlookcnt
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_LOOKBACK。
+示例:adb shell setprop persist.camera.zsl.backlookcnt 1
+51) persist.camera.zsl.queuedepth
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_QUEUE_DEPTH。
+示例:adb shell setprop persist.camera.zsl.queuedepth 1
+52) persist.camera.snapshot.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_BURST_NUM。
+示例:adb shell setprop persist.camera.snapshot.number 1
+53) persist.camera.snapshot.fd
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_FD_DATA。示例:adb shell setprop persist.camera.snapshot.fd 1
+54) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat功能。
+示例:adb shell setprop persist.camera.mobicat 1
+55) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 1
+56) persist.camera.hdr.outcrop
+数值:0或1
+功能: 手动开/关HDR Output Crop功能。
+示例:adb shell setprop persist.camera.hdr.outcrop 1
+57) persist.camera.zsl.mode
+数值:0或1
+功能: 手动开/关ZSL模式。
+示例:adb shell setprop persist.camera.zsl.mode 1
+58) persist.debug.set.fixedfps
+数值:0-30
+功能: 手动设置相机预览的固定帧率数值。
+示例:adb shell setprop persist.debug.set.fixedfps 15
+59) persist.camera.zzhdr.enable
+数值:0或1功能: 手动开/关Sensor Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.enable 1
+60) persist.camera.zzhdr.video
+数值:0或1
+功能: 手动开/关Video Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.video 1
+61) persist.camera.tintless
+数值:enable/disable
+功能: 手动开/关tintless功能。
+示例:adb shell setprop persist.camera.tintless enable
+62) persist.camera.video.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_VIDEO_CDS_MODE。
+示例:adb shell setprop persist.camera.video.CDS on
+63) persist.camera.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_CDS_MODE。
+示例:adb shell setprop persist.camera.CDS on
+64) persist.camera.ois.disable
+数值:0或1
+功能: 手动开/关ois。
+示例:adb shell setprop persist.camera.ois.disable 1
+65) persist.camera.set.afd数值:0-5
+功能: 手动设置Antibanding模式:OFF、60HZ、50HZ、AUTO、AUTO_50HZ、AUTO_60HZ。
+示例:adb shell setprop persist.camera.set.afd 1
+66) persist.camera.mem.usecache
+数值: 特定str
+功能: 手动设置KEY_QC_CACHE_VIDEO_BUFFERS。
+示例:adb shell setprop persist.camera.mem.usecache str
+67) persist.denoise.process.plates
+数值:0-3
+功能: 手动设置降噪类型:YCBCR_PLANE、CBCR_ONLY、STREAMLINE_YCBCR、
+STREAMLINED_CBCR。
+示例:adb shell setprop persist.denoise.process.plates 1
+68) persist.camera.snap.format
+数值:1或非1
+功能: 手动设置snapshot stream的YUV类型,若设置为1,则使用CAM_FORMAT
+_YUV_422_NV61,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV21格式。
+示例:adb shell setprop persist.camera.snap.format 1
+69) persist.camera.video.ubwc
+数值:1或非1
+功能: 手动设置video stream的YUV类型,若设置为1,则使用CAM_FORMAT_YUV_420_
+NV12_UBWC,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV12_VENUS格式。
+示例:adb shell setprop persist.camera.video.ubwc 1
+70) persist.camera.exif.rotation
+数值:on/off功能: 手动开/关exif rotation。
+示例:adb shell setprop persist.camera.exif.rotation on
+71) persist.camera.dcrf.enable
+数值:0或1
+功能: 手动开/关DCRF(dual-camera-range-finding)功能。
+示例:adb shell setprop persist.camera.dcrf.enable 1
+72) persist.camera.eztune.enable
+数值:0或1
+功能: 手动开/关Eztune功能。
+示例:adb shell setprop persist.camera.eztune.enable 1
+73) persist.camera.is_type
+数值:0-4
+功能: 手动设置IS的类型:NONE、DIS、EIS_1_0、EIS_2_0。
+示例:adb shell setprop persist.camera.is_type 1
+74) persist.camera.preview.seemore
+数值:0或1
+功能: 手动开/关Preview SeeMore功能。
+示例:adb shell setprop persist.camera.preview.seemore 1
+75) persist.camera.offlineraw
+数值:0或1
+功能: 手动开/关Offline RAW功能。
+示例:adb shell setprop persist.camera.offlineraw 1
+76) persist.camera.multi_pass数值:0或非0
+功能: 设置为0将生效,其余数值为无效数值。开启后,在Zoom触发后,将不会进行两次PP
+通道的数据处理。
+示例:adb shell setprop persist.camera.multi_pass 0
+77) persist.camera.pp_scaling
+数值:0或1
+功能: 返回为1,表示使用的是CPP scaling。否则,使用VFE scaling。
+示例:adb shell getprop persist.camera.pp_scaling
+78) persist.camera.llnoise
+数值:0或1
+功能: 返回为1,表示low light noise被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.llnoise
+79) persist.camera.video.batchsize
+数值:0-16
+功能: 手动设置KEY_QC_VIDEO_BATCH_SIZE。
+示例:adb shell setprop persist.camera.video.batchsize 1
+80) persist.camera.longshot.stages
+数值:0-4
+功能: 手动设置连拍需要的buffer数目。
+示例:adb shell setprop persist.camera.longshot.stages 2
+81) persist.camera.llc
+数值:0或1
+功能: 手动开/关low light capture功能。
+示例:adb shell setprop persist.camera.llc 182) persist.camera.fdvideo
+数值:0或1
+功能: 返回为1,表示Face Detection in Video被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.fdvideo
+83) persist.camera.dual.camera.dump
+数值:0或1
+功能: 开启后,将dump双摄像头的图片数据到/data/misc/camera/路径下。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.dump 1
+84) persist.camera.dual.camera.mpo
+数值:0或1
+功能: 是否使能双摄像头拍照图片合成。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.mpo 1
+85) persist.camera.aux.camera
+数值:0或1
+功能: 使能后,AUX摄像头将在"逻辑"上面可见,即对用户可见。若不使能,则物理上是两个摄像头
+,但对用户来说相当于只有一个摄像头。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.aux.camera 1
+86) persist.camera.dc.frame.sync
+数值:0或1
+功能: 手动开/关双摄像头帧同步功能。注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dc.frame.sync 1
+87) persist.camera.HAL3.enabled
+数值:0或1
+功能: 开启后,将使用HAL3。
+示例:adb shell setprop persist.camera.HAL3.enabled 1
+88) persist.camera.dual.camera
+数值:0或1
+功能: 手动开/关双摄像头模式。
+示例:adb shell setprop persist.camera.dual.camera 1
+89) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+90) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+91) persist.camera.disp.num_vsync
+数值:
+功能:display tuning相关。
+示例:
+92) persist.camera.disp.ms_to_vsync数值:
+功能:display tuning相关。
+示例:
+93) persist.camera.disp.filter_max
+数值:
+功能:display tuning相关。
+示例:
+94) persist.camera.disp.filter_min
+数值:
+功能:display tuning相关。
+示例:
+95) persist.camera.disp.fps
+数值:
+功能:display tuning相关。
+示例:
+96) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump ZSL/Capture/Snapshot channel中的Metadata到/data/misc/camera/路径下
+。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+
+adb shell setprop persist.vendor.camera.dumpmetadata 1
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+kernel/drivers/leds/leds-qpnp.c
+ 257 enum qpnp_leds {
+ 258         QPNP_ID_WLED = 0,
+ 259         QPNP_ID_FLASH1_LED0,
+ 260         QPNP_ID_FLASH1_LED1,
+ 261         QPNP_ID_RGB_RED,
+ 262         QPNP_ID_RGB_GREEN,  //对应qcom,id = <4>;
+ 263         QPNP_ID_RGB_BLUE,
+ 264         QPNP_ID_LED_MPP,
+ 265         QPNP_ID_KPDBL,
+ 266         QPNP_ID_LED_GPIO,
+ 267         QPNP_ID_MAX,
+ 268 };
+
+
+
+kernel/arch/arm/boot/dts/qcom/msm-pmi8994.dtsi
+qcom,id = <4>;
+对应
+linux,name = "green";
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+宝蓝小花瓣
+写的有点乱，因为病史太长了，哈哈。现在总结一下我的经验吧，也许不是对每个人都适用的，但是是这些年来我用过的最好的方法了！
+1. 不用洗面奶洗脸，也不用冰凉或者过热的自来水洗脸。
+我6月下旬发疹子的那段时间，我男票说每天早晨起床我的脸都是最好看的时候，疹子不红，看不出来。洗完脸就彻底毁了，红红的还脱皮。于是他就跟我说让我不要用洗面奶什么的刺激脸了，不洗脸看着多好啊！又不脏…然后我就乖乖的再也没有用洗面奶洗过脸，也尽量避免用自来水洗脸。我现在每天就用雅漾大喷擦脸，或者中药水洗脸。每天早晨起床用雅漾喷雾把化妆棉喷湿轻轻擦去脸上油脂和前一晚剩余的护肤品或者药膏、然后涂眼霜，面乳。然后出门，lz的工作每天是对着电脑的，也没有刺激到皮肤什么的。
+2. 中药煮水洗脸做面膜
+lz的中药外洗方子其实不是专门针对脂溢性皮炎的，而且是lz从天涯治湿疹的帖子里扒来的。那个lz说这个方子洗好了他20多年的湿疹！于是lz就果断试了！效果真的不错！不过一定要配合内服中药哦！外洗方子我发给大家，但是好的中医需要大家自己去找去碰，内外兼治才好哦。方子为：金银花30 地肤子30 蛇床子30 苦参30 千里光30 混合在一起弄匀 每次抓一小把放到锅里煮 煮好了放到温热就可以洗洗脸然后泡个面膜进去然后敷脸了 lz因为身上还有湿疹所以每次煮的比较多 只有面部皮炎的筒子们可以每次捏一点点出来泡20分钟然后用毛巾占着擦洗面部后敷个面膜就好啦！每天一次哦，当然啦如果您有时间洗两次更好、我没时间所以只晚上这样做～
+3.只用敏感肌肤用的护肤品，不用油性太大的护肤品
+吧里面推荐的黄芪霜lz也试过，可惜一涂就起皮炎，果断弃了…lz认为脂溢性皮炎就是油脂分泌过多、异常，所以lz坚持清爽保湿。lz现在用的理肤泉特安的润肤乳、特别水，还有雅漾的三重修复乳，这个乳比较油，lz每次用之前都要用雅漾喷雾稀释之后才涂。这两款乳液都很温和，绝对不会刺激的，并且会帮助修复皮肤，重建肌肤屏障哦。
+4. 维生素b6软膏
+lz从来没用过什么它可莫司神马的，除了用过激素就是氧化锌鱼石脂啥的了，统统不好用！有一天lz看到淘宝有卖维生素b6软膏的，于是就果断淘宝了…很便宜，1.5一支。无色无味，lz每次只用一点点，抹在起疹子的部位，薄薄的一层。效果不是第一天涂第二天就好了那么快的，大概涂了三天吧，并且用中药水也洗，疹子就结痂了。现在lz时不时的涂一下，已经没有再起过疹子了…
+5.补充维生素b族，葡萄紫胶囊，善存
+我买的是维生素b50，保健品那种，每天吃一颗，也吃葡萄籽胶囊，这个抗过敏抗氧化的，善存是老妈让我吃的，说是增强免疫力！我就吃了…这个效果不好说，也许吃的只是心理安慰吧，哈哈！
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+APK签名
+1.进入<Android_Source_Path>/build/target/product/security,找到【platform.pk8】和【platform.x509.pem】系统密钥。
+2.进入<Android_Source_Path>/build/tools/signapk找到SignApk.java，运行javac编译成SignApk.class
+3.执行命令java com.android.signapk.SignApk platform.x509.pem platform.pk8 input.apk output.apk
+OK， 您已经完成了对input.apk 的签名，输出文件是output.apk。
+另外，命令java com.android.signapk.SignApk platform.x509.pem platform.pk8 input.apk output.apk
+不单可以对apk文件进行重签名，也可以对所有的zip文件进行重签名，包括ROM文件。
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+1. 宏可以像函数一样被定义，例如：
+#define min(x,y) (x 但是在实际使用时，只有当写上min()，必须加括号，min才会被作为宏展开，否则不做任何处理。
+
+2. 如果宏需要参数，你可以不传，编译器会给你警告(宏参数不够)，但是这会导致错误。如C++书籍中所描
+述的，编译器(预处理器)对宏的语法检查不够，所以更多的检查性工作得你自己来做。
+
+3. 很多程序员不知道的#和##
+#符号把一个符号直接转换为字符串，例如：
+#define STRING(x) #x
+const char *str = STRING( test_string ); str的内容就是"test_string"，也就是说#会把其后的符号
+直接加上双引号。
+##符号会连接两个符号，从而产生新的符号(词法层次)，例如：
+#define SIGN( x ) INT_##x
+int SIGN( 1 ); 宏被展开后将成为：int INT_1;
+
+4. 变参宏，这个比较酷，它使得你可以定义类似的宏：
+#define LOG( format, ... ) printf( format, __VA_ARGS__ )
+LOG( "%s %d", str, count );
+__VA_ARGS__是系统预定义宏，被自动替换为参数列表。
+
+5. 当一个宏自己调用自己时，会发生什么？例如：
+#define TEST( x ) ( x + TEST( x ) )
+TEST( 1 ); 会发生什么？为了防止无限制递归展开，语法规定，当一个宏遇到自己时，就停止展开，也就是
+说，当对TEST( 1 )进行展开时，展开过程中又发现了一个TEST，那么就将这个TEST当作一般的符号。TEST(1)
+最终被展开为：1 + TEST( 1) 。
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+proc_create驱动文件节点, 创建文件节点
+struct proc_dir_entry *proc_file_entry;
+
+#include <linux/module.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+
+static int hello_proc_show(struct seq_file *m, void *v) {
+  seq_printf(m, "Hello proc!\n");
+  return 0;
+}
+
+static int hello_proc_open(struct inode *inode, struct  file *file) {
+  return single_open(file, hello_proc_show, NULL);
+}
+
+static const struct file_operations hello_proc_fops = {
+  .owner = THIS_MODULE,
+  .open = hello_proc_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
+};
+
+static int __init hello_proc_init(void) {
+  proc_create("hello_proc", 0, NULL, &hello_proc_fops);
+  return 0;
+}
+
+static void __exit hello_proc_exit(void) {
+  remove_proc_entry("hello_proc", NULL);
+}
+
+MODULE_LICENSE("GPL");
+module_init(hello_proc_init);
+module_exit(hello_proc_exit);
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+qmi接口例子
+sensors-qmi.c
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+在SBL/XBL 中加串口UART log
+A. Print char string
+#include "boot_logger.h"
+boot_log_message("Uart log in SBL/XBL");
+B. Print char string with parameter
+#include "boot_logger.h"
+char UartStrBuf[64] = {0};
+memset(UartStrBuf, 0, 64);
+snprintf(UartStrBuf, 64, "Uart log in SBL/XBL with parameter %x", Variable);
+UartStrBuf[63] = 0;
+boot_log_message(UartStrBuf);
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+打印real_gain和snap_lux_idx填写aec trigger points
+vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/stats/q3a/aec/aec_biz.c +1043
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+/* TL84 Whitebalance - RGB */
+荧光
+/* D50 Whitebalance - RGB */
+日光
+/* A Whitebalance - RGB */
+白炽光
+/* D65 Whitebalance - RGB */
+阴天
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+芯片平台与ISP pipeline源文件的对应关系
+芯片平台与ISP pipeline源文件的对应关系如下
+Chipset isp_pipeline file
+MSM8996 isp_pipeline47.c
+MSM8994 isp_pipeline46.c
+MSM8084/MSM8992 isp_pipeline44.c
+MSM8953/MSM8937/MSM8917 isp_pipeline42.c
+MSM8976/MSM8952/MSM8956 isp_pipeline41.c
+MSM8939/MSM8916 isp_pipeline40.c
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Camera System Comparison (cont.)
+
+MSM8996
+ ISP1 – 28 MP
+ ISP2 – 13 MP 
+
+Maximum output sizes
+(constraint on width) 
+
+ISP1 enc – 6272
+ISP1 view – 4608+10%
+ISP2 enc – 4608
+ISP2 view – 4608+10%
+
+
+JPEG hardware 硬件编码器只有一个,8994有2个
+ 1x encoder,
+ 1x decoder
+
+
+ VFE and CPP MHz
+Nominal/Turbo mode  
+
+
+JPEG hardware
+MIPI CSI2 ports DPHY 4/4/4 or 4/4/2/1 4/4/4 or 4/4/2/1 4/4/4 or 4/4/2/1
+JPEG hardware  2x encoder
+ 1x decoder
+ 1xDMA  1x encoder,
+ 1x decoder  1x encoder
+VFE feature highlights Based on MSM8992 update, Based on MSM8994 update,
+FIR+IIR Dual AF,
+BPC, Demosaic
+CAC2+SNR, LTM, Green
+Imbalance, Pedestal Based on MSM8996 update,
+PDPC, zzHDR, ABF3.4, Improved
+Green Imbalance, Stats upgrades
+CPP feature highlights None Based on MSM8994 update,
+Low Light Chroma Denoise Based on MSM8996 update,
+RNR applied to WNR and ASF
+Face Detection Hardware Hardware Hardware
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera AWB收敛, 提高色温也可以加快收敛
+
+mm-camera/mm-camera2/media-controller/modules/stats/q3a/awb/awb.h
+修改这个+#define INITIAL_CCT                       (5000) /* TL84 */
+
+请提高这个initi cct，从log看，第一帧4100到
+Line 896: E/mm-camera-CORE( 330): awb_estimate_color_temperature: Bayer AWB CCT: 7125.000000
+有14帧。
+另外
+// AWB aggressiveness
+// 0 low aggressive
+// 1 medium aggressive
+// 2 high aggressive
+/*********************************************************************/
+
+0, /* AWB Aggressiveness */
+提供AWB收敛速度可以调整为1。
+
+跳帧(5帧和以上可能会有问题, 放大拍照可能卡死)
+~/project/cb03/vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/sensor_libs/ov8858_q8v19w/ov8858_q8v19w_lib.c
+.sensor_num_frame_skip = 1,
+
+
+
+sdm450/vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/chromatix/0310/chromatix_s5k3l8/3A/zsl_video/chromatix_s5k3l8_zsl_video_ak7345.h
+
+初始曝光,收敛
+220, /* AEC Start Index */
+
+// The initial exposure index when sensor starts streaming in fast AEC mode
+// Default value: 240.
+// Data range: 0 to 500.
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+(cb03客户)预览拍照正常, 但是图库打开看到图片转了90度, 可能是Gsensor问题, 如果没有Gsensor,
+就需要修改APK代码
+
+@@ -205,7 +205,8 @@ public class CameraActivity extends Activity
+     private OnScreenHint mStorageHint;
+     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
+     private boolean mSecureCamera;
+-    private int mLastRawOrientation;
++    //private int mLastRawOrientation;
++    private int mLastRawOrientation = 0;
+     private MyOrientationEventListener mOrientationListener;
+     private Handler mMainHandler;
+     private PanoramaViewHelper mPanoramaViewHelper;
+
+
+@@ -200,7 +200,8 @@ public class PhotoModule
+     private boolean mLastPhotoTakenWithRefocus = false;
+ 
+     // The degrees of the device rotated clockwise from its natural orientation.
+-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
++    //private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
++    private int mOrientation = 0;
+     private ComboPreferences mPreferences;
+     private String mPrevSavedCDS;
+
+
+@@ -185,8 +185,8 @@ public class VideoModule implements CameraModule,
+             "persist.camera.cpp.duplication";
+ 
+     // The degrees of the device rotated clockwise from its natural orientation.
+-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
+-
++    //private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
++    private int mOrientation = 0;
+      private int mZoomValue;  // The current zoom value.
+      private boolean mStartRecPending = false;
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+shell显示时间 时间脚本
+date1=`date +"%Y-%m-%d_%H:%M:%S"`
+make update-api
+make -j48
+echo start $date1 --> `date +"%Y-%m-%d_%H:%M:%S"`
 
 
 
@@ -3247,12 +4982,1763 @@ frameworks$ vim base/data/etc/platform.xml
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+sudo apt-get install git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache libgl1-mesa-dev libxml2-utils xsltproc unzip m4
+
+
 
 
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+android.mk编译所有目录
+LOCAL_PATH:= $(call my-dir)
+include $(call all-makefiles-under,$(LOCAL_PATH))
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ 修改linux kernel驱动加载的顺序
+2016-10-31 17:12 457人阅读 评论(0) 收藏 举报
+分类：
+linux（212）
+最近有一个在LCD驱动中读取nand的需求（linux），这就要求nand 的驱动加载必须在LCD驱动前，而linux kernel驱动的加载顺序是由一个宏决定的
+比如helper2416板子(s3c2416芯片)中的nand驱动module_init(s3c_nand_init)， module_init决定了其优先级。同一优先级的顺序由Makefile中.o的先后影响
+优先级定义在include/linux/init.h
+[cpp] view plaincopy
+
+    #define early_initcall(fn)      __define_initcall("early",fn,early)  
+      
+      
+    /* 
+     * A "pure" initcall has no dependencies on anything else, and purely 
+     * initializes variables that couldn't be statically initialized. 
+     * 
+     * This only exists for built-in code, not for modules. 
+     */  
+    #define pure_initcall(fn)       __define_initcall("0",fn,0)  
+      
+      
+    #define core_initcall(fn)       __define_initcall("1",fn,1)  
+    #define core_initcall_sync(fn)      __define_initcall("1s",fn,1s)  
+    #define postcore_initcall(fn)       __define_initcall("2",fn,2)  
+    #define postcore_initcall_sync(fn)  __define_initcall("2s",fn,2s)  
+    #define arch_initcall(fn)       __define_initcall("3",fn,3)  
+    #define arch_initcall_sync(fn)      __define_initcall("3s",fn,3s)  
+    #define subsys_initcall(fn)     __define_initcall("4",fn,4)  
+    #define subsys_initcall_sync(fn)    __define_initcall("4s",fn,4s)  
+    #define fs_initcall(fn)         __define_initcall("5",fn,5)  
+    #define fs_initcall_sync(fn)        __define_initcall("5s",fn,5s)  
+    #define rootfs_initcall(fn)     __define_initcall("rootfs",fn,rootfs)  
+    #define device_initcall(fn)     __define_initcall("6",fn,6)  
+    #define device_initcall_sync(fn)    __define_initcall("6s",fn,6s)  
+    #define late_initcall(fn)       __define_initcall("7",fn,7)  
+    #define late_initcall_sync(fn)      __define_initcall("7s",fn,7s)  
+      
+      
+    #define __initcall(fn) device_initcall(fn)  
+    #define module_init(x)  __initcall(x);  
+
+
+
+moudle_init 实质是device_initcall,把之改成rootfs_initcall或者更高级别的则其加载顺序便会提前。
+不过有时候不能这样单纯地修改，因为驱动间相互依赖，牵一发而动全身，此如要修改nand的，则必须先修改nand依赖的驱动的优先级，否则kernel启动不起来，比如mtd驱动,而如果是修改代码则要修改多处，从Makefile 入手则相对会简单些
+看drivers/Makefile
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Ubuntu14.04 改成Nvidia的显卡驱动以后，开机进不了图形界面，如何解决？ 110
+启动电脑到启动ubuntu完成后，如果不能进入图形界面，
+先试一试Ctrl+Alt+F2 能否进入终端2
+可以的话，输入用户名和密码登陆
+然后删除NV驱动：
+sudo apt-get remove nvidia*
+
+你有root权限吧？有的话，输入sudo apt-get remove --purdg nvidia*之后会叫你输入密码的啊，密码输入正确的话，就会删除现有的nvidia的驱动的了。如果不行的话，那就先输入sudo su进入root模式，再进行删除。
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+2.4 wakeup debug mask
+
+调试wakeup问题，可以使能debug功能，然后抓取log。Log中会增加一些debug信息。
+mount -t debugfs none /sys/kernel/debug  
+echo 1 > /sys/kernel/debug/clk/debug_suspend  
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask  
+echo 4 > /sys/module/wakelock/parameters/debug_mask  
+echo 1 > /sys/module/lpm_levels/parameters/debug_mask  
+echo 0x16 > /sys/module/smd/parameters/debug_mask  
+
+另外注意改
+device/qcom/cb09/init.target.rc
+on charger
+write /sys/devices/system/cpu/cpu2/online 1
+write /sys/devices/system/cpu/cpu3/online 1
+ 
+
+2.5 wakelock  
+
+1、wakeup_sources  
+
+kernel wakelock和userspace wakelock都有可能阻止系统睡眠。所有的wakeup_sources均保存在sys节点/sys/kernel/debug/wakeup_sources里面。 
+
+该文件包含了如下信息：
+
+（1）the total amount of time a wakeup source has prevented suspend  
+
+（2）the amount of time a wakelock has been active since the last activation etc. The unit of time is milliseconds. 
+
+ 
+
+2、active_since
+
+active_since值可以用来确认wakelock是否正在阻止休眠。如果该值不是零，那么这个wakelock正在工作并且阻止休眠。
+
+ 
+
+3、获取wakeup_sources的命令
+
+adb root 67754400
+
+adb remount
+
+adb shell 
+
+cat /sys/kernel/debug/wakeup_sources > /data/wakeup_sources.txt
+
+adb pull /data/wakeup_sources.txt
+
+获得wakeup_sources.txt以后，通过Excel打开，active_since不为0的项为wakeup source。以表2为例，msm_dwc3对应的active-since值481756>0，这意味着msm_dwc3驱动在阻止系统睡眠，下一步需要检查msm_dwc3驱动代码及相关log。
+
+ 表格 2 Wakeup source opened in Excel
+4、power:wakeup_source_activate and power:wakeup_source_deactivate events
+
+当一个wakeup source被acquire或者release时候，power:wakeup_source_activate和power:wakeup_source_deactivate event将随即被写到trace buffer里面，这样可以记录wakeup source被driver使用的频率。
+开启该功能的方法：
+echo "power:wakeup_source_activate power:wakeup_source_deactivate" > /sys/kernel/debug/tracing/set_event
+
+The power:wakeup_source_activate and power:wakeup_source_deactivate events are written to the trace buffer any time a wakeup source is acquired or released and it can provide information on how often a wakeup source is being used by a driver.  
+
+To enable these events, you can enable following:  
+
+echo "power:wakeup_source_activate power:wakeup_source_deactivate" > /sys/kernel/debug/tracing/set_event 
+
+Once the above done, the traces will be present in /sys/kernel/debug/tracing/trace. 
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+3、使用QPST抓开机DUMP
+
+如何抓取开机过程中log了？特别是抓取恢复出厂设置开机卡死log。
+
+长按power按键dump
+you can configure pwrkey S2 reset to warm reset in SBL pm_oem_init(): 
+make sure with your HW engineer if your pwrkey is connected with RESIN_N? 
+if yes: 
+pm_pon_reset_source_cfg(0,PM_PON_RESET_SOURCE_RESIN_AND_KPDPWR,10256,2000,PM_PON_RESET_CFG_WARM_RESET); 
+pm_pon_reset_source_ctl(0,PM_PON_RESET_SOURCE_RESIN_AND_KPDPWR,PM_ON); 
+
+if not: 
+pm_pon_reset_source_cfg(0,PM_PON_RESET_SOURCE_KPDPWR,10256,2000,PM_PON_RESET_CFG_WARM_RESET); 
+pm_pon_reset_source_ctl(0,PM_PON_RESET_SOURCE_KPDPWR,PM_ON);
+
+并且与下面一同修改。则在开机过程中长按power按键即可进入dload mode模式。
+dtsi file: 
+                qcom,pon_1 { 
+                                                                        qcom,pon-type = <0x0>; 
+                                                                        qcom,support-reset = <0x1>; 
+                                                                        qcom,pull-up = <0x1>; 
+                                                                        qcom,s1-timer = <0x2810>; 
+                                                                        qcom,s2-timer = <0x7d0>; 
+                                                                        qcom,s2-type = <0x7>; ==>change to <0x1> 
+                                                                        linux,code = <0x74>;
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera lane 选择 lane计算
+ Limitations
+Because the camera MIPI throughput on 8x25Q is 800 Mbps/lane MIPI, the preview frame rate has limitation For example, the line_length_pclk is set to 3148 and frame_length_lines is 1045 for the preview, and the Bayer data format is 10 bit, then the max preview frame rate of 1-lane MIPI is:
+800 * 1000000 / (3148 * 1045 * 10) = 24.3fps
+
+ZSL (Zero Shutter Lag) performance also has limitation with 1-  lane MIPI. If the line_length_pclk is 3696, frame_length_lines is 2021, and the Bayer data format is 10 bit, then the max frame rate is:  
+800 * 1000000 / ( 3696 * 2021 * 10) = 10.7fps
+We suggest that the Bayer sensor be used for the 1-lane front camera because the Bayer data format of 5MP camera is usually 8 bit or 10 bit. But for the YUV sensor, the data format is 16 bit which needs more MIPI bandwidth for the same pixel number. 
+
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+电压均方根的平方÷电阻= 喇叭功率
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+MCLK可以理解为源时钟，是系统提供给模组的。通过sensor内部的PLL电路可以产生不同频率的PCLK；
+PCLK是像素同步信号。我理解的PCLK  、帧率的关系大致如下：
+1个像素数据所占用的时钟周期 * 帧率 * 像素 * Tpclk   =1
+至于1个像素的数据要占几个时钟周期要看传输的数据格式：RAW RGB、YUV等。
+上面等式忽略了每行、每帧之间的间隔时间。
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+msm8996开机电压代码
+boot_images/QcomPkg/Library/PmicLib/config/msm8996/pm_config_target.c
+3600,  //bootup_battery_theshold_mv
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+linux统计文件夹中文件的个数
+ll | grep ^- | wc -l
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+1. 如果你只想看文件的前100行，可以使用head命令，如
+head -100  filename
+2. 如果你想查看文件的后100行，可以使用tail命令，如：
+tail -100  filename 或 tail -n 100  filename
+3. 查看文件中间一段，你可以使用sed命令，如：
+sed -n '100,200p' filename 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ Render mode
+Use the following
+ steps 
+to change Render Mode
+1.
+Set ESX Configurations
+Check 
+per 
+below panel(esx_config.txt) if the config works.
+> adb root 
+> adb root 
+> adb disable-verity 
+> adb remount 
+> adb shell su root setenforce 0 
+> adb shell mkdir /data/misc/gpu 
+> adb shell chmod 777 /data/misc/gpu/   
+> adb shell rm /data/misc/gpu/esx_config.txt 
+> adb shell "echo "0xcd19168c=0" > /data/misc/gpu/esx_config.txt"  
+> adb shell cat /data/misc/gpu/esx_config.txt (to check setting) 
+  0xcd19168c=0 
+> adb reboot  
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+cat cpu0/cpufreq/scaling_setspeed                                              <
+<unsupported>
+cho "userspace" > cpu0/cpufreq/scaling_governor                               <
+q18:/sys/devices/system/cpu # cat cpu0/cpufreq/scaling_governor
+userspace
+q18:/sys/devices/system/cpu # cat cpu0/cpufreq/scaling_setspeed                
+307200
+q18:/sys/devices/system/cpu # cat cpu0/cpufreq/scaling_a                       
+scaling_available_frequencies           scaling_available_governors
+at cpu0/cpufreq/scaling_available_                                            <
+scaling_available_frequencies           scaling_available_governors
+at cpu0/cpufreq/scaling_available_frequencies                                 <
+307200 422400 480000 556800 652800 729600 844800 960000 1036800 1113600 1190400 1228800 1324800 1401600 1478400 1593600 
+at cpu0/cpufreq/scaling_available_governors                                   <
+interactive conservative ondemand userspace powersave performance 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+请使用命令去掉雪花点。
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+adb remount 
+adb shell setprop debug.gralloc.enable_fb_ubwc 0 
+adb shell setprop debug.gralloc.gfx_ubwc_disable 1 
+adb shell setprop debug.gralloc.map_fb_memory 0
+adb shell setenforce 0 
+adb shell stop 
+adb shell start 
+下面这部分优化卡顿问题
+adb shell echo 1 > /sys/class/kgsl/kgsl-3d0/force_clk_on
+adb shell 10000000 > /sys/class/kgsl/kgsl-3d0/idle_timer
+adb shell performance > /sys/class/kgsl/kgsl-3d0/devfreq/governor
+adb shell 624000000 > /sys/class/kgsl/kgsl-3d0/gpuclk
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb指令录像
+ adb shell screenrecord --time-limit 10 /sdcard/demo.mp4
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+thermal 关核极限温度
+./cb09.dtsi:2800:		qcom,hotplug-temp = <105>;
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+分区type是guid随机数 生成地址  https://www.guidgen.com/
+common/config/ufs/partition.xml
+type="5c036d60-04d9-4c33-85e4-92a0237a8ed9"
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+cb03 扫描头代码位置
+vendor/simcom/scanner
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+app权限 root, 尝试去掉下面全部neverallow
+system/sepolicy/app.te
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+分区表更新需要将Non-hlos里common的分区表拷给AP
+device/qcom/q18/Extension/tools/ext4_sparse/
+
+拆包/稀疏模式
+./core/Makefile:1775:	$(hide) python $(HOST_OUT_EXECUTABLES)/checksparse.py -i $(HOST_OUT_EXECUTABLES)/rawprogram0.xml -o $(PRODUCT_OUT)/sparse_images/rawprogram0_unsparse.xml -s $(PRODUCT_OUT) -t $(PRODUCT_OUT)/sparse_images
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+分区编译
+BuildImage: in_dir = out/target/product/q18/cache, out_file = out/target/product/q18/cache.img
+fs type is not ext4
+Running:  mkuserimg.sh -s out/target/product/q18/cache out/target/product/q18/cache.img ext4 cache 268435456 -D out/target/product/q18/system -L cache out/target/product/q18/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/q18/root/file_contexts.bin -L cache -l 268435456 -a cache out/target/product/q18/cache.img out/target/product/q18/cache out/target/product/q18/system
+Creating filesystem with parameters:
+    Size: 268435456
+    Block size: 4096
+    Blocks per group: 32768 
+    Inodes per group: 8192
+    Inode size: 256
+    Journal blocks: 1024
+    Label: cache 
+    Blocks: 65536 
+    Block groups: 2
+    Reserved block group size: 15
+Created filesystem with 11/16384 inodes and 2089/65536 blocks
+Running ['mkuserimg.sh', '-s', 'out/target/product/q18/cache', 'out/target/product/q18/cache.img', 'ext4', 'cache', '268435456', '-D', 'out/target/product/q18/system', '-L', 'cache', 'out/target/product/  q18/root/file_contexts.bin'] command, exit code = 0 
+out/target/product/q18/cache.img maxsize=273985536 blocksize=135168 total=6398184 reserve=2838528
+[ 99% 10008/10063] Target update fs image: out/target/product/q18/update.img
+BuildImage: in_dir = out/target/product/q18/update, out_file = out/target/product/q18/update.img
+fs type is not ext4
+Running:  mkuserimg.sh -s out/target/product/q18/update out/target/product/q18/update.img ext4 update 536870912 -D out/target/product/q18/system -L update out/target/product/q18/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/q18/root/file_contexts.bin -L update -l 536870912 -a update out/target/product/q18/update.img out/target/product/q18/update out/target/product/q18/system
+Creating filesystem with parameters:
+    Size: 536870912
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 8192
+    Inode size: 256
+    Journal blocks: 2048
+    Label: update 
+    Blocks: 131072
+    Block groups: 4
+    Reserved block group size: 31
+Created filesystem with 11/32768 inodes and 4206/131072 blocks
+Running ['mkuserimg.sh', '-s', 'out/target/product/q18/update', 'out/target/product/q18/update.img', 'ext4', 'update', '536870912', '-D', 'out/target/product/q18/system', '-L', 'update', 'out/target/      product/q18/root/file_contexts.bin'] command, exit code = 0
+out/target/product/q18/update.img maxsize=548106240 blocksize=135168 total=10682684 reserve=5541888
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+电源键相应重启/关机,防抖时间
+qcom,s2-type                  The type of reset associated with this source.
+                              The supported resets are - SOFT(0), WARM(1), SHUTDOWN(4), HARD(7)
+        qcom,pon_1 {
+                qcom,pon-type = <0>;
+                qcom,pull-up = <1>;
+                linux,code = <116>;
+                qcom,support-reset = <1>;
+                qcom,s1-timer = <10256>;
+                qcom,s2-timer = <2000>;
+                qcom,s2-type = <7>;
+        };
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+lk的是否usb充电判断
+        pm_smbchg_get_charger_path(1, &charger_path);
+        if (is_cold_boot &&
+                        (!(pon_reason & HARD_RST)) &&
+                        (!(pon_reason & KPDPWR_N)) &&
+                        ((pon_reason & PON1)) &&
+                        ((charger_path == PM_SMBCHG_USB_CHGPTH_PWR_PATH__DC_CHARGER) ||
+                        (charger_path == PM_SMBCHG_USB_CHGPTH_PWR_PATH__USB_CHARGER)))
+
+
+
+
+
+3985         if (!boot_into_fastboot)
+3986         {
+3987                 if (keys_get_state(KEY_HOME) || keys_get_state(KEY_VOLUMEUP))
+3988                         boot_into_recovery = 1;
+3989                 if (!boot_into_recovery &&
+3990                         (keys_get_state(KEY_BACK) || keys_get_state(KEY_VOLUMEDOWN)))
+3991                         boot_into_fastboot = true;
+
+
+
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+赋权限
+system/core/libcutils/fs_config.c
+@@ -136,7 +136,7 @@ static const struct fs_path_config android_files[] = {
+ 
+     /* the following two files are INTENTIONALLY set-uid, but they
+      * are NOT included on user builds. */
+-    { 04750, AID_ROOT,      AID_SHELL,     0, "system/xbin/su" },
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb remount之后提示read only
+adb root
+adb disable-verity
+adb reboot 
+
+adb root
+adb remount
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+EXIF 3A信息
+adb root
+adb remount
+adb shell setprop persist.camera.mobicat 2
+adb shell setprop persist.vendor.camera.global.debug 5    //   persist.camera.global.debug 1
+adb shell setprop persist.camera.stats.debugexif 4128768
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+boot.img和system.img不匹配导致wifi不工作，去掉加密项即可
+CONFIG_MODULE_SIG=y
+CONFIG_MODULE_SIG_FORCE=y
+CONFIG_MODULE_SIG_SHA512=y
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+video codec视频解码缩小分辨率
+
+(1) please check whether there is the property of vidc.dec.enable.downscalar, if yes, please set the value to "1".
+
+(2)adb root
+adb shell setprop vidc.dec.downscalar_width 2560
+adb shell setprop vidc.dec.downscalar_height 1600
+// I can't confirm 2560*1600 is your 2K resolution, please set them as your requirement.
+
+But it is set to 1080P by defaul.
+adb shell setprop vidc.dec.downscalar_width 1920
+adb shell setprop vidc.dec.downscalar_height 1088 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+systrace
+打开chromium浏览器   输入chrome://tracing/
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Dump Layers
+Easy way to confirm if it is a rendering issue If it has no layer corrupted, but the
+composited scene is corrupted, It is a composition issue
+Do a “adb shell service call” on runtime to dump each layer
+
+adb shell "service call display.qservice 21 i32 frame_count i32 display_type i32 layer_type”
+
+frame_count = Number of frames to be dumped.
+
+display_type = Set bit 0 -> To enable dump on primary display
+Set bit 1 -> To enable dump on hdmi display
+Set bit 2 -> To enable dump on virtual display
+
+layer_type = Set bit 0 -> To enable input layer dump
+Set bit 1 -> To enable output layer dump
+Example : To dump 5 frames of input layers on primary display.
+
+adb shell "service call display.qservice 21 i32 5 i32 1 i32 1"
+
+PAGE 13
+ /data/misc/diplay/frame_dump_primary/input_layer0_1600x2560_RGBX_8888_frame2.raw
+ May need to do mkdir /data/misc/display before input command.
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ECALL
+
+fwcfg.txt
+100 -> 1  //debug log指定串口1
+102 -> 2
+103 -> 0x10
+130 -> 0
+245 -> 00
+
+------
+build/project -->  files.mk    // CSOURCES+=modules/charger/charger.c
+build/common  -->  app_gnsssapp_defs.mk   // modules/charger
+
+DPM: Dynamic Power Management
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+清理linux内存
+echo 3 > /proc/sys/vm/drop_caches
+
+1. sync
+2. cat /proc/sys/vm/drop_caches
+3. echo 3 > /proc/sys/vm/drop_caches
+4. free -m
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+双摄使能
+Dual Camera Feature Description 80-P2667-1 A
+
+5.1 Enable Dual Camera mode
+To enable Dual Camera mode, run the following commands (requires media-server restart to
+apply the effect (default off):
+
+adb wait-for-device
+adb root
+adb wait-for-device
+adb remount
+adb shell setprop persist.camera.dc.frame.sync 1
+adb shell setprop persist.camera.dcrf.sensor.mnt 15
+adb shell setprop persist.camera.HAL3.enabled 0
+adb shell setprop persist.camera.dual.camera 1
+adb shell sync
+adb reboot
+5.2 Dual camera mount angle
+To set the dual camera mount angle (default 0), run the following ADB command:
+adb shell setprop persist.camera.dcrf.sensor.mnt <value in range 0-15>
+The value is a decimal representation of the bit combinations:
+ bit 0 – Main sensor horizontal mirror enabled
+ bit 1 – Main sensor vertical flipped enabled
+ bit 2 – Auxiliary sensor horizontal mirror enabled
+ bit 3 – Auxiliary sensor vertical flipped enabled
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+建项
+CP:
+Non-HLOS/MSM8953.LA.2.0/common/build/build.py
+global_partition_xml   = '../config/partition.xml'
+if options.product == 'cb05':
+        global_partition_xml = '../config/cb05.xml'
+if options.product == 'pa726':
+        global_partition_xml = '../config/pa726.xml'
+if options.product.strip() == '': 
+        global_partition_xml = '../config/partition.xml'
+print global_partition_xml
+
+提示编译错误:
+ninja: error: 'out/host/linux-x86/bin/checksparse.py', needed by 'out/target/product/msm8953_32/obj/PACKAGING/target_files_intermediates/msm8953_32-target_files-eng.room.zip', missing and no known rule to make it
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WIKI
+音频调试:
+http://172.19.2.160/dokuwiki/doku.php/android;driver;audio_start_here?s[]=tuning
+http://172.19.2.160/dokuwiki/doku.php/platform;8953;8953%E9%9F%B3%E9%A2%91%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95?s[]=tuning
+
+
+camera效果调试:
+http://172.19.2.160/dokuwiki/doku.php/platform;8939;af_tuning_guide?s[]=af
+http://172.19.2.160/dokuwiki/doku.php/msm;camera_chromatix?s[]=camera
+
+照片的EXIF信息
+http://172.19.2.160/dokuwiki/doku.php/msm;camera_exif%E4%BF%A1%E6%81%AF?s[]=chromatix
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera预览有明显的水波纹,反带效应
+
+packages/apps/SnapdragonCamera/res/values/qcomstrings.xml
+ <string name="pref_camera_antibanding_default">off</string>
+将off改为50hz
+改完push apk重启后，在点击设置 -->应用-->相机-->存储-->清除数据后重启camera app
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+lk没有串口log
++++ b/lib/debug/debug.c
+@@ -97,6 +97,8 @@ int _dprintf(const char *fmt, ...)
+ #if ENABLE_FBCON_LOGGING
+        dputs(ALWAYS, buf);
+ #endif
++
++    dputs(ALWAYS, buf); 
+        return err;
+ }
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ramdump开关 CONFIG_MSM_DLOAD_MODE
+/sys/module/restart/parameters/download_mode 0/1
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+2.关闭wifi
+# adb shell svc wifi disable
+3.打开wifi
+# adb shell svc wifi enable
+
+无屏命令打开蓝牙
+adb shell svc bluetooth enable
+adb shell svc bluetooth disable
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Case 03643835: device crash (cb03 8909开机过程死机问题, 提高ddr工作电压或者关闭CPR自动电压调节)
+
+Created By: Biao Wang (8/30/2018 2:47 AM)
+5. boost mx
+bump up the vdd_mx to max value
+
+(1) SBL change:
+the following code will change the range of LDO3(vdd_mx) in PMIC registor:
+pm_device_post_init(void)
+{
+pm_err_flag_type err = PM_ERR_FLAG__SUCCESS;
+//LDO_UL_LL_CONFIG:
++err |= pm_spmi_lite_write_byte(1, 0x42d0, 0xA5, 0);
++ err |= pm_spmi_lite_write_byte(1, 0x426a, 0x2, 0);
++err |= pm_spmi_lite_write_byte(1, 0x42d0, 0xA5, 0);
++ err |= pm_spmi_lite_write_byte(1, 0x426b, 0x34, 0);
++ err |= pm_spmi_lite_write_byte(1, 0x4240, 0x2, 0);
++ err |= pm_spmi_lite_write_byte(1, 0x4241, 0x34, 0);
+}
+
+(2)RPM change:
+\rpm_proc\ core\power\railway_v2\src\8916\railway_config.c
+// Must init VDDMX first, as voting on the other rails will cause Mx changes to occur.
+{
+.vreg_name = "vddmx",
+.vreg_type = RPM_LDO_A_REQ,
+.vreg_num = 3,
+.pm_rail_id = PM_RAILWAY_MX,
+.pmic_step_size = 12500, // not used
+.initial_corner = RAILWAY_NOMINAL,
+.supports_explicit_voltage_requests = true,
+.default_uvs = (const unsigned[])
+{
+0, // RAILWAY_NO_REQUEST
+750000+50000, // RAILWAY_RETENTION
+1050000+50000, // RAILWAY_SVS_KRAIT
+1050000+50000, // RAILWAY_SVS_SOC
+1150000+50000, // RAILWAY_NOMINAL
+1287500+50000, // RAILWAY_TURBO
+1287500+50000, // RAILWAY_TURBO_HIGH
+1287500+50000, // RAILWAY_SUPER_TURBO
+1287500+50000, // RAILWAY_SUPER_TURBO_NO_CPR
+},
+
+(3)rpm_proc\core\systemdrivers\pmic\config\msm8916\pm_config_target.c
+the following code will change the range of LDO3(vdd_mx) in software.
+In pm_rpm_ldo_rail_info_type ldo_rail_a[NUM_OF_LDO_A] =
+Change from:
+{5, 62.5, 0, PM_ACCESS_ALLOWED, PM_ALWAYS_ON, PM_NPA_SW_MODE_LDO__IPEAK, PM_NPA_BYPASS_DISALLOWED, 750, 1350}, // LDO3 N1200_Stepper
+To:
+{5, 62.5, 0, PM_ACCESS_ALLOWED, PM_ALWAYS_ON, PM_NPA_SW_MODE_LDO__IPEAK, PM_NPA_BYPASS_DISALLOWED, 750, 1400}, // LDO3 N1200_Stepper
+
+6. Disable RPM CPR
+/rpm_proc/core/power/rbcpr/src/target/8916/rbcpr_bsp.c
+All variables ( gf_tn1_cpr_settings / gf_tn3_cpr_settings / tsmc_tn1_cpr_settings / tsmc_tn3_cpr_settings)
+-.rbcpr_enablement=RBCPR_ENABLED_CLOSED_LOOP,
++ .rbcpr_enablement=RBCPR_DISABLED,
+7. if issue still happen ,after you did all the test aboved ,then need swap test for msm chip
+8. if issue go with msm chip ,then we need RMA
+
+note: some code change will be changes base on different build , code list here ,just for reference
+Created By: Biao Wang (8/30/2018 2:47 AM)
+Question: Normally , when meet a crash, but from dump, can not find any clue, how to handle it? like unknown reset/dog bite/memory corrupt/bit flip crash.
+
+Answer: There maybe many crash that are unknown dog bite/reset, or looks like random memory corrupt, or bit flip,or strange kernel panic that does not like a possible software logic bug, for such crash issues, we need to check from hardware, memory configure, PVS, CPR, voltage, clock setting etc.
+Normally for this kind of issue , we need do lots for test to narrow down issue , so can find the right directions to resolve this kind of unknown reset issue .
+
+Normally we can do following test :
+1. check PDN report
+Customer hardware team will raise up case for PDN Simulation, need check this report to confirm whether all powr rail match qualcomm requirement .if any of power rail not match the requirement normally,we need check vdd_cx, vdd_mx, vdd_apc(power rail for apps core),if any of them out of qualcomm requirement, we need boost it for test ,the method boost it will list below.
+
+2. do ddr QBlazed test ,test ddr . for QBlazed test ,if still do not know how to use it ,pls refer doc 80-NH759-1 QBlizzard_2_10_UG.pdf.
+
+3. If you are using PMIC8916 ,disable cpr , if disable cpr, issue can not duplicated ,then we need adopt your cpr setting ,to boost vdd_apc ,step by step .
+arch/arm/boot/dts/qcom/msm8916-regulator.dtsi
+<0 0 2 4 8>,
+<1 0 2 4 7>;
+qcom,cpr-quot-adjust-scaling-factor-max = <650>;
+- qcom,cpr-enable;
+};
+
+3. If you are using PMIC8916 ,then boost vdd_apc
+qcom,cpr-voltage-ceiling = <1050000 1150000 1350000>;
+qcom,cpr-voltage-floor = <1050000 1050000 11375000>;
+--->
+qcom,cpr-voltage-ceiling = <1350000 1350000 1350000>;
+qcom,cpr-voltage-floor = <1350000 1350000 1350000>;
+
+4. boost cx
+bump up the retention voltage by 50mV.
+/rpm_proc /core/power/sleep/src/8916/sleep_target_config.c
+// retention programmed in uV ( 600000uV = 0.6V )
+static const uint32 vddcx_pvs_retention_data[8] =
+{
+/* 000 */ 650000+50000,
+/* 001 */ 500000+50000,
+/* 010 */ 650000+50000,
+/* 011 */ 650000+50000,
+/* 100 */ 650000+50000,
+/* 101 */ 650000+50000,
+/* 110 */ 650000+50000,
+/* 111 */ 650000+50000
+};
+
+
+bump up vdd_cx by 50 mv
+\rpm_proc\ core\power\railway_v2\src\8916\railway_config.c
+// VDDCX
+{
+// VDDCX
+{
+.vreg_name = "vddcx",
+
+.vreg_type = RPM_SMPS_A_REQ,
+.vreg_num = 1,
+
+.pm_rail_id = PM_RAILWAY_CX,
+.pmic_step_size = 12500, // not used
+
+.initial_corner = RAILWAY_NOMINAL,
+
+.supports_explicit_voltage_requests = true,
+
+.default_uvs = (const unsigned[])
+{
+0, // RAILWAY_NO_REQUEST
+700000+50000, // RAILWAY_RETENTION
+1050000+50000, // RAILWAY_SVS_KRAIT
+1050000+50000, // RAILWAY_SVS_SOC
+1150000+50000, // RAILWAY_NOMINAL
+1287500+50000, // RAILWAY_TURBO
+1287500+50000, // RAILWAY_TURBO_HIGH
+1287500+50000, // RAILWAY_SUPER_TURBO
+1287500+50000, // RAILWAY_SUPER_TURBO_NO_CPR
+},
+............
+},
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+分析灭屏log, 灭屏后log, 休眠唤醒屏幕亮的慢
+<1> Kernel log
+kernel config: CONFIG_PM_SLEEP_DEBUG=y
+
+device\qcom\msmxxx\BoardConfig.mk:
+BOARD_KERNEL_CMDLINE += initcall_debug log_buf_len=16M
+
+<2> adb shell top > top.txt
+
+<3> systrace
+before grab systrace, run commands below:
+adb shell "echo mdss:* >> /d/tracing/set_event"
+adb shell "echo 1 > /d/tracing/events/mdss/enable"
+adb shell "echo 1 > /d/tracing/events/mdss/tracing_mark_write/enable"
+
+and choose gfx wm am sm view sync input video camera hal app res dalvik rs bionic binder_driver power sched freq idle irq irq options, thanks!
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+上层音频通道, 中间层音频通道的实现
+
+/LAXTON/hardware/qcom/audio$ vim hal/msm8916/platform.c
+
+commit c7ee70e60b8fa980d6f93ad44d0138eba0f8868e (tag: CB05_V0.13, tag: CB05_V0.12, tag: CB05_V0.11, tag: CB05_V0.10, tag: CB05_V0.09, tag: CB05_V0.08, tag: CB05_V0.07, tag: CB05_V0.06, tag: CB05_V0.05, tag: CB05_V0.04, tag: CB05_V0.03, tag: CB05_V0.02)
+Author: chendaimiao <daimiao.chen@sim.com>
+Date:   Tue Apr 11 17:10:56 2017 +0800
+
+    CB05 : Add api for CIT test secondary mic
+
+    Change-Id: I59ba3371a5ce6efa511e82c0d6885db1016b5645
+
+diff --git a/hal/msm8916/platform.c b/hal/msm8916/platform.c
+index 8159bcb..33b111b 100644
+--- a/hal/msm8916/platform.c
++++ b/hal/msm8916/platform.c
+@@ -38,6 +38,7 @@
+ #include "sound/msmcal-hwdep.h"
+ #include <dirent.h>
+ #define SOUND_TRIGGER_DEVICE_HANDSET_MONO_LOW_POWER_ACDB_ID (100)
++bool secondary_mic_state = false;
+ #define MAX_MIXER_XML_PATH  100
+ #define MIXER_XML_PATH "/system/etc/mixer_paths.xml"
+ #define MIXER_XML_PATH_MTP "/system/etc/mixer_paths_mtp.xml"
+@@ -118,6 +119,7 @@
+ #define AUDIO_PARAMETER_KEY_VOLUME_BOOST  "volume_boost"
+ #define AUDIO_PARAMETER_KEY_AUD_CALDATA   "cal_data"
+ #define AUDIO_PARAMETER_KEY_AUD_CALRESULT "cal_result"
++#define AUDIO_PARAMETER_KEY_SECONDARY_MIC  "secondary_mic"
+
+ /* Reload ACDB files from specified path */
+ #define AUDIO_PARAMETER_KEY_RELOAD_ACDB "reload_acdb"
+@@ -437,6 +439,7 @@ static const char * const device_table[SND_DEVICE_MAX] = {
+     [SND_DEVICE_IN_UNPROCESSED_THREE_MIC] = "three-mic",
+     [SND_DEVICE_IN_UNPROCESSED_QUAD_MIC] = "quad-mic",
+     [SND_DEVICE_IN_UNPROCESSED_HEADSET_MIC] = "headset-mic",
++    [SND_DEVICE_IN_SECONDARY_MIC] = "secondary-mic",
+ };
+
+ // Platform specific backend bit width table
+@@ -557,6 +560,7 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
+     [SND_DEVICE_IN_UNPROCESSED_THREE_MIC] = 145,
+     [SND_DEVICE_IN_UNPROCESSED_QUAD_MIC] = 146,
+     [SND_DEVICE_IN_UNPROCESSED_HEADSET_MIC] = 147,
++    [SND_DEVICE_IN_SECONDARY_MIC] = 4,
+ };
+
+ struct name_to_index {
+@@ -679,6 +683,7 @@ static struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
+     {TO_NAME_INDEX(SND_DEVICE_IN_UNPROCESSED_THREE_MIC)},
+     {TO_NAME_INDEX(SND_DEVICE_IN_UNPROCESSED_QUAD_MIC)},
+     {TO_NAME_INDEX(SND_DEVICE_IN_UNPROCESSED_HEADSET_MIC)},
++    {TO_NAME_INDEX(SND_DEVICE_IN_SECONDARY_MIC)},
+ };
+
+ static char * backend_tag_table[SND_DEVICE_MAX] = {0};
+@@ -3383,8 +3388,12 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
+             else if ((my_data->fluence_type & (FLUENCE_DUAL_MIC | FLUENCE_QUAD_MIC)) &&
+                     (channel_count == 2) && (my_data->source_mic_type & SOURCE_DUAL_MIC))
+                 snd_device = SND_DEVICE_IN_HANDSET_STEREO_DMIC;
+-            else
++            else if (secondary_mic_state == false)
+                 snd_device = SND_DEVICE_IN_HANDSET_MIC;
++            else {
++                snd_device = SND_DEVICE_IN_SECONDARY_MIC;
++                ALOGD("chaser: secondary mic is select");
++            }
+         } else if (in_device & AUDIO_DEVICE_IN_BACK_MIC) {
+             snd_device = SND_DEVICE_IN_SPEAKER_MIC;
+         } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
+@@ -3601,6 +3610,14 @@ int platform_set_parameters(void *platform, struct str_parms *parms)
+         if (ret)
+             ALOGE("%s: Failed to set slow talk err: %d", __func__, ret);
+     }
++    err = str_parms_get_str(parms, AUDIO_PARAMETER_KEY_SECONDARY_MIC, value, sizeof(value));
++    if (err >= 0) {
++        secondary_mic_state = false;
++        if (!strncmp("on", value, sizeof("on")))
++            secondary_mic_state = true;
++        ALOGD("chaser: secondary_state is %d",secondary_mic_state);
++        str_parms_del(parms, AUDIO_PARAMETER_KEY_SECONDARY_MIC);
++    }
+
+     err = str_parms_get_str(parms, AUDIO_PARAMETER_KEY_HD_VOICE, value, sizeof(value));
+     if (err >= 0) {
+diff --git a/hal/msm8916/platform.h b/hal/msm8916/platform.h
+index dcd351a..e6ea1d2 100644
+--- a/hal/msm8916/platform.h
++++ b/hal/msm8916/platform.h
+@@ -193,6 +193,7 @@ enum {
+     SND_DEVICE_IN_UNPROCESSED_THREE_MIC,
+     SND_DEVICE_IN_UNPROCESSED_QUAD_MIC,
+     SND_DEVICE_IN_UNPROCESSED_HEADSET_MIC,
++    SND_DEVICE_IN_SECONDARY_MIC,
+     SND_DEVICE_IN_END,
+
+     SND_DEVICE_MAX = SND_DEVICE_IN_END, 
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+https://blog.csdn.net/leavestrong/article/details/52438803
+eng模式下屏幕四周红框显示问题
+persist.sys.strictmode.visual=0
+persist.sys.strictmode.disable=1
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+关机状态，usb插入再马上拔掉
+		if (IsColdBoot &&
+			(!(PONReason.HARD_RESET) &&
+			(!(PONReason.KPDPWR)) &&
+			(PONReason.PON1 || PONReason.USB_CHG) &&
+			(ChgPresent))) //<--插上再拔掉也开机，可以去掉
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+2-2   display 屏
+时钟计算
+H-total = HorizontalActive + HorizontalFrontPorch + HorizontalBackPorch + HorizontalSyncPulse + HorizontalSyncSkew
+V-total = VerticalActive + VerticalFrontPorch + VerticalBackPorch + VerticalSyncPulse + VerticalSyncSkew
+总像素= H-total × V-total × 60 (Hz)
+Bitclk = 总像素× bpp（字节）× 8/通道数
+Byteclk = bitclk/8Dsipclk =（Byteclk × 通道数）/bpp（字节）
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ＣＢ０５去掉关机对话框
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+adb shell setprop persist.sys.powerkey.behavior 3
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+settle_cnt(即稳定计数)– 必须根据传感器输出特性配置该值,以确保传感器的 PHY 发
+送器与 MSM 的 PHY 接收器无障碍同步。
+
+对于 28 nm 以及更小的 MSM 芯片,使用以下公式计算稳定计数:
+settle_cnt = T(HS_SETTLE)_avg /T(TIMER_CLK),
+其中 T(HS_SETTLE)_avg = (T(HS_SETTLE)_min + T(HS_SETTLE)_max) / 2,如传感
+器数据表所指示。
+–
+TIMER_CLK 指摄像头传感器所连接的 PHY 接口的工作频率。(例如,PHY0 的
+CAMSS_PHY0_CSI0PHYTIMER_CLK)。该值在 kernel/arch/arm/boot/dts/msm/
+msmXXXX-camera.dtsi 文件中设置,其中 XXXX 指正在使用 MSM 芯片组。另
+外,也可在摄像头数据流传输期间确认,方法是通过 adb shell 检查相应的时钟信
+息。例如,可通过命令提示窗口发出以下命令以确认 PHY0 定时器时钟值:
+adb root
+adb remount
+adb shell
+cd /sys/kernel/debug/clk/camss_phy0_csi0phytimer_clk
+cat measure
+–
+
+传感器驱动程序调通
+T(TIMER_CLK) 为工作频率等于 TIMER_CLK 时的时钟周期持续时间,以纳秒
+为单位表示。例如,TIMER_CLK 200 MHz 的 T(TIMER_CLK) 为 (1 * (10^9)) /
+(200 * (10^6)) = 5 ns。
+对于 45 nm MSM 芯片,使用与 28 nm MSM 芯片相似的公式,其中的 T(TIMER_CLK)
+替换为 T(DDR_CLK)。
+– DDR_CLK 指摄像头传感器的 MIPI CLK 通道的工作频率,该值由通过传感器摄
+像头驱动程序设置的摄像头传感器 PLL 配置确定。
+– T(DDR_CLK) 为工作频率等于 DDR_CLK 时的时钟周期持续时间,以纳秒为单位
+表示。例如,DDR_CLK 200 MHz 的 T(DDR_CLK) 为 (1 * (10^9)) / (200 * (10^6)) =
+5 ns。
+有关 T(HS_SETTLE) 的定义,可参见针对 D-PHY(版本 1.1)的 MIPI(R) 联盟规范。
+为了防止上述系数在传感器工作时所处的不同数据流传输模式间发生变化,必须为
+摄像头传感器驱动程序中每个唯一的数据流传输模式单独配置 settle_cnt。
+3.3.2.7.2 VFE 时钟频率计算
+摄像头传感器时钟通道(即 MIPI DDR 时钟)的工作频率与激活的数据通道数决定摄像头
+传感器在指定操作模式下的总数据传输速率(吞吐量)。每个通道的数据传输速率是 MIPI
+DDR 时钟速度的两倍。例如,工作在 200 MHz MIPI DDR 时钟频率和 4 个激活通道下的摄
+像头传感器的总数据传输速率为 1600 Mbps(每个通道的数据传输速率为 200 * 2 =
+400 Mbps)。
+每个帧的分辨率、额外/虚拟像素/线数、水平消隐、垂直消隐、MIPI 包开销、每像素位数、
+数据格式、内部是否存在多个交错数据流以及每个流的数据传输速率/开销等,都会影响数
+据传输速率。指定工作模式下初步摄像头调通,计算:
+X = 帧宽 * ( 帧高 * 垂直消隐 ) * 每像素位数 * 每秒帧数 * (MIPI 协议和其他数据流的开销 )
+在 VFE 时钟优化中为给定的 MSM 找到大于 X 的最接近的值作为 VFE 时钟的初始值。
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+D/audio_hw_primary(  290): adev_open_input_stream: enter: sample_rate(48000) channel_mask(0xc) devices(0x80000080)        stream_handle(0xb7c60f10) io_handle(81)
+D/audio_hw_primary(  290): in_standby: enter: stream (0xb7c60f10) usecase(7: audio-record)
+D/audio_hw_primary(  290): in_standby: enter: stream (0xb7c60f10) usecase(7: audio-record)
+D/audio_hw_primary(  290): out_set_parameters: enter: usecase(0: deep-buffer-playback) kvpairs: fm_volume=0.0000000000
+D/audio_hw_extn(  290): audio_extn_set_anc_parameters: anc_enabled:0
+D/audio_hw_fm(  290): audio_extn_fm_set_parameters: set_fm_volume usecase
+D/audio_hw_fm(  290): fm_set_volume: (0.000000)
+D/audio_hw_primary(  290): out_set_parameters: enter: usecase(1: low-latency-playback) kvpairs: routing=6
+D/audio_hw_primary(  290): start_output_stream: enter: stream(0xb7aa06a8)usecase(1: low-latency-playback) devices(0x6)
+D/audio_hw_extn(  290): audio_extn_get_anc_enabled: anc_enabled:0
+D/audio_hw_primary(  290): select_devices: out_snd_device(5: speaker-and-headphones) in_snd_device(0: )
+I/soundtrigger(  290): audio_extn_sound_trigger_update_device_status: device 0x5 of type 0 for Event 1, with Raise=0
+W/audio_hw_utils(  290): audio_extn_utils_update_stream_app_type_cfg: App type could not be selected. Falling back to default
+I/audio_hw_primary(  290): select_devices Selected apptype: 69936
+D/soundtrigger(  290): audio_extn_sound_trigger_update_stream_status: uc_id 1 of type 0 for Event 3, with Raise=0
+D/ACDB-LOADER(  290): ACDB -> send_audio_cal, acdb_id = 10, path =  0
+I/audio_hw_utils(  290): audio_extn_utils_send_app_type_cfg app_type 69936, acdb_dev_id 10, sample_rate 48000
+D/audio_hw_primary(  290): select_devices: done
+I/MediaCodecSource(  290): MediaCodecSource (audio) starting
+D/audio_hw_primary(  290): adev_set_parameters: enter: rec_play_conc_on=true
+D/audio_hw_extn(  290): audio_extn_set_anc_parameters: anc_enabled:0
+E/audio_a2dp_hw(  290): adev_set_parameters: ERROR: set param called even when stream out is null
+D/audio_hw_primary(  290): in_set_parameters: enter: kvpairs=input_source=5;routing=-2147483520
+I/MediaCodecSource(  290): MediaCodecSource (audio) started
+D/audio_hw_primary(  290): start_input_stream: enter: stream(0xb7c60f10)usecase(7: audio-record)
+D/audio_hw_primary(  290): select_devices: out_snd_device(0: ) in_snd_device(70: handset-stereo-dmic-ef)
+I/soundtrigger(  290): audio_extn_sound_trigger_update_device_status: device 0x46 of type 1 for Event 1, with Raise=1
+V/sound_trigger_hw(  290): handle_audio_concurrency: Enter, event type = 1
+D/soundtrigger(  290): audio_extn_sound_trigger_update_stream_status: uc_id 7 of type 1 for Event 3, with Raise=0
+D/ACDB-LOADER(  290): ACDB -> send_audio_cal, acdb_id = 34, path =  1
+D/audio_hw_primary(  290): select_devices: done
+D/audio_hw_primary(  290): out_set_parameters: enter: usecase(0: deep-buffer-playback) kvpairs: fm_volume=0.1894530505
+D/audio_hw_extn(  290): audio_extn_set_anc_parameters: anc_enabled:0
+D/audio_hw_fm(  290): audio_extn_fm_set_parameters: set_fm_volume usecase
+D/audio_hw_fm(  290): fm_set_volume: (0.189453)
+
+插入音频通道
+D/audio_hw_primary(  290): select_devices: out_snd_device(0: ) in_snd_device(70: handset-stereo-dmic-ef)
+
+
+D/ACDB-LOADER(  290): ACDB -> send_audio_cal, acdb_id = 34, path =  1
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+arm-eabi-addr2line 调试
+80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+adb shell screencap -p /sdcard/1.png
+adb shell screenrecord
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+make vbmetaimage
+
+然后烧录下面几个文件，否则出现无法开机或者DTS选择不对
+dtbo.img、boot. system. vendor, lk, vbmeta.img
+
+fastboot flash vbmeta vbmeta.img reboot
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+关闭selinux ,在BOARD_KERNEL_CMDLINE后面加一个 androidboot.selinux=disabled即可。 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+休眠唤醒源
+/sys/kernel/wakeup_reasons/last_resume_reason
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+DDR稳定性
+
+
+1. cb03提高s3电压
+Please bump up S3 to have a try :
+change 1225 to 1275
+rpm_proc/core/systemdrivers/pmic/config/msm8953/pm_config_target.c
+pm_rpm_smps_rail_info_type smps_rail_a[] =?
+{
+.......
+{300, 0, PM_ACCESS_ALLOWED, PM_ALWAYS_ON, PM_NPA_SW_MODE_SMPS__AUTO, PM_CLK_1p6_MHz, PM_CLK_1p6_MHz, PM_DROOP_DETECT_DIS, 1275, 1275, 0, PM_SETTLING_ERR_EN, PM_SETTLING_EN, 0}, // HFS 2 - DDR and low sub-reg
+
+
+2. CB03降低电阻提高DQ/CA驱动能力电流
+        路径: boot_images/core/boot/ddr/hw/msm8909/ddr_config.c
+        增加如下绿色部分：:
+
+- In the array ddr_caphy_config_MSM8x09_LPDDR2:
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG0)), 0x20002250}, (remove)
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG1)), 0x20000450}, (remove)
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG0)), 0x20002230}, (add)
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG1)), 0x20000430}, (add)
+- In the array ddr_dqphy_config_MSM8x09_LPDDR2:
+  {HWIO_ADDR(PHY_DQ_ADDR(PAD_CFG0)), 0xA0002250}, (remove)
+  {HWIO_ADDR(PHY_DQ_ADDR(PAD_CFG1)), 0xA0002250}, (remove)
+  {HWIO_ADDR(PHY_DQ_ADDR(PAD_CFG0)), 0xA0002230}, (add)
+  {HWIO_ADDR(PHY_DQ_ADDR(PAD_CFG1)), 0xA0002230}, (add)
+- In the array ddr_caphy_config_MSM8x09_LPDDR3:
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG0)), 0x20002250}, (remove)
+  {HWIO_ADDR(PHY_CA_ADDR(PAD_CFG0)), 0x20002230}, (add)
+
+
+3. CB05 降频
+diff --git a/RPM.BF.2.4/rpm_proc/core/systemdrivers/clock/hw/msm8953/ClockRPMNPA.c b/RPM.BF.2.4/rpm_proc/core/systemdrivers/clock/hw/msm8953/ClockRPMNPA.c
+index 3d31f33e06..19373829c1 100755
+--- a/RPM.BF.2.4/rpm_proc/core/systemdrivers/clock/hw/msm8953/ClockRPMNPA.c
++++ b/RPM.BF.2.4/rpm_proc/core/systemdrivers/clock/hw/msm8953/ClockRPMNPA.c
+@@ -1118,6 +1118,11 @@ static npa_resource_state Clock_NPANodeBIMCFunc
+     return pClockRsc->pClock->pDomain->pBSPConfig[pClockRsc->nCurLevel].nFreqHz / 1000;
+   }
+ 
+-  if (nState > 844800)
+-  {
++  	nState = 422400; 
+-  }
+   bNoWait = (hClient->resource_data != 0);
+   return_state = Clock_BIMCSetFrequency( pClockRsc, nState, bNoWait );
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera i2c address 写完整8位地址
+内核驱动 i2c address 写7位地址
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera debug
+1, use chromatix6 to check jpg exif info
+Exif Debug:
+adb root
+adb remount
+adb shell setprop persist.camera.mobicat 2
+adb shell setprop persist.camera.global.debug 1 (安卓8.1先开这个,再开其他的 adb shell setprop persist.vendor.camera.global.debug  4)
+adb shell setprop persist.camera.stats.debugexif 4128768
+
+2,enable 3a log
+AE
+adb shell setprop persist.camera.stats.aec.debug 5;adb shell getprop persist.camera.stats.aec.debug
+AWB
+adb shell setprop persist.camera.stats.awb.debug 5;adb shell gersist.camera.stats.awb.debug
+AF
+adb shell setprop persist.camera.stats.af.debug 5;adb shell getprop persist.camera.stats.af.debug
+HAF
+adb shell setprop persist.camera.stats.haf.debug 5
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Makefile
+= 是最基本的赋值
+:= 是覆盖之前的值
+?= 是如果没有被赋值过就赋予等号后面的值
++= 是添加等号后面的值
+
+////////
+      1、“=”
+
+      make会将整个makefile展开后，再决定变量的值。也就是说，变量的值将会是整个makefile中最后被指定的值。看例子：
+
+            x = foo
+            y = $(x) bar
+            x = xyz
+
+      在上例中，y的值将会是 xyz bar ，而不是 foo bar 。
+
+      2、“:=”
+
+      “:=”表示变量的值决定于它在makefile中的位置，而不是整个makefile展开后的最终值。
+
+            x := foo
+            y := $(x) bar
+            x := xyz
+
+      在上例中，y的值将会是 foo bar ，而不是 xyz bar 了。
+      
+//////
+$@：目标的名字
+$^：构造所需文件列表所有所有文件的名字
+$<：构造所需文件列表的第一个文件的名字
+$?：构造所需文件列表中更新过的文件
+
+1 test1.o:test1.c
+2     gcc -o $@ $<
+$@：就是test1.o
+$<：就是test1.c
+
+1 test1.o:test1.c head.c
+2     gcc -o $@ $^
+$^：就是test1.c head.c  
+//////
+$(wildcard 寻找的文件)：
+	$(wildcard *.c)
+就等于找到系统中所有后缀为.c的文件，返回成以空格隔开的一整行字符
+例如：test1.c test2.c test3.c 这样
+
+////////
+$(basename 文件名)：
+取得文件的名字（去掉后缀的意思）
+$(basename test1.c)
+就会取得test1
+
+///////
+$(subst 要被替换的字符串,用来替换的字符串,被处理的字符串)：
+用“用来替换的字符串”替换“被处理的字符串”中的“要被替换的字符串”
+所以：
+$(subst .c,.o,test1.c test2.c)
+就会得到test1.o test2.o
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+LINUX shell
+$# 是传给脚本的参数个数
+$0 是脚本本身的名字
+$1 是传递给该shell脚本的第一个参数
+$2 是传递给该shell脚本的第二个参数
+$@ 是传给脚本的所有参数的列表
+$* 是以一个单字符串显示所有向脚本传递的参数，与位置变量不同，参数可超过9个
+$$ 是脚本运行的当前进程ID号
+$? 是显示最后命令的退出状态，0表示没有错误，其他表示有错误
+
+////////
+##del.sh
+echo "number:$#"
+echo "scname:$0"
+echo "first :$1"
+echo "second:$2"
+echo "argume:$@"
+echo "show parm list:$*"
+echo "show process id:$$"
+echo "show precomm stat: $?"
+执行结果
+[@jihite]$ sh del.sh 1 2 3
+number:3
+scname:del.sh
+first: 1
+second:2
+argume:1 2 3
+show parm list:1 2 3
+show process id:21057
+show precomm stat: 0
+
+例子二
+#!/bin/sh
+num=$#
+name=$0
+echo "number:$num"
+echo "scname:$name"
+echo $0
+echo $1
+echo $2
+
+for ((i=0; i<$num; i++))
+do
+    echo "$i"
+done
+
+echo "argume:$@"
+for key in $@
+do
+    echo $key
+done
+echo "-----------------"
+for key in "$@"
+do
+    echo $key
+done
+echo "-----------------------------"
+for key2 in $*
+do 
+    echo $key2
+done
+echo "-----------------"
+for key2 in "$*"
+do 
+    echo $key2
+done
+
+echo "show process id:$$"
+cho
+echo "show precomm stat: $?"
+
+复制代码
+
+执行结果
+[@jihite]$ sh del.sh a b                                                      
+number:2
+scname:del.sh
+del.sh
+a
+b
+0
+1
+argume:a b
+a
+b
+-----------------
+a
+b
+-----------------------------
+a
+b
+-----------------
+a b
+show process id:23582
+del.sh: line 37: cho: command not found
+show precomm stat: 127
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera dump
+hardware/qcom/camera/QCamera2/HAL/QCamera2HWICallbacks.cpp
+dumpJpegToFile()
+dumpFrameToFile()
+dumpMetadataToFile()
+
+persist.camera.dumpmetadata
+persist.camera.dumpimg
+
+
+
+KBA-161204073328	[Camera]How to dump camera image buffer
+2.1 Dump raw image
+adb shell setprop persist.camera.raw_yuv 1
+adb shell setprop persist.camera.preview_raw 1
+adb shell setprop persist.camera.dumpimg 16711696
+
+adb shell setprop persist.vendor.camera.raw_yuv 1
+adb shell setprop persist.vendor.camera.preview_raw 1
+adb shell setprop persist.vendor.camera.dumpimg 16711696
+
+16711696 converted to hexadecimal is 0xFF0010 .
+Bit-16 to bit-23 specifies how many frames to dump; default is 10.
+Bit-8 to bit-15 specifies how many frames to skip during dumping; default is no skip.
+Bit-0 to bit-7 need to be set, corresponding to flags:
+QCAMERA_DUMP_FRM_PREVIEW –0x1
+QCAMERA_DUMP_FRM_VIDEO –0x2
+QCAMERA_DUMP_FRM_SNAPSHOT –0x4
+QCAMERA_DUMP_FRM_THUMBNAIL –0x8
+QCAMERA_DUMP_FRM_RAW –0x10
+// dump raw image set to 0x10
+QCAMERA_DUMP_FRM_JPEG –0x20
+
+2.2 Dump VFE/ISP output yuv image
+adb shell setprop persist.camera.isp.dump 2
+adb shell setprop persist.camera.isp.dump_cnt 20
+// dump 20 frames
+For persist.camera.isp.dump, bit-0 to bit-12 needs to be set, corresponding to flag:
+CAM_STREAM_TYPE_PREVIEW – 0x2
+// dump preview image set to 0x2
+CAM_STREAM_TYPE_SNAPSHOT – 0x8
+CAM_STREAM_TYPE_VIDEO
+– 0x10
+The corresponding code in this place:
+Function iface_util_dump_frame from iface_util.c
+Image files under /data/misc/camera folder.
+2.3 Dump CPP output yuv image
+adb shell setprop persist.camera.dumpimg 16711681
+16711681 converted to hexadecimal is 0xFF0001.
+
+3.1 Dump raw image
+adb shell setprop persist.camera.raw_yuv 1
+adb shell setprop persist.camera.video_raw 1
+adb shell setprop persist.camera.dumpimg 16711696
+
+adb shell setprop persist.vendor.camera.dumpimg 16711696
+
+3.2 Dump ISP/VFE output YUV image
+adb shell setprop persist.camera.isp.dump 2
+adb shell setprop persist.camera.isp.dump_cnt 20
+// dump 20 frames
+
+3.3 Dump CPP output YUV image
+3.3.1 Dump preview yuv image(for display)
+adb shell setprop persist.camera.dumpimg 16711681
+dump QCAMERA_DUMP_FRM_PREVIEW stream type.
+
+3.3.2 Dump video yuv image(for video encorder)
+adb shell setprop persist.camera.dumpimg 16711682
+dump QCAMERA_DUMP_FRM_VIDEO stream type.
+
+4.1 How to dump capture raw image
+adb shell setprop persist.camera.raw_yuv 1
+adb shell setprop persist.camera.snapshot_raw 1
+adb shell setprop persist.camera.dumpimg 16711696
+
+4.2 How to dump capture ISP/VFE output image
+adb shell setprop persist.camera.dumpimg 65600
+
+4.3 How to dump capture CPP output image
+adb shell setprop persist.camera.dumpimg 65540
+
+
+
+
+
+
+Created By: Lifeng Xiao (12/24/2018 12:11 AM)
+Dear customer 
+
+As we talked on phone, please enable RDI mode through function setRdiMode, 
+and you will find RAW callback in function rdi_mode_stream_cb_routine. 
+Thanks
+Created By: Lifeng Xiao (12/23/2018 11:55 PM)
+Dear customer 
+
+This is Lifeng Xiao from China Camera team, please find below document for learning. 
+KBA-161204073328	[Camera]How to dump camera image buffer 
+Please find my office number below, feel free to contact me for this case, please also leave your phone number for better understanding. 
+
+office number:0755-36655827 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+system/extras/su/su.c
+root su super su去掉以下内容
+    /* myuid = getuid();
+    if (myuid != AID_ROOT && myuid != AID_SHELL) {
+        fprintf(stderr,"su: uid %d not allowed to su\n", myuid);
+        return 1;
+    } */
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+关闭selinux
+system/core/init/init.c
+static bool selinux_is_disabled(void)
+{
++	return true;
+	
+
+static bool selinux_is_enforcing(void)
+{
++	return false;
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+hardware/qcom/camera/QCamera2/stack/mm-camera-interface/src/mm_camera_interface.c
+扫描头改后辅摄
+	memset(temp_is_yuv, 0, sizeof(temp_is_yuv));
++	property_set("persist.vendor.camera.expose.aux", "1"); //开启后辅摄支持
+	memset(prop, 0, sizeof(prop));
+	property_get("persist.vendor.camera.expose.aux", prop, "0");
+	
+vendor/qcom/proprietary/mm-camera/mm-camera2/media-controller/modules/sensors/configs/msm8953_camera.xml
+<Position>BACK_AUX</Position>
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+关闭selinux
+device/qcom/msm8909/BoardConfig.mk
+androidboot.selinux=permissive
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+关闭PDAF
+Check in the （sensor）_lib.h driver 
+Check in the ov16b10_lib.h driver 
+/* Res 0 */ 
+{ 
+.is_pdaf_supported = 1, 
+
+2、Check HAF enabled 
+chromatix_ov16b10_zsl_preview_3a.h 
+1, /* Enable */ 
+/* Algo Enable */ 
+{ 
+0, 1, 0, 0 
+}, 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+&i2c_2 {
+qcom,camera@60 {
+		cell-index = <3>;
+		compatible = "opto,msi4000";
+		reg = <0x60>;
+		qcom,slave-id = <0x60 0x300A 0x7750>; // i2c slave address, device id address, expected id read value
+		qcom,csiphy-sd-index = <2>; //硬件的phy线路
+		qcom,csid-sd-index = <2>;
+		qcom,mount-angle = <270>;
+		qcom,sensor-name = "msi4000";
+		cam_vio-supply = <&pm8953_l6>;
+		qcom,cam-vreg-name ="cam_vio";
+		qcom,cam-vreg-min-voltage = <0>; //<1780000 0 0>;
+		qcom,cam-vreg-max-voltage = <0>; //<1780000 0 0>;
+		qcom,cam-vreg-op-mode = <0>; //<105000 0 0>;
+		pinctrl-names = "cam_default", "cam_suspend";
+		pinctrl-0 = <&barcode_power_default>;
+		pinctrl-1 = <&barcode_power_sleep>;
+		gpios = <&tlmm 0 0>;
+		//qcom,gpio-reset = <0>;
+		qcom,gpio-standby = <0>;
+		//qcom,gpio-vdig = <2>;
+		qcom,gpio-req-tbl-num = <1>;
+		qcom,gpio-req-tbl-flags = <0>;
+		qcom,gpio-req-tbl-label = "CAM_STANDBY1"; //"CAM_RESET1",
+			//"CAM_STANDBY1",
+			//"CAM_VDIG1";
+		//qcom,gpio-set-tbl-num = <0 0 1 1 2 2>;
+		//qcom,gpio-set-tbl-flags = <0 2 0 2 0 2>;
+		//qcom,gpio-set-tbl-delay = <1000 30000 1000 30000 1000 30000>;
+		qcom,csi-lane-assign = <0x4320>;
+		qcom,csi-lane-mask = <0x03>;
+		qcom,sensor-position = <0x101>;//前辅摄 qcom,sensor-position = <0x100>; //0x100 is back aux position
+		/* 0x101 is front aux position */
+		qcom,sensor-mode = <0>;
+		qcom,cci-master = <0>;
+
+		status = "ok";
+		clocks = <&clock_mmss MCLK0_CLK_SRC>,
+				<&clock_mmss MMSS_CAMSS_MCLK0_CLK>;
+		clock-names = "cam_src_clk", "cam_clk";
+		qcom,clock-rates = <24000000 0>;
+	};
+};
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+usb typec 耳机支持开关
+#CONFIG_SND_USB_AUDIO=y
+#CONFIG_SND_USB_AUDIO_QMI=y
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+RDI 
+Data path – Sensor→CSIPHY→CSID→ISPIF→VFE-write-masters
+(VFE bypass mode)→External memory
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+VTS测试流程
+1）替换谷歌system.img
+VTS测试要求刷入谷歌提供AOSP的system.img (GSI)。在user版本中，如果直接使用flash tool单独烧录GSI时，会导致无法开机。
+之所以会出现这种问题，是由于在user/userdebug版本中，dm-verity是使能的，替换GSI后导致dm-verity不能通过。 如果要解决这个问题，就需要进行unlock操作，并且要用fastboot来刷入刷入谷歌提供的system.img .
+
+fastboot flashing unlock
+fastboot oem unlock
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+目录大小
+du -sh ../ -m
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Lily项目
+git push sim HEAD:refs/for/MSM8909_LA_311_00038
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+selunx规则快速配置
+
+sepolicy,seandroid规则
+
+较详细的规则可以查看： 172.21.1.23/dokuwiki/doku.php
+1. 节点访问权限
+
+<5>[77037.274119] [(2015-01-20 09:17:42.876329323 UTC)] [cpuid: 2] type=1400 audit(1421745462.859:2172964): avc: denied { write } for pid=15848
+comm=“system_server” name=“enable” dev=“sysfs” ino=9381 scontext=u:r:zygote:s0 tcontext=u:object_r:sysfs:s0 tclass=file
+
+<5>[77037.841329] [(2015-01-20 09:17:43.443539322 UTC)] [cpuid: 0] type=1400 audit(1421745463.429:2172966): avc: denied { open } for pid=15871
+comm=“ActivityManager” name=“stat” dev=“proc” ino=5513 scontext=u:r:zygote:s0 tcontext=u:r:init:s0 tclass=file
+
+<5>[77037.912449] [(2015-01-20 09:17:43.514659321 UTC)] [cpuid: 2] type=1400 audit(1421745463.509:2172968): avc: denied { open } for pid=15871
+comm=“ActivityManager” name=“stat” dev=“proc” ino=5515 scontext=u:r:zygote:s0 tcontext=u:r:kernel:s0 tclass=file
+
+这种情况可能发生在代码中fork一个进程或者调用system()函数进行read/write某个file时就会出现这些denied，使得操作无法进行。
+那么如何处理这些denied信息，我们拿上面的log作为例子，可以在extern/sepolicy下新建一个test.te文件（这个目录下的te文件会自动全部加入编译），比如
+
+test.te
+allow <scontext> <tcontext>:<tclass> <operation>
+1. allow zygote sysfs:file write; #解释:允许源上下文类型是zygote的进程对目的上下文类型是sysfs的file进行write操作
+
+2. allow zygote init:file open;
+
+3. allow zygote kernel:file open;
+
+这样就可以保证上面的log中就不会再出现这些denied了。
+2. 验证修改
+
+android 8
+obj/ETC/nonplat_sepolicy.cil_intermediates/nonplat_policy.conf
+obj/ETC/plat_sepolicy.cil_intermediates/plat_policy.conf
+
+android 6 和之前 编译之后，直接查看这个文件就可以。
+out/target/product/q39/obj/ETC/sepolicy_intermediates/policy.conf
+
+3. 查看进程和文件的sepolicy属性
+
+shell@TCL_M3G:/ $ ps -Z                                                        
+LABEL                          USER     PID   PPID  NAME
+u:r:init:s0                    root      1     0     /init
+u:r:kernel:s0                  root      2     0     kthreadd
+u:r:kernel:s0                  root      3     2     ksoftirqd/0
+u:r:kernel:s0                  root      5     2     kworker/0:0H
+u:r:kernel:s0                  root      6     2     kworker/u16:0
+u:r:kernel:s0                  root      7     2     migration/0
+
+shell@TCL_M3G:/ $ ls -Z
+drwxr-xr-x root             root              u:object_r:cgroup:s0 acct
+drwxrwx--- system      cache           u:object_r:cache_file:s0 cache
+lrwxrwxrwx root           root              u:object_r:rootfs:s0 charger -> /sbin/healthd
+dr-x------ root                 root              u:object_r:rootfs:s0 config
+lrwxrwxrwx root           root              u:object_r:rootfs:s0 d -> /sys/kernel/debug
+drwxrwx--x system      system        u:object_r:system_data_file:s0 data
+
+4. 文件位置
+
+文件位置: 
+./build/target/board/generic_x86/sepolicy/
+./build/target/board/generic/sepolicy/
+./packages/services/Car/car_product/sepolicy/
+./device/qcom/sepolicy/
+./system/sepolicy/
+
+
+
+-rw-rw-r-- 1 q q 1510620  5月 17 14:24 obj/ETC/nonplat_sepolicy.cil_intermediates/nonplat_policy.conf
+-rw-rw-r-- 1 q q 1005580  5月 17 14:24 obj/ETC/plat_sepolicy.cil_intermediates/plat_policy.conf
+-rw-rw-r-- 1 q q  840121  5月 17 14:24 obj/ETC/treble_sepolicy_tests_intermediates/26.0_plat_policy.conf
+-rw-rw-r-- 1 q q  876038  5月 17 14:24 obj/ETC/treble_sepolicy_tests_intermediates/base_plat_policy.conf
+-rw-rw-r-- 1 q q  522250  5月 17 14:24 obj/FAKE/selinux_policy_intermediates/plat_pub_policy.conf
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+res几
+搜res:
+01-12 19:52:15.751   574  3248 I mm-camera: <SENSOR>< INFO> 4224: sensor_get_resolution_info: sensor info: name: s5k3l8, res: 0, max_fps: 30.000000, w: 4208, h: 3120 op pix clk: 449600000, FLL: 3250, LLPCK: 5808, mode: 1, PDAF support: 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+名词解释,术语
+LPG Light pattern generator 灯光模式发生器  light pulse generator 光脉冲发生器
+LUT Lookup table 查找表
+MPP Multipurpose pin 多用途引脚
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+查看使用的哪一组chromatix
+
+b/mm-camera/mm-camera2/media-controller/modules/sensors/sensor/module/sensor.c
+@@ -3195,7 +3195,7 @@ static char * sensor_get_cur_chromatix_name_for_type(
+       }
+       else if (index_array[j][1] != chromatix_name->special_mode_mask)
+         continue;
+-
++      ALOGE("qc33 qiancheng, module:%d, stream_type:%d",module, stream_type);
+
+
+typedef enum
+{
+  CAMERA_MODULE_ISP,
+  CAMERA_MODULE_CPP,
+  CAMERA_MODULE_SW_PPROC,
+  CAMERA_MODULE_3A,
+  CAMERA_MODULE_EXTERNAL,
+  CAMERA_MODULE_IOT,
+  CAMERA_MODULE_MAX
+} camera_module;
+
+typedef enum
+{
+  SENSOR_CHROMATIX_TYPE_COMMON,
+  SENSOR_CHROMATIX_TYPE_PREVIEW,
+  SENSOR_CHROMATIX_TYPE_SNAPSHOT,
+  SENSOR_CHROMATIX_TYPE_VIDEO,
+  SENSOR_CHROMATIX_TYPE_LIVESHOT,
+  SENSOR_CHROMATIX_TYPE_MAX,
+} sensor_chroamtix_type;
+
+
+
+module/stream_type
+拍照5/0
+录像3/3
+全景0/1
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+根据xml版本更新代码, 相当于 checkout <tag>
+repo init -m default.xml
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+B4 n3601 扫描头
+上电操作 connectDecoderLibrary
+下电操作 disconnectDecoderLibrary
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+耳机检查(插无耳机图标,不插有耳机图标)
+qcom,msm-mbhc-hphl-swh
+
+NO: normally-opened
+NC: normally-closed
+
+https://blog.csdn.net/lsn946803746/article/details/75269942
+1.耳机插入检测
+当中断触发，MBHC机械检测是通过hsdet销连接
+在软件中使用的配置来检测插入和移除插入3.5毫米的插头
+耳机插孔连接器。与一个比较器的阈值相比，hsdet针的电压被比较了。
+这里是固定在1.62 V，软件中可以设置到1.8V，用于支持更多不同的阻值的耳机类型。
+NO 就是HSDET从上拉到低电平
+NC 就是HSDET从HPH_L的接触到断开,上拉到1.8V
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera debug
+q@pc:~/APK$ adb shell setprop persist.vendor.camera.global.debug  5			// 开log 等级5
+q@pc:~/APK$ adb shell chmod 777 /data
+q@pc:~/APK$ adb shell setprop persist.vendor.camera.dumpimg 655615
+q@pc:~/APK$ adb shell setprop persist.vendor.camera.raw_yuv 1
+q@pc:~/APK$ adb shell setprop persist.vendor.camera.preview_raw 1
+q@pc:~/APK$ adb shell setprop persist.vendor.camera.global.debug 0
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera关键log
+exp_index
+cur_luma
+linecount
+sensor_gain=7.929688, real_gain=0.000000
+
+
+Line 112628: 06-20 10:02:25.225 566 9055 D mm-camera: <STATS_AEC >< HIGH> 9920: aec_process_pack_output: AEC_CORE_DEBUG: frame_id=12 target_luma=50.000000, cur_luma=57.593903, exp_index=347, linecount=3545, sensor_gain=7.929688, real_gain=0.000000 aec_settled=0, conv_speed=0.950000, iso=792 fps=7040 
+
+
+01-01 07:26:40.979   565  3903 I mm-camera: <SENSOR>< INFO> 4224: sensor_get_resolution_info: sensor info: name: s5k3l8, res: 1, max_fps: 30.000000, w: 2104, h: 1560 op pix clk: 449600000, FLL: 3250, LLPCK: 5808, mode: 1, PDAF support: 0
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
 
 
 

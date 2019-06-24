@@ -10,6 +10,25 @@ Power-Idle Power -- Madhusudana Tanugundala
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+__android_log_print(ANDROID_LOG_INFO, "ProjectName", "I am : %d/n", n);
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+http://www.vpnonline.org/
+
+ VPN Protocol:  PPTP VPN
+
+US VPN Server IP:  us.vpnonline.org
+                            67.212.188.13
+
+UK VPN Server IP:  uk.vpnonline.org
+                            77.92.92.133
+
+VPN Username:  vpnonline.org
+
+VPN Password:   freevpn
+
+VPN Bandwidth:  10Mbps Up/Down
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -51,6 +70,7 @@ adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_lo
 ./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm/boot/dts/s600.dtb
 ./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb09-apq8096-v3.0-pmi8994-cdp.dtb
 ./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/cb05.dtb
+./scripts/dtc/dtc -I dtb -O dts -o abc.dts arch/arm64/boot/dts/qcom/pa726.dtb
 
 /home/q/project/mt6735_cb04/frameworks/av/media/
 /home/q/project/2.1_msm8939_q39_s201/frameworks/av/media/
@@ -74,6 +94,7 @@ core/power/mpm/config/asic/8953/MPMIntDevCfgData.c:125:  { MPM_TRIGGER_RISING_ED
 
 Collecting kernel and userspace log in single file:
 adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
+adb shell logcat -v time -b all -f /dev/kmsg | adb shell cat /proc/kmsg | tee kernel_logcat.txt
 
 adb logcat ­-v thread
 adb shell logcat -v time -f /dev/kmsg | adb shell cat /proc/kmsg | tee zzker_cat.txt
@@ -144,6 +165,11 @@ git push ssh://qiancheng@172.16.6.72:29418/S600/platform/system/core.git HEAD:re
 git push ssh://qiancheng@172.16.6.72:29418/S600/platform/vendor/qcom/s600 HEAD:refs/for/S600
 
 git push ssh://qiancheng@192.167.100.232:29418/Non-HLOS_second.git HEAD:refs/for/8939_L
+
+git push --no-thin ssh://qiancheng@172.16.6.72:29418/MT6735/platform/build.git HEAD:refs/for/MT6735_L
+
+ECALL
+git push ssh://qiancheng@172.16.6.72:29418/STA8090 HEAD:refs/for/develop
 
 1使用git format-patch生成所需要的patch:
 当前分支所有超前master的提交：
@@ -216,6 +242,16 @@ $ repo forall -c git checkout tagname
 
 $ git format-patch commit号1 commit号2  # 提取2次commit号之间的不同, 并生成patch文件 (commit号可以通过 git log 来查看)
 $ git format-patch tag1 tag2            # 提取2次tag之间的不同, 并生成patch文件 (tag可以通过 git tag 来查看)
+
+查看commit与tag的对应关系
+git log --decorate
+
+切换分支 切换branch
+repo forall -c git checkout -b c01 sim/MSM8996_C01
+
+自定义指令, 结果保存在~/.gitconfig
+git config --global alias.t "log --decorate"   //"git t" 就显示commit和tag关系
+~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~
 
 
 ======脚本中log输出到logcat=======
@@ -590,6 +626,8 @@ du -Bm 当前目录下文件大小（单位兆）
 
 du -h --max-depth=1 .
 
+sudo du --max-depth=1 -hBm /  查分区大小根目录大小
+
 du -sm * | sort -n //统计当前目录大小 并安大小 排序
     du -sk * | sort -n
     du -sk * | grep guojf //看一个人的大小
@@ -606,6 +644,26 @@ du -sm * | sort -n //统计当前目录大小 并安大小 排序
     -w:多少字
 
 sed
+
+删除：d命令
+sed '2d' example-----删除example文件的第二行。
+sed '2,$d' example-----删除example文件的第二行到末尾所有行。
+sed '$d' example-----删除example文件的最后一行。
+sed '/test/'d example-----删除example文件所有包含test的行。
+替换：s命令
+sed 's/test/mytest/g' example
+-----在整行范围内把test替换为mytest。如果没有g标记，则只有每行第一个匹配的test被替换成mytest。
+sed -n 's/^test/mytest/p' example
+-----(-n)选项和p标志一起使用表示只打印那些发生替换的行。也就是说，如果某一行开头的test被替换成mytest，就打印它。
+sed 's/^192.168.0.1/&localhost/' example
+-----&符号表示替换换字符串中被找到的部份。所有以192.168.0.1开头的行都会被替换成它自已加 localhost，变成192.168.0.1localhost。
+sed -n 's/able/\1rs/p' example
+-----love被标记为1，所有loveable会被替换成lovers，而且替换的行会被打印出来。
+sed 's#10#100#g' example
+-----不论什么字符，紧跟着s命令的都被认为是新的分隔符，所以，“#”在这里是分隔符，代替了默认的“/”分隔符。表示把所有10替换成100。
+cat init.ora | grep -v  ^#|grep –v ^*  > initprod.ora
+
+
 输出指定字符之前的部分
 echo "djdkfalfjakfjak dfdfdf   doioio add" | sed -r 's/.*(doioio)/\1/'
 
@@ -653,10 +711,22 @@ paste -d '' 008tree ../005tree.txt > 009
 sed '/Sysadmin/d' thegeekstuff.txt 
 sed '/Sysadmin/'d thegeekstuff.txt 
 
+
+显示每4行中的第1行
+sed    -n    '1~4p' xxx > 21
+显示每4行中的第3行
+sed    -n    '3~4p' xxx > 23
+
 显示文件中重复的行
 cat s700_defconfig | sort | uniq -cd
 
-
+删除空行
+:g/^\s*$/d
+简单解释一下：
+g ：全区命令
+/ ：分隔符
+^\s*$ ：匹配空行，其中^表示行首，\s表示空字符，包括空格和制表符，*重复0到n个前面的字符，$表示行尾。连起来就是匹配只有空字符的行，也就是空行。
+/d ：删除该行 
 >>>>>>>>>>>>>>>>>>
 
 
@@ -666,6 +736,9 @@ qemu.hw.mainkeys=0
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 systrace工具
 external/chromium-trace/systrace.py
+
+如果双击打不开：
+打开chromium浏览器   输入chrome://tracing/    再点load
 
 adb shell setprop service.adb.root 1
 adb wait-for-device
@@ -693,19 +766,19 @@ adb shell "cat /sys/kernel/debug/tracing/set_event"
 
 
 Frame drop issue on browsing, gaming, and UX 丢帧问题，浏览，游戏，和UX
-$ python systrace.py gfx input view sched am wm dalvik freq idle load sync workq power mmc disk -b 40000 -t 10 -o output.html
+python systrace.py gfx input view sched am wm dalvik freq idle load sync workq power mmc disk -b 40000 -t 10 -o output.html
 
 Application launch latency 应用程序启动延迟
-$ python systrace.py gfx input sched am wm dalvik freq idle load sync workq power mmc disk  -b 40000 -t 10 -o output.html
+python systrace.py gfx input sched am wm dalvik freq idle load sync workq power mmc disk  -b 40000 -t 10 -o output.html
 
 Audio quality issue 音频质量问题
-$ python systrace.py sched dalvik freq idle load sync workq power mmc disk audio hal res -b 40000 -t 10 -o output.html
+python systrace.py sched dalvik freq idle load sync workq power mmc disk audio hal res -b 40000 -t 10 -o output.html
 
 Camera frame drop issue 相机帧下降问题
-$ python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk camera hal res membus -b 40000 -t 10 -o output.html
+python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk camera hal res membus -b 40000 -t 10 -o output.html
 
 Video frame drop issue 视频帧下降问题
-$ python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk video audio hal res membus –b 40000 –t 10 -o output.htm
+python systrace.py gfx sched am wm dalvik freq idle load sync workq power mmc disk video audio hal res membus -b 40000 -t 10 -o output.htm
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 file debug / .c debug
 
@@ -786,6 +859,1024 @@ adb shell logcat |grep "FULL Sweep AF ENDs here - success"
 60
 120
 300
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+camera debug旧的
+typedef enum {  
+STATS_DEBUG_MASK_AEC_LOG   = (1 << 0),   //<value> 1   //曝光
+STATS_DEBUG_MASK_AWB_LOG   = (1 << 1),   //2  //白平衡
+STATS_DEBUG_MASK_AF_LOG   = (1 << 2),   //4   //对焦
+STATS_DEBUG_MASK_ASD_LOG   = (1 << 3),   //8   //自动场景选择
+STATS_DEBUG_MASK_AFD_LOG   = (1 << 4),   //16   //工频干扰消除
+} stats_debug_mask_type;  
+
+adb shell setprop persist.camera.stats.debug.mask 1 //AEC
+adb shell setprop persist.camera.stats.debug.mask 4 //AF
+
+新的
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+KBA-160511044137
+Camera persist使用手册
+基于MSM8996平台PL1.0
+Contents
+一. Log部分... 9
+1. persist.camera.global.debug. 9
+2. persist.camera.mct.debug. 9
+3. persist.camera.sensor.debug. 9
+4. persist.camera.iface.logs. 10
+5. persist.camera.isp.debug. 10
+6. persist.camera.stats.debug. 10
+7. persist.camera.stats.af.debug. 10
+8. persist.camera.stats.aec.debug. 10
+9. persist.camera.stats.awb.debug. 10
+10. persist.camera.stats.asd.debug. 11
+11. persist.camera.stats.afd.debug. 11
+12. persist.camera.stats.q3a.debug. 11
+13. persist.camera.stats.is.debug. 11
+14. persist.camera.stats.haf.debug. 11
+15. persist.camera.pproc.debug.mask. 11
+16. persist.camera.cpp.debug.mask. 12
+17. persist.camera.c2d.debug.mask. 12
+18. persist.camera.imglib.logs. 12
+19. persist.camera.hal.debug. 1220. persist.camera.mmstill.logs. 12
+二. Module部分... 13
+1. SENSOR模块... 13
+1) persist.camera.sensor.gain. 13
+2) persist.camera.sensor.linecount. 13
+3) persist.dual.gain_tune. 13
+4) persist.dual.line_tune. 13
+5) persist.camera.fastaec. 13
+6) persist.camera.iso100. 14
+7) persist.camera.csid.payload. 14
+8) persist.camera.sensorliveconnect. 14
+9) persist.partial.skip. 14
+10) persist.camera.led.rerdbg. 14
+11) persist.camera.cal.af. 14
+12) persist.camera.cal.awb. 15
+13) persist.camera.cal.lsc. 15
+14) persist.camera.cal.dp. 15
+15) persist.camera.cal.dual 15
+16) persist.camera.dumpmetadata. 15
+2. IFACE2模块... 16
+1) persist.camera.isp.testgen. 16
+2) persist.camera.isp.dump. 16
+3) persist.camera.isp.dump_cnt. 164) persist.camera.isp.ppbypass. 16
+5) persist.camera.isp.buf_cnt. 16
+6) persist.camera.hvx_lib_1. 17
+7) persist.camera.hvx_lib_2. 17
+3. ISP2模块... 18
+1) persist.camera.isp.turbo. 18
+2) persist.camera.isp.dualisp. 18
+3) persist.camera.dumpmetadata. 18
+4) persist.camera.tintless.skip. 18
+5) persist.camera.saturationext. 18
+6) persist.camera.isp.regdump. 19
+7) persist.camera.isp.offregdump. 19
+8) persist.camera.isp.cac_disable. 19
+9) persist.camera.isp.ltm_disable. 19
+10) persist.camera.ltm.sw.. 19
+11) persist.camera.ltm.filteroff. 19
+12) persist.camera.ltm.out. 19
+13) persist.camera.ltm.overlap. 20
+4. STATS模块... 21
+1) persist.camera.ledcalib.enabled. 21
+2) persist.camera.mobicat. 21
+5. PPROC-NEW模块... 22
+1) persist.enable.max.pending.buf. 22
+2) persist.camera.c2d.disable. 223) persist.camera.tnr.force_enable. 22
+4) persist.camera.enable_vpu. 22
+5) persist.camera.dumpmetadata. 22
+6. IMGLIB模块... 23
+1) persist.camera.imglib.hdr.dump. 23
+2) persist.camera.imglib.cac.dump. 23
+3) persist.camera.mobicat. 23
+4) persist.camera.imglib.cf.ver. 23
+5) persist.imglib.cf.tune. 23
+6) persist.imglib.cf.deghost. 24
+7) persist.imglib.cf.flash_weight. 24
+8) persist.camera.imglib.dump. 24
+9) persist.camera.fd.dump. 24
+10) persist.camera.imglib.face_sw.. 24
+11) persist.camera.imglib.face_all 24
+12) persist.camera.fd_region_filter. 25
+13) persist.camera.imglib.bsgc. 25
+14) persist.camera.imglib.fd_arm.. 25
+15) persist.camera.imglib.tp.mask. 25
+16) persist.camera.imglib.tp.effect. 25
+17) persist.camera.imglib.tp.power. 26
+18) persist.camera.imglib.fddsp. 26
+19) persist.camera.imglib.cds. 2620) persist.camera.dumpmetadata. 26
+7. MCT模块... 27
+1) persist.camera.max_prev.enable. 27
+2) persist.camera.max.snapshot. 27
+3) persist.camera.logsync. 27
+4) persist.camera.logsync.interval 27
+5) persist.camera.debugfs_root. 27
+6) persist.camera.debug.exit. 27
+8. MM-STILL模块... 28
+1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable. 28
+2) persist.camera.kpi.debug. 28
+9. QCAMERA2模块... 29
+1) persist.camera.longshot.save. 29
+2) persist.camera.jpeg_burst. 29
+3) persist.camera.tn.disable. 29
+4) persist.camera.zsl_raw.. 29
+5) persist.camera.zsl_yuv. 29
+6) persist.camera.zsl_matching. 29
+7) persist.camera.nonzsl.yuv. 30
+8) persist.camera.preview_raw.. 30
+9) persist.camera. video_raw.. 30
+10) persist.camera.snapshot_raw.. 30
+11) persist.camera.dumpimg. 30
+12) persist.camera.preview_yuv. 3013) persist.camera.raw_yuv. 31
+14) persist.camera.mem.usepool 31
+15) persist.camera.imglib.stillmore. 31
+16) persist.camera.raw.format. 31
+17) persist.camera.feature.cac. 31
+18) persist.camera.feature.restart. 31
+19) persist.sys.exif.make. 32
+20) ro.product.manufacturer. 32
+21) persist.sys.exif.model 32
+22) ro.product.model 32
+23) persist.sys.exif.model 32
+24) persist.camera.feature.shutter. 32
+25) persist.camera.kpi.debug. 33
+26) persist.debug.sf.showfps. 33
+27) persist.camera.thermal.mode. 33
+28) persist.camera.ltmforseemore. 33
+29) persist.camera.batchcount. 33
+30) persist.camera.aux.preview.size. 33
+31) persist.camera.aux.picture.size. 34
+32) persist.camera.opt.livepic. 34
+33) persist.camera.liveshot.size. 34
+34) persist.camera.preview.ubwc. 34
+35) persist.camera.led.on.period. 3436) persist.camera.retro.number. 34
+37) persist.camera.effect. 35
+38) persist.camera.stats.af.paaf. 35
+39) persist.camera.continuous.iso. 35
+40) persist.camera.auto.hdr.enable. 35
+41) persist.capture.burst.exposures. 35
+42) persist.camera.no-display. 35
+43) persist.camera.tnr_cds. 36
+44) persist.camera.tnr.video. 36
+45) persist.camera.tnr.preview.. 36
+46) persist.camera.tnr.snapshot. 36
+47) persist.camera.rdi.mode. 36
+48) persist.camera.secure.mode. 36
+49) persist.camera.zsl.interval 36
+50) persist.camera.zsl.backlookcnt. 37
+51) persist.camera.zsl.queuedepth. 37
+52) persist.camera.snapshot.number. 37
+53) persist.camera.snapshot.fd. 37
+54) persist.camera.mobicat. 37
+55) persist.capture.burst.exposures. 37
+56) persist.camera.hdr.outcrop. 38
+57) persist.camera.zsl.mode. 38
+58) persist.debug.set.fixedfps. 38
+59) persist.camera.zzhdr.enable. 3860) persist.camera.zzhdr.video. 38
+61) persist.camera.tintless. 38
+62) persist.camera.video.CDS. 39
+63) persist.camera.CDS. 39
+64) persist.camera.ois.disable. 39
+65) persist.camera.set.afd. 39
+66) persist.camera.mem.usecache. 39
+67) persist.denoise.process.plates. 39
+68) persist.camera.snap.format. 40
+69) persist.camera.video.ubwc. 40
+70) persist.camera.exif.rotation. 40
+71) persist.camera.dcrf.enable. 40
+72) persist.camera.eztune.enable. 40
+73) persist.camera.is_type. 40
+74) persist.camera.preview.seemore. 41
+75) persist.camera.offlineraw.. 41
+76) persist.camera.multi_pass. 41
+77) persist.camera.pp_scaling. 41
+78) persist.camera.llnoise. 41
+79) persist.camera.video.batchsize. 41
+80) persist.camera.longshot.stages. 42
+81) persist.camera.llc. 42
+82) persist.camera.fdvideo. 4283) persist.camera.dual.camera.dump. 42
+84) persist.camera.dual.camera.mpo. 42
+85) persist.camera.aux.camera. 42
+86) persist.camera.dc.frame.sync. 43
+87) persist.camera.HAL3.enabled. 43
+88) persist.camera.dual.camera. 43
+89) persist.camera.perflock.enable. 43
+90) persist.camera.perflock.enable. 43
+91) persist.camera.disp.num_vsync. 43
+92) persist.camera.disp.ms_to_vsync. 44
+93) persist.camera.disp.filter_max. 44
+94) persist.camera.disp.filter_min. 44
+95) persist.camera.disp.fps. 44
+96) persist.camera.dumpmetadata. 44
+一. Log部分
+8996 重新定义了自己的log规则,使用起来更加方便简洁,相关代码的主要实现部分在
+camera_dbg.c文件中。框架定义了如下6个log级别:
+名称 数值
+NONE 0
+ERROR 1
+WARN 2HIGH 3
+DBG 4
+LOW 5
+INFO 6
+注:INFO级别不可控,是一定会打印的。
+查看当前系统使能了哪些级别的log,可以使用参考命令:
+adb shell getprop | grep "camera"
+下面是开启各个模块log级别的简单描述。
+1. persist.camera.global.debug (安卓8.1 persist.vendor.camera.global.debug)
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性是总的log级别开关。
+注意: 若子模块的log级别小于该属性设置值,则以该属性为准;若子模块的log
+级别大于该属性设置值,则以子模块设置的log级别为准。
+示例:adb shell setprop persist.camera.global.debug 5
+2. persist.camera.mct.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制MCT模块的log级别。
+示例:adb shell setprop persist.camera.mct.debug 5
+3. persist.camera.sensor.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制SENSOR模块的log级别。示例:adb shell setprop persist.camera.sensor.debug 5
+4. persist.camera.iface.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IFACE模块的log级别。
+示例:adb shell setprop persist.camera.iface.logs 5
+5. persist.camera.isp.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ISP模块的log级别。
+示例:adb shell setprop persist.camera.isp.debug 5
+6. persist.camera.stats.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制STATS模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.debug 5
+7. persist.camera.stats.af.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AF模块的log级别。
+示例:adb shell setprop persist.camera.stats.af.debug 5
+8. persist.camera.stats.aec.debug
+persist.vendor.camera.stats.aec.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AEC模块的log级别。
+示例:adb shell setprop persist.camera.stats.aec.debug 5  (persist.vendor.camera.stats.aec.debug)
+
+9. persist.camera.stats.awb.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AWB模块的log级别。
+示例:adb shell setprop persist.camera.stats.awb.debug 5
+10. persist.camera.stats.asd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制ASD模块的log级别。
+示例:adb shell setprop persist.camera.stats.asd.debug 5
+11. persist.camera.stats.afd.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制AFD模块的log级别。
+示例:adb shell setprop persist.camera.stats.afd.debug 5
+12. persist.camera.stats.q3a.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制Q3A模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.stats.q3a.debug 5
+13. persist.camera.stats.is.debug
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IS模块的log级别。
+示例:adb shell setprop persist.camera.stats.is.debug 5
+14. persist.camera.stats.haf.debug数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制HAF模块的log级别。
+示例:adb shell setprop persist.camera.stats.haf.debug 5
+15. persist.camera.pproc.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制PPROC模块的log级别。
+注意: 这是一个container模块。
+示例:adb shell setprop persist.camera.pproc.debug.mask 5
+16. persist.camera.cpp.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制CPP模块的log级别。
+示例:adb shell setprop persist.camera.cpp.debug.mask 5
+17. persist.camera.c2d.debug.mask
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制C2D的log级别。
+示例:adb shell setprop persist.camera.c2d.debug.mask 5
+18. persist.camera.imglib.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制IMGLIB模块的log级别。
+示例:adb shell setprop persist.camera.imglib.logs 5
+19. persist.camera.hal.debug
+数值:0-5功能: 设置不同的数值,将打印对应级别的log。该属性控制HAL的log级别。
+示例:adb shell setprop persist.camera.hal.debug 5
+20. persist.camera.mmstill.logs
+数值:0-5
+功能: 设置不同的数值,将打印对应级别的log。该属性控制mm-still的log级别。
+示例:adb shell setprop persist.camera.mmstill.logs 5
+二. Module部分
+以module为单位,简述各个module中persist使用方法。
+1. SENSOR模块
+1) persist.camera.sensor.gain
+数值: 非负数
+功能: 手动设置real gain到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.gain 1
+2) persist.camera.sensor.linecount
+数值: 非负数
+功能: 手动设置line count到sensor。
+注意: 该属性在宏ENABLE_MANUAL_EXPOSURE_UPDATE被使能的前提下生效。
+示例:adb shell setprop persist.camera.sensor.linecount 1024
+3) persist.dual.gain_tune
+数值: 非负数
+功能: 手动设置双摄像头gain factor。注意: 该属性在双摄像头使用场景中生效。
+示例:
+4) persist.dual.line_tune
+数值: 非负数
+功能: 手动设置双摄像头line count factor。
+注意: 该属性在双摄像头使用场景中生效。
+示例:
+5) persist.camera.fastaec
+数值: 非负整数
+功能:fast aec模式下,手动设置frame skip数目。
+示例:adb shell setprop persist.camera.fastaec 2
+6) persist.camera.iso100
+数值: 非负数
+功能: 手动设置iso100的gain数值。
+示例:adb shell setprop persist.camera.iso100 1
+7) persist.camera.csid.payload
+数值:0或4
+功能: test模式下,将csid设置为0或4模式,以便产生相应的测试pattern。
+示例:adb shell setprop persist.camera.csid.payload 4
+8) persist.camera.sensorliveconnect
+数值:0或1
+功能: 设置为1,则在代码中开启sensor live connect线程,方便调试工具实时控制AF。
+示例:adb shell setprop persist.camera.sensorliveconnect 19) persist.partial.skip
+数值:0或1
+功能: 设置为1,则使能闪光灯下的frame skip模式。
+示例:adb shell setprop persist.partial.skip 1
+10) persist.camera.led.rerdbg
+数值:0或1
+功能: 开启闪光灯去红眼功能后,若将该属性设置为1,则会打印预闪电流、持续时间、
+脉冲数目等调试信息。
+示例:adb shell setprop persist.camera.led.rerdbg 1
+11) persist.camera.cal.af
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中af校准数据。
+示例:adb shell setprop persist.camera.cal.af 1
+12) persist.camera.cal.awb
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中awb校准数据。
+示例:adb shell setprop persist.camera.cal.awb 1
+13) persist.camera.cal.lsc
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中lsc校准数据。
+示例:adb shell setprop persist.camera.cal.lsc 1
+14) persist.camera.cal.dp
+数值:0或1
+功能: 如果设置为0,则不加载eeprom中dp校准数据。示例:adb shell setprop persist.camera.cal.dp 1
+15) persist.camera.cal.dual
+数值:0或1
+功能: 如果设置为0,则不做dual camera校准。
+示例:adb shell setprop persist.camera.cal.dual 1
+16) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,则将sensor中的meta数据发送到MCT BUS,然后通过
+mct_stream_fill_metadata_v1接口将信息传递给HAL。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+2. IFACE2模块
+1) persist.camera.isp.testgen
+数值:0或1
+功能: 若设置为1,折预览将呈现七彩条纹图像。
+示例:adb shell setprop persist.camera.isp.testgen 1
+2) persist.camera.isp.dump
+数值: 需要dump的stream type所对应的enum数值。
+功能: 使能后,会根据设置的stream type去dump相应的帧数据。路径:/data/misc/camera/
+示例:adb shell setprop persist.camera.isp.dump 2
+3) persist.camera.isp.dump_cnt
+数值: 非负整数功能: 该属性定义persist.camera.isp.dump需要dump的帧数。
+示例:adb shell setprop persist.camera.isp.dump_cnt 10
+4) persist.camera.isp.ppbypass
+数值:0或1
+功能: 使能该属性后,isp不再自己申请native buffer,而是使用从HAL map过来的buffer,并且
+buffer将不做pproc处理。
+注意: 生效前提是HAL已经申请过足够数量的buffer。
+示例:adb shell setprop persist.camera.isp.ppbypass 1
+5) persist.camera.isp.buf_cnt
+数值: 非零正整数
+功能:stream on后,会request image buffer,有两种方式,一是map HAL的buffer,
+二是自己在本地申请native buffer。如果选择方式二,则该属性将定义native buffer的数量。
+注意: 生效前提是ISP自己在本地申请native buffer。
+示例:adb shell setprop persist.camera.isp.buf_cnt 4
+6) persist.camera.hvx_lib_1
+数值:external chromatix lib名称
+功能: 手动指定加载的后置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_1 libchromatix_xxx.so
+7) persist.camera.hvx_lib_2
+数值:external chromatix lib名称
+功能: 手动指定加载的前置external chromatix lib。
+注意: 生效前提是tuning没有设置external chromatix的name。
+示例:adb shell setprop persist.camera.hvx_lib_2 libchromatix_xxx.so3. ISP2模块
+1) persist.camera.isp.turbo
+数值:0或1
+功能: 若设置为1,则将turbo clk设置为ISP默认工作clk。
+注意: 设置完成后,需要重启手机才会生效。
+示例:adb shell setprop persist.camera.isp.turbo 1
+2) persist.camera.isp.dualisp
+数值:0或1
+功能: 若设置为1,将强制使用两个VFE工作。若设置为0,则将根据默认clk与user请求clk
+的大小关系来决定使用VFE数量。
+注意: 若channel中有raw stream存在,该属性将失效。
+示例:adb shell setprop persist.camera.isp.dualisp 1
+3) persist.camera.dumpmetadata
+数值:0或1
+功能: 若设置为1,将分配meta dump的资源。同时,将打印mesh_roll、tintless_algo等sub isp
+module中的调试信息或在/data/misc/camera/路径下生成相关调试信息文件。
+注意: 该属性需要配合HAL/PPROC中同名属性进行使用,此处仅仅是HAL/PPROC
+中同名属性生效的前提。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+4) persist.camera.tintless.skip
+数值: 非负整数
+功能: 设置tintless所需要skip的frame数目,默认是skip 2帧。
+示例:adb shell setprop persist.camera.tintless.skip 2
+5) persist.camera.saturationext数值:true或false
+功能:
+示例:
+6) persist.camera.isp.regdump
+数值: 非负整数
+功能:isp online process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.regdump 30
+7) persist.camera.isp.offregdump
+数值: 非负整数
+功能:isp offline process时,根据设定的数值去dump相应帧数的register信息。
+示例:adb shell setprop persist.camera.isp.offregdump 30
+8) persist.camera.isp.cac_disable
+数值:0或1
+功能: 手动开/关CAC功能。
+示例:adb shell setprop persist.camera.isp.cac_disable 1
+9) persist.camera.isp.ltm_disable
+数值:0或1
+功能: 手动开/关LTM功能。
+示例:adb shell setprop persist.camera.isp.ltm_disable 1
+10) persist.camera.ltm.sw
+数值:
+功能:
+示例:11) persist.camera.ltm.filteroff
+数值:0或1
+功能:
+示例:
+12) persist.camera.ltm.out
+数值:
+功能:
+示例:
+13) persist.camera.ltm.overlap
+数值:0-50
+功能: 手动定义cell overlap factor的大小。
+示例:adb shell setprop persist.camera.isp.ltm_disable 10
+4. STATS模块
+1) persist.camera.ledcalib.enabled
+数值:0或1
+功能: 手动开/关双色温LED校准功能。
+示例:adb shell setprop persist.camera.ledcalib.enabled 1
+2) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat。
+示例:adb shell setprop persist.camera.mobicat 1
+5. PPROC-NEW模块
+1) persist.enable.max.pending.buf数值:1或2
+功能: 定义cpp硬件一次操作所处理的buffer数量。
+示例:adb shell setprop persist.enable.max.pending.buf 1
+2) persist.camera.c2d.disable
+数值:0或1
+功能: 手动开/关C2D。
+示例:adb shell setprop persist.camera.c2d.disable 1
+3) persist.camera.tnr.force_enable
+数值:0或1
+功能: 手动开/关TNR。
+示例:adb shell setprop persist.camera.tnr.force_enable 1
+4) persist.camera.enable_vpu
+数值:0或1
+功能: 手动开/关VPU。
+示例:adb shell setprop persist.camera.enable_vpu 1
+5) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump PPROC的Metadata到/data/misc/camera/路径下。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+6. IMGLIB模块
+1) persist.camera.imglib.hdr.dump
+数值:no/in/out/in out功能: 设置为no,关闭HDR dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.hdr.dump in
+2) persist.camera.imglib.cac.dump
+数值:no/in/out/inout
+功能: 设置为no,关闭CAC dump功能;设置为in,将dump输入帧;设置为out,将dump输出帧;
+设置为in out,将同时dump输入与输出帧。
+示例:adb shell setprop persist.camera.imglib.cac.dump no
+3) persist.camera.mobicat
+数值:0与非0
+功能: 设置为0,关闭这个功能;设置为其他值,将在返回给HAL的meta信息中添加mobicat
+相关的调试信息。
+注意: 该属性需要配合HAL中的同名属性使用。
+示例:adb shell setprop persist.camera.mobicat 0
+4) persist.camera.imglib.cf.ver
+数值: chroma flash 库的版本号
+功能: 返回使用的chroma flash 库版本号给chroma flash初始化提供版本信息。
+注意: 该属性一般有系统设置,此处仅做读取操作。
+示例:adb shell getprop persist.camera.imglib.cf.ver
+5) persist.imglib.cf.tune
+数值:0或1
+功能: "手动设置chroma flash参数"的总开关,使能后,才能通过其他属性手动修改相应参数。
+示例:adb shell setprop persist.imglib.cf.tune 1
+6) persist.imglib.cf.deghost数值:0或1
+功能: 手动开/关deghost功能。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.deghost 1
+7) persist.imglib.cf.flash_weight
+数值:1-15
+功能: 手动设置chroma flash 亮度等级。
+注意: 该属性在persist.imglib.cf.tune被使能后才能生效。
+示例:adb shell setprop persist.imglib.cf.flash_weight 1
+8) persist.camera.imglib.dump
+数值:0或1
+功能: imglib模块frame dump总开关。
+示例:adb shell setprop persist.camera.imglib.dump 1
+9) persist.camera.fd.dump
+数值:0-4
+功能: 设置为0,将关闭face frame dump功能;设置为1,将dump non-tracked faces帧数据;
+设置为2,将dump tracked faces帧数据;设置为3,将dump non-detected faces帧数据;设置为4,
+将dump所有的帧数据。
+注意: 该属性只有在persist.camera.imglib.dump为1的前提下才能生效。
+示例:adb shell setprop persist.camera.fd.dump 1
+10) persist.camera.imglib.face_sw
+数值:0或1
+功能: 手动开/关软件辅助人脸识别功能。
+示例:adb shell setprop persist.camera.imglib.face_sw 111) persist.camera.imglib.face_all
+数值:0或1
+功能: 手动开/关全角度搜寻人脸功能。使能该功能后,在识别人脸时,将不考虑手机的方向。
+示例:adb shell setprop persist.camera.imglib.face_all 1
+12) persist.camera.fd_region_filter
+数值:0或1
+功能: 使能后,将根据region来执行相应的滤波设定。相应region参数,由chromatix加载进来。
+示例:adb shell setprop persist.camera.fd_region_filter 1
+13) persist.camera.imglib.bsgc
+数值:0或1
+功能: 设置为1,将Enable blink, smile, gaze, contour detection。
+示例:adb shell setprop persist.camera.imglib.bsgc 1
+14) persist.camera.imglib.fd_arm
+数值:0或1
+功能: 设置为0,将优先申请HW FD资源。设置为1,将不优先使用HW FD资源,将会优先去申请
+DSP FD资源。
+示例:adb shell setprop persist.camera.imglib.fd_arm 1
+15) persist.camera.imglib.tp.mask
+数值:0或1
+功能: 在TruePortrait模式下,设置为1,将使能bodymask。
+示例:adb shell setprop persist.camera.imglib.tp.mask 1
+16) persist.camera.imglib.tp.effect
+数值:0-2功能: 在TruePortrait模式下,手动设置effect,0代表boke effect,1代表halo effect,2代表notion
+blur effect。
+示例:adb shell setprop persist.camera.imglib.tp.effect 1
+17) persist.camera.imglib.tp.power
+数值: 正整数
+功能: 在TruePortrait模式下,手动设置effect的强度,数值越大,强度越大。
+示例:adb shell setprop persist.camera.imglib.tp.power 1
+18) persist.camera.imglib.fddsp
+数值:0或1
+功能: 设置为1,将强制使用FD DSP资源。
+示例:adb shell setprop persist.camera.imglib.fddsp 1
+19) persist.camera.imglib.cds
+数值:0-5
+功能: 手动选择CDS的运行模式:C、NEON、NENO_ASM、DSP、GPU、FCV。
+示例:adb shell setprop persist.camera.imglib.cds 1
+20) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将meta中填充CAC相关调试信息。并且,可以dump WNR相关参数到/data/misc/
+camera/路径下
+示例:adb shell setprop persist.camera.dumpmetadata 1
+7. MCT模块
+1) persist.camera.max_prev.enable
+数值:0或1功能: 使能后,将使用符合条件的最大尺寸来做preview。
+示例:adb shell setprop persist.camera.max_prev.enable 1
+2) persist.camera.max.snapshot
+数值:0或1
+功能: 使能后,将使用符合条件的最大尺寸来做sanpshot。
+示例:adb shell setprop persist.camera.max.snapshot 1
+3) persist.camera.logsync
+数值:0或1
+功能:
+示例:
+4) persist.camera.logsync.interval
+数值:
+功能:
+示例:
+5) persist.camera.debugfs_root
+数值:
+功能:
+示例:
+6) persist.camera.debug.exit
+数值:
+功能:
+示例:
+8. MM-STILL模块1) persist.camera.max_prev.enable persist.camera.jpeg.dumpqtable
+数值:0或1
+功能: 开启后,将打印jpeg的quality table调试信息。
+示例:adb shell setprop persist.camera.jpeg.dumpqtable 1
+2) persist.camera.kpi.debug
+数值:1或2
+功能: 设置KPI调试信息的级别,设置为1表示KPI_APT,设置为2表示KPI_DBG级别。
+示例:adb shell setprop persist.camera.kpi.debug 1
+9. QCAMERA2模块
+1) persist.camera.longshot.save
+数值:0或1
+功能: 是否启动在HAL存储连拍照片的routine。
+示例:adb shell setprop persist.camera.longshot.save 1
+2) persist.camera.jpeg_burst
+数值:0或1
+功能: 手动开/关jpeg burst模式。
+注意: 若有设置persist.camera.longshot.save,该属性将失效。
+示例:adb shell setprop persist.camera.jpeg_burst 1
+3) persist.camera.tn.disable
+数值:0或1
+功能: 手动开/关jpeg thumbnail编码功能。
+示例:adb shell setprop persist.camera.tn.disable 1
+4) persist.camera.zsl_raw数值:0或1
+功能: 使能后,将dump zsl channel 中的raw stream到文件。
+示例:adb shell setprop persist.camera.zsl_raw 1
+5) persist.camera.zsl_yuv
+数值:0或1
+功能: 使能后,将dump zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.zsl_yuv 1
+6) persist.camera.zsl_matching
+数值:0或1
+功能: 开启后,将打印ZSL super buffer里面每块子buffer的编号、对应的frame_idx、属于的stream
+类型、时间戳等信息。
+示例:adb shell setprop persist.camera.zsl_matching 1
+7) persist.camera.nonzsl.yuv
+数值:0或1
+功能: 使能后,将dump non-zsl channel 中的yuv stream到文件。
+示例:adb shell setprop persist.camera.nonzsl.yuv 1
+8) persist.camera.preview_raw
+数值:0-63
+功能: 开启后,将dump preview raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera.preview_raw 5
+9) persist.camera. video_raw
+数值:0-63功能: 开启后,将dump video raw stream到文件。0代表关闭,1-63代表开启后自定义raw stream
+中的buffer数量。
+示例:adb shell setprop persist.camera. video_raw 5
+10) persist.camera.snapshot_raw
+数值:0或1
+功能: 开启后,将dump snapshot raw stream到文件。
+示例:adb shell setprop persist.camera.snapshot_raw 1
+11) persist.camera.dumpimg
+数值:0或1
+功能: 开启后,将dump jpeg编码之前的YUV数据和编码之后的jpeg图像到文件。
+示例:adb shell setprop persist.camera.dumpimg 1
+12) persist.camera.preview_yuv
+数值:0-63
+功能: 手动定义preview stream中的buffer数量。
+示例:adb shell setprop persist.camera.preview_yuv 5
+13) persist.camera.raw_yuv
+数值:0或1
+功能: 开启后,将在preview/zsl/capture channel中强制添加raw stream。
+示例:adb shell setprop persist.camera.raw_yuv 1
+14) persist.camera.mem.usepool
+数值:0或1
+功能: 开启后,在申请分配stream buffer的时候,优先从内存池中分配。
+示例:adb shell setprop persist.camera.mem.usepool 115) persist.camera.imglib.stillmore
+数值: 非负整数
+功能: 手动设置stillmore功能所需要的buffer数量。
+注意: 设置的数值要在stillmore 这个功能做支持的min与max buffer cnt之间时,才能生效。
+示例:adb shell setprop persist.camera.imglib.stillmore 1
+16) persist.camera.raw.format
+数值: 根据宏
+功能:设置raw stream的图像格式,例如,设置为宏格式CAM_FORMAT_BAYER_QCOM
+_RAW_10BPP_GBRG。
+示例:adb shell setprop persist.camera.raw.format 1
+17) persist.camera.feature.cac
+数值:0或1
+功能: 手动开/关CAC。
+示例:adb shell setprop persist.camera.feature.cac 1
+18) persist.camera.feature.restart
+数值:0或1
+功能:定义image capture期间,是否需要重启preview。
+示例:adb shell setprop persist.camera.feature.restart 1
+19) persist.sys.exif.make
+数值: null或任意str
+功能: 手动定制写的exif信息(manufacturer)内容的开关。
+示例:adb shell setprop persist.sys.exif.make null
+20) ro.product.manufacturer数值:str
+功能: 手动定制写的exif信息(manufacturer)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.manufacturer qcom
+21) persist.sys.exif.model
+数值: null或任意str
+功能: 手动定制写的exif信息(model)内容的开关。
+示例:adb shell setprop persist.sys.exif.model null
+22) ro.product.model
+数值:str
+功能: 手动定制写的exif信息(model)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop ro.product.model qcom
+23) persist.sys.exif.model
+数值:str
+功能: 手动定制写的exif信息(description)内容。
+注意: 前提条件ENABLE_MODEL_INFO_EXIF使能。
+示例:adb shell setprop persist.sys.exif.model qcom
+24) persist.camera.feature.shutter
+数值:0或1
+功能: 开启后,将在capture结束后立刻播放快门声音。
+示例:adb shell setprop persist.camera.feature.shutter 1
+25) persist.camera.kpi.debug数值:1或2
+功能: 设置1,则打印KPI log级别为KPI_ONLY;设置2,则打印KPI log级别为KPI_DBG。
+示例:adb shell setprop persist.camera.kpi.debug 1
+26) persist.debug.sf.showfps
+数值:0或1
+功能: 开启后,将在log中实时打印preview的帧率。
+示例:adb shell setprop persist.debug.sf.showfps 1
+27) persist.camera.thermal.mode
+数值: frameskip或fps
+功能: 若设置为frameskip模式,则thermal将按照指定的frame skip pattern来丢帧;若设置为fps(
+默认模式),则thermal将按照默认设定来动态调整帧率。
+示例:adb shell setprop persist.camera.thermal.mode fps
+28) persist.camera.ltmforseemore
+数值:0或1
+功能: 在seeemore功能下开启/关闭LTM。
+示例:adb shell setprop persist.camera.ltmforseemore 1
+29) persist.camera.batchcount
+数值: 非0整数
+功能: 手动定义KEY_QC_VIDEO_BATCH_SIZE的数值。
+示例:adb shell setprop persist.camera.batchcount 1
+30) persist.camera.aux.preview.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的预览size。
+示例:adb shell setprop persist.camera.aux.preview.size 320x4031) persist.camera.aux.picture.size
+数值: widthxheight,例如320x240
+功能: 手动定义AUX摄像头的照片size。
+示例:adb shell setprop persist.camera.aux.picture.size 320x240
+32) persist.camera.opt.livepic
+数值:0或1
+功能: 使能后,live snapshot时将自动选用最优的照片尺寸。
+示例:adb shell setprop persist.camera.opt.livepic 1
+33) persist.camera.liveshot.size
+数值: widthxheight,例如320x240
+功能: 手动设置live snapshot的照片尺寸。
+示例:adb shell setprop persist.camera.liveshot.size 320x240
+34) persist.camera.preview.ubwc
+数值:0或1
+功能: 开启后,将preview format强制设置为CAM_FORMAT_YUV_420_NV12_UBWC格式。
+示例:adb shell setprop persist.camera.preview.ubwc 1
+35) persist.camera.led.on.period
+数值:0-800
+功能:设置 burst LED on的持续时间,如果设置数值为小于0,则使用默认值(300)。
+示例:adb shell setprop persist.camera.led.on.period 300
+36) persist.camera.retro.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_NUM_RETRO_BURST_PER_SHUTTER。示例:adb shell setprop persist.camera.retro.number 1
+37) persist.camera.effect
+数值:"none"/ "mono"/ "negative"/ "solarize"/ "sepia"/ "posterize"/ "whiteboard"/ "blackboard"/ "aqua
+"
+功能: 手动设置effect。
+示例:adb shell setprop persist.camera.effect none
+38) persist.camera.stats.af.paaf
+数值:0或1
+功能: 手动开/关PAAF。
+示例:adb shell setprop persist.camera.stats.af.paaf 1
+39) persist.camera.continuous.iso
+数值: 非0正整数
+功能: 手动设置KEY_QC_CONTINUOUS_ISO。
+示例:adb shell setprop persist.camera.continuous.iso 100
+40) persist.camera.auto.hdr.enable
+数值:0或1
+功能: 手动开/关Auto HDR。
+示例:adb shell setprop persist.camera.auto.hdr.enable 1
+41) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 10
+42) persist.camera.no-display数值:0或1
+功能: 手动开/关No Display Preview功能。
+示例:adb shell setprop persist.camera.no-display 1
+43) persist.camera.tnr_cds
+数值:0或1
+功能: 手动开/关TNR with CDS功能。
+示例:adb shell setprop persist.camera.tnr_cds 1
+44) persist.camera.tnr.video
+数值:0或1
+功能: 手动开/关TNR Video功能。
+示例:adb shell setprop persist.camera.tnr.video 1
+45) persist.camera.tnr.preview
+数值:0或1
+功能: 手动开/关TNR Preview功能。
+示例:adb shell setprop persist.camera.tnr.preview 1
+46) persist.camera.tnr.snapshot
+数值:0或1
+功能: 手动开/关TNR Sanpshot功能。
+示例:adb shell setprop persist.camera.tnr.snapshot 1
+47) persist.camera.rdi.mode
+数值:0或1
+功能: 手动开/关ISP的RDI接口。
+示例:adb shell setprop persist.camera.rdi.mode 148) persist.camera.secure.mode
+数值:0或1
+功能: 手动开/关Secure模式。
+示例:adb shell setprop persist.camera.secure.mode 1
+49) persist.camera.zsl.interval
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_INTERVAL。
+示例:adb shell setprop persist.camera.zsl.interval 1
+50) persist.camera.zsl.backlookcnt
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_BURST_LOOKBACK。
+示例:adb shell setprop persist.camera.zsl.backlookcnt 1
+51) persist.camera.zsl.queuedepth
+数值: 非0正整数
+功能: 手动设置KEY_QC_ZSL_QUEUE_DEPTH。
+示例:adb shell setprop persist.camera.zsl.queuedepth 1
+52) persist.camera.snapshot.number
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_BURST_NUM。
+示例:adb shell setprop persist.camera.snapshot.number 1
+53) persist.camera.snapshot.fd
+数值: 非0正整数
+功能: 手动设置KEY_QC_SNAPSHOT_FD_DATA。示例:adb shell setprop persist.camera.snapshot.fd 1
+54) persist.camera.mobicat
+数值:0或1
+功能: 手动开/关mobicat功能。
+示例:adb shell setprop persist.camera.mobicat 1
+55) persist.capture.burst.exposures
+数值: 非0正整数
+功能: 手动设置KEY_QC_CAPTURE_BURST_EXPOSURE。
+示例:adb shell setprop persist.capture.burst.exposures 1
+56) persist.camera.hdr.outcrop
+数值:0或1
+功能: 手动开/关HDR Output Crop功能。
+示例:adb shell setprop persist.camera.hdr.outcrop 1
+57) persist.camera.zsl.mode
+数值:0或1
+功能: 手动开/关ZSL模式。
+示例:adb shell setprop persist.camera.zsl.mode 1
+58) persist.debug.set.fixedfps
+数值:0-30
+功能: 手动设置相机预览的固定帧率数值。
+示例:adb shell setprop persist.debug.set.fixedfps 15
+59) persist.camera.zzhdr.enable
+数值:0或1功能: 手动开/关Sensor Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.enable 1
+60) persist.camera.zzhdr.video
+数值:0或1
+功能: 手动开/关Video Hdr功能。
+示例:adb shell setprop persist.camera.zzhdr.video 1
+61) persist.camera.tintless
+数值:enable/disable
+功能: 手动开/关tintless功能。
+示例:adb shell setprop persist.camera.tintless enable
+62) persist.camera.video.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_VIDEO_CDS_MODE。
+示例:adb shell setprop persist.camera.video.CDS on
+63) persist.camera.CDS
+数值:on/off/auto
+功能: 手动设置KEY_QC_CDS_MODE。
+示例:adb shell setprop persist.camera.CDS on
+64) persist.camera.ois.disable
+数值:0或1
+功能: 手动开/关ois。
+示例:adb shell setprop persist.camera.ois.disable 1
+65) persist.camera.set.afd数值:0-5
+功能: 手动设置Antibanding模式:OFF、60HZ、50HZ、AUTO、AUTO_50HZ、AUTO_60HZ。
+示例:adb shell setprop persist.camera.set.afd 1
+66) persist.camera.mem.usecache
+数值: 特定str
+功能: 手动设置KEY_QC_CACHE_VIDEO_BUFFERS。
+示例:adb shell setprop persist.camera.mem.usecache str
+67) persist.denoise.process.plates
+数值:0-3
+功能: 手动设置降噪类型:YCBCR_PLANE、CBCR_ONLY、STREAMLINE_YCBCR、
+STREAMLINED_CBCR。
+示例:adb shell setprop persist.denoise.process.plates 1
+68) persist.camera.snap.format
+数值:1或非1
+功能: 手动设置snapshot stream的YUV类型,若设置为1,则使用CAM_FORMAT
+_YUV_422_NV61,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV21格式。
+示例:adb shell setprop persist.camera.snap.format 1
+69) persist.camera.video.ubwc
+数值:1或非1
+功能: 手动设置video stream的YUV类型,若设置为1,则使用CAM_FORMAT_YUV_420_
+NV12_UBWC,设置其他数值,将使用默认的CAM_FORMAT_YUV_420_NV12_VENUS格式。
+示例:adb shell setprop persist.camera.video.ubwc 1
+70) persist.camera.exif.rotation
+数值:on/off功能: 手动开/关exif rotation。
+示例:adb shell setprop persist.camera.exif.rotation on
+71) persist.camera.dcrf.enable
+数值:0或1
+功能: 手动开/关DCRF(dual-camera-range-finding)功能。
+示例:adb shell setprop persist.camera.dcrf.enable 1
+72) persist.camera.eztune.enable
+数值:0或1
+功能: 手动开/关Eztune功能。
+示例:adb shell setprop persist.camera.eztune.enable 1
+73) persist.camera.is_type
+数值:0-4
+功能: 手动设置IS的类型:NONE、DIS、EIS_1_0、EIS_2_0。
+示例:adb shell setprop persist.camera.is_type 1
+74) persist.camera.preview.seemore
+数值:0或1
+功能: 手动开/关Preview SeeMore功能。
+示例:adb shell setprop persist.camera.preview.seemore 1
+75) persist.camera.offlineraw
+数值:0或1
+功能: 手动开/关Offline RAW功能。
+示例:adb shell setprop persist.camera.offlineraw 1
+76) persist.camera.multi_pass数值:0或非0
+功能: 设置为0将生效,其余数值为无效数值。开启后,在Zoom触发后,将不会进行两次PP
+通道的数据处理。
+示例:adb shell setprop persist.camera.multi_pass 0
+77) persist.camera.pp_scaling
+数值:0或1
+功能: 返回为1,表示使用的是CPP scaling。否则,使用VFE scaling。
+示例:adb shell getprop persist.camera.pp_scaling
+78) persist.camera.llnoise
+数值:0或1
+功能: 返回为1,表示low light noise被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.llnoise
+79) persist.camera.video.batchsize
+数值:0-16
+功能: 手动设置KEY_QC_VIDEO_BATCH_SIZE。
+示例:adb shell setprop persist.camera.video.batchsize 1
+80) persist.camera.longshot.stages
+数值:0-4
+功能: 手动设置连拍需要的buffer数目。
+示例:adb shell setprop persist.camera.longshot.stages 2
+81) persist.camera.llc
+数值:0或1
+功能: 手动开/关low light capture功能。
+示例:adb shell setprop persist.camera.llc 182) persist.camera.fdvideo
+数值:0或1
+功能: 返回为1,表示Face Detection in Video被使能。否则,表示未使能。
+示例:adb shell getprop persist.camera.fdvideo
+83) persist.camera.dual.camera.dump
+数值:0或1
+功能: 开启后,将dump双摄像头的图片数据到/data/misc/camera/路径下。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.dump 1
+84) persist.camera.dual.camera.mpo
+数值:0或1
+功能: 是否使能双摄像头拍照图片合成。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dual.camera.mpo 1
+85) persist.camera.aux.camera
+数值:0或1
+功能: 使能后,AUX摄像头将在"逻辑"上面可见,即对用户可见。若不使能,则物理上是两个摄像头
+,但对用户来说相当于只有一个摄像头。
+注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.aux.camera 1
+86) persist.camera.dc.frame.sync
+数值:0或1
+功能: 手动开/关双摄像头帧同步功能。注意: 仅在双camera的情况下有效。
+示例:adb shell setprop persist.camera.dc.frame.sync 1
+87) persist.camera.HAL3.enabled
+数值:0或1
+功能: 开启后,将使用HAL3。
+示例:adb shell setprop persist.camera.HAL3.enabled 1
+88) persist.camera.dual.camera
+数值:0或1
+功能: 手动开/关双摄像头模式。
+示例:adb shell setprop persist.camera.dual.camera 1
+89) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+90) persist.camera.perflock.enable
+数值:0或1
+功能:
+示例:
+91) persist.camera.disp.num_vsync
+数值:
+功能:display tuning相关。
+示例:
+92) persist.camera.disp.ms_to_vsync数值:
+功能:display tuning相关。
+示例:
+93) persist.camera.disp.filter_max
+数值:
+功能:display tuning相关。
+示例:
+94) persist.camera.disp.filter_min
+数值:
+功能:display tuning相关。
+示例:
+95) persist.camera.disp.fps
+数值:
+功能:display tuning相关。
+示例:
+96) persist.camera.dumpmetadata
+数值:0或1
+功能: 使能后,将dump ZSL/Capture/Snapshot channel中的Metadata到/data/misc/camera/路径下
+。
+示例:adb shell setprop persist.camera.dumpmetadata 1
+
+
+
+
+
+
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 解除adb验证：
 device/qcom/common/base.mk
@@ -1167,11 +2258,11 @@ lsusb -d 05c6:9091 -v   > lsusb2.txt
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 HDMI显示
 adb reboot bootloader
-fastboot oem select-display-panel hdmi
+fastboot oem select-display-panel hdmi  //这条指令会造成横屏,默认不做这个操作本身就是竖屏
 fastboot reboot 
 
 mdss_mdp.panel=1:dsi:0:qcom,mdss_dsi_ili9885_1080p_video:1:none
-
+fastboot oem select-display-panel mdss_dsi_ili9885_1080p_video
 
 hdmi横屏
 #set hdmi display portrait (rotates 90 degrees)
@@ -1215,10 +2306,14 @@ root@cb09:/ # ls -l data/misc/camera/
 -rw-r--r-- media    audio     2353280 2017-01-01 09:34 201701010934555p_1440x1080_4517.yuv
 
 
-camera debug
+[]camera debug
 80-NL239-33SC_Camera Debugging Guide (Simplified Chinese).pdf
 
-
+kba-170501033706_pdaf_tuning_note.pdf
+adb shell setprop persist.vendor.camera.global.debug  5 //1     ///    persist.camera.global.debug 1
+adb shell setprop persist.camera.pdaf_logging 1
+adb shell setprop persist.camera.pdaf_dump 1
+adb shell setprop persist.camera.pdaf_profiling 1
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 grep忽略
@@ -1282,21 +2377,436 @@ setprop persist.sys.ssr.enable_ramdumps 1
 https://cap.qti.qualcomm.com/default.aspx
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+./cts-tradefed run cts -m CtsKeystoreTestCases -disable-reboot --skip-preconditions
+
+7.0的cts测试命令
+run cts –m CtsAppTestCases  –t Android.app.cts.ActionBarTest#testAddTab --skip-preconditions
+
+run cts -m android.hardware.camera2.cts.BurstCaptureTest -t testYuvBurst
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+cb09 msm8996开机电压
+a/boot_images/QcomPkg/Library/PmicLib/config/msm8996/pm_config_target.c
++++ b/boot_images/QcomPkg/Library/PmicLib/config/msm8996/pm_config_target.c
+@@ -120,7 +120,7 @@ smbchg_specific_data[1] =
+       {4200,                                             PM_DISABLE_CONFIG },  //Float Voltage
+       {2100,                                             PM_DISABLE_CONFIG },  //USBIN Input Current Limit
+       {1000,                                             PM_DISABLE_CONFIG },  //DCIN Input Current Limit
+-      3600,                                                                    //bootup_battery_theshold_mv
++      3400,                                                                    //bootup_battery_theshold_mv
+       3800,                                                                    //wipowr bootup battery thesholdmv
+       3050,                                                                    //apsd_reset_threshold_mv:  APSD reset only applicable if initial Vbatt level is less than th
+       2800,                                                                    //apsd_reset_theshold_no_uvlo_mv: Used if last reset reason is NOT UVLO
+
 
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+查看分区格式
+root@CB03:/ # mount                                                            
+rootfs / rootfs ro,relatime 0 0
+tmpfs /dev tmpfs rw,seclabel,nosuid,relatime,size=975336k,nr_inodes=157942,mode=755 0 0
+devpts /dev/pts devpts rw,seclabel,relatime,mode=600 0 0
+proc /proc proc rw,relatime 0 0
+sysfs /sys sysfs rw,seclabel,relatime 0 0
+selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0
+debugfs /sys/kernel/debug debugfs rw,relatime 0 0
+none /acct cgroup rw,relatime,cpuacct 0 0
+none /sys/fs/cgroup tmpfs rw,seclabel,relatime,size=975336k,nr_inodes=157942,mode=750,gid=1000 0 0
+tmpfs /mnt/asec tmpfs rw,seclabel,relatime,size=975336k,nr_inodes=157942,mode=755,gid=1000 0 0
+tmpfs /mnt/obb tmpfs rw,seclabel,relatime,size=975336k,nr_inodes=157942,mode=755,gid=1000 0 0
+none /dev/cpuctl cgroup rw,relatime,cpu 0 0
+adb /dev/usb-ffs/adb functionfs rw,relatime 0 0
+/dev/block/bootdevice/by-name/system /system ext4 rw,seclabel,relatime,data=ordered 0 0
+/dev/block/bootdevice/by-name/userdata /data ext4 rw,seclabel,nosuid,nodev,relatime,discard,noauto_da_alloc,data=ordered 0 0
+/dev/block/bootdevice/by-name/cache /cache ext4 rw,seclabel,nosuid,nodev,relatime,data=ordered 0 0
+/dev/block/bootdevice/by-name/persist /persist ext4 rw,seclabel,nosuid,nodev,relatime,data=ordered 0 0
+/dev/block/bootdevice/by-name/modem /firmware vfat ro,context=u:object_r:firmware_file:s0,relatime,uid=1000,gid=1000,fmask=0337,dmask=0227,codepage=437,iocharset=iso8859-1,shortname=lower,errors=remount-ro 0 0
+/dev/fuse /storage/uicc0 fuse rw,nosuid,nodev,noexec,relatime,user_id=1023,group_id=1023,default_permissions,allow_other 0 0
+/dev/fuse /mnt/shell/emulated fuse rw,nosuid,nodev,noexec,relatime,user_id=1023,group_id=1023,default_permissions,allow_other 0 0
+/dev/fuse /mnt/shell/emulated/0 fuse rw,nosuid,nodev,noexec,relatime,user_id=1023,group_id=1023,default_permissions,allow_other 0 0
+
+分区大小分区空间:
+root@CB03:/ # df
+Filesystem               Size     Used     Free   Blksize
+/persist                27.5M   184.0K    27.3M   4096
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+log显示tag
+git log --decorate
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+查看内存参数 
+sudo dmidecode -t memory
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+调试wakeup问题，可以使能debug功能，然后抓取log。Log中会增加一些debug信息。
+mount -t debugfs none /sys/kernel/debug  
+echo 1 > /sys/kernel/debug/clk/debug_suspend  
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask  
+echo 4 > /sys/module/wakelock/parameters/debug_mask  
+echo 1 > /sys/module/lpm_levels/parameters/debug_mask  
+echo 0x16 > /sys/module/smd/parameters/debug_mask  
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+1. 如果你只想看文件的前100行，可以使用head命令，如
+head -100  filename
+2. 如果你想查看文件的后100行，可以使用tail命令，如：
+tail -100  filename 或 tail -n 100  filename
+3. 查看文件中间一段，你可以使用sed命令，如：
+sed -n '100,200p' filename 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+EXIF 3A信息msm8996
+adb root
+adb remount
+adb shell setprop persist.camera.mobicat 2
+adb shell setprop persist.vendor.camera.global.debug  1   /// persist.camera.global.debug 1
+adb shell setprop persist.camera.stats.debugexif 4128768
+
+msm8953
+方法一： chromatix工具 -> Tools -> Enable 3A Debug
+方法二： adb shell setprop persist.camera.mobicat 2
+         adb shell setprop persist.camera.global.debug 1
+         adb shell setprop persist.camera.stats.debug 4294901760
+         adb shell setprop persist.camera.stats.debugexif 4294901760
+最后，导出的图片用chromatix工具打开，就能查看图片相应的3A信息。
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+修改应用进程权限,修改用户组, 除了init.rc等还如下
+system/core/libcutils/fs_config.c
+ { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/su" },
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+video codec视频解码缩小分辨率
+
+(1) please check whether there is the property of vidc.dec.enable.downscalar, if yes, please set the value to "1".
+
+(2)adb root
+adb shell setprop vidc.dec.downscalar_width 2560
+adb shell setprop vidc.dec.downscalar_height 1600
+// I can't confirm 2560*1600 is your 2K resolution, please set them as your requirement.
+
+But it is set to 1080P by defaul.
+adb shell setprop vidc.dec.downscalar_width 1920
+adb shell setprop vidc.dec.downscalar_height 1088 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+打包userdata.img 1Gb大小(1073741824)
+mkuserimg.sh -s out/target/product/msm8953_32/data out/target/product/msm8953_32/userdata.img ext4 data 1073741824 -D out/target/product/msm8953_32/system -L data out/target/product/msm8953_32/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/msm8953_32/root/file_contexts.bin -L data -l 1073741824 -a data out/target/product/msm8953_32/userdata.img out/target/product/msm8953_32/data out/target/product/msm8953_32/system
+
+打包persist
+make_ext4fs -s -T -1 -l 33554432 -a persist out/target/product/msm8953_32/persist.img out/target/product/msm8953_32/persist
+
+打包cache
+mkuserimg.sh -s out/target/product/msm8953_32/cache out/target/product/msm8953_32/cache.img ext4 cache 268435456 -D out/target/product/msm8953_32/system -L cache out/target/product/msm8953_32/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/msm8953_32/root/file_contexts.bin -L cache -l 268435456 -a cache out/target/product/msm8953_32/cache.img out/target/product/msm8953_32/cache out/target/product/msm8953_32/system
+
+打包system.img
+mkuserimg.sh -s out/target/product/msm8953_32/system out/target/product/msm8953_32/obj/PACKAGING/systemimage_intermediates/system.img ext4 system 3170938880 -D out/target/product/msm8953_32/system -L system out/target/product/msm8953_32/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/msm8953_32/root/file_contexts.bin -L system -l 3170938880 -a system out/target/product/msm8953_32/obj/PACKAGING/systemimage_intermediates/system.img out/target/product/msm8953_32/system out/target/product/msm8953_32/system
+
+打包oem.img
+mkuserimg.sh -s out/target/product/msm8953_32/oem out/target/product/msm8953_32/oem.img ext4 oem 268435456 -D out/target/product/msm8953_32/system -L oem out/target/product/msm8953_32/root/file_contexts.bin
+make_ext4fs -s -T -1 -S out/target/product/msm8953_32/root/file_contexts.bin -L oem -l 268435456 -a oem out/target/product/msm8953_32/oem.img out/target/product/msm8953_32/oem out/target/product/msm8953_32/system
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CB05去掉关机对话框
+adb shell setprop service.adb.root 1
+adb shell setenforce 0
+adb shell setprop persist.sys.powerkey.behavior 3
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+每次重新获取camera number
+MSM8909/platform/frameworks/av / services/camera/libcameraservice/CameraService.cpp
+if (mNumberOfCameras == 0) {
+        ALOGE("No Camera be Found! check again");
+        onFirstRef();
+    }
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+QCamera2/HAL3/QCamera3Channel.cpp:540:    property_get("persist.vendor.camera.dumpimg", prop, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:645:    property_get("debug.gralloc.gfx_ubwc_disable", value, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:654:    property_get("persist.vendor.camera.eztune.enable", value, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:702:            property_get("persist.vendor.camera.preview.ubwc", prop, "1");
+QCamera2/HAL3/QCamera3Channel.cpp:850:    property_get("persist.vendor.debug.sf.showfps", prop, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:2602:    property_get("persist.vendor.camera.raw.debug.dump", prop, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:2824:    property_get("persist.vendor.camera.raw.dump", prop, "0");
+QCamera2/HAL3/QCamera3Channel.cpp:4638:    property_get("persist.vendor.camera.mpo.disabled",prop,"0");
+QCamera2/HAL3/QCamera3Stream.cpp:455:    property_get("persist.vendor.camera.cache.optimize", value, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:530:    property_get("persist.vendor.camera.raw.dump", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:532:    property_get("persist.vendor.camera.hal3.force.hdr", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:542:    property_get("persist.vendor.camera.tnr.preview", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:546:    property_get("persist.vendor.camera.swtnr.preview", prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:550:    property_get("persist.vendor.camera.tnr.video", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:554:    property_get("persist.vendor.camera.avtimer.debug", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:559:    property_get("persist.vendor.camera.cacmode.disable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:924:    property_get("persist.vendor.camera.fdleak.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:932:    property_get("persist.vendor.camera.memleak.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:1024:    property_get("service.bootanim.exit", value, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:1153:    property_get("service.bootanim.exit", value, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:1550:    property_len = property_get("persist.vendor.camera.hal3.feature",
+QCamera2/HAL3/QCamera3HWI.cpp:1553:    property_len = property_get("persist.vendor.camera.hal3.feature",
+QCamera2/HAL3/QCamera3HWI.cpp:2083:    property_get("persist.vendor.camera.eis.enable", eis_prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:2217:    property_get("vendor.debug.camera.tnr.forceenable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:2407:    property_get("persist.vendor.camera.is_type", is_type_value, "4");
+QCamera2/HAL3/QCamera3HWI.cpp:4049:                    property_get("persist.vendor.camera.dumpmetadata", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:4500:    property_get("persist.vendor.camera.sensor.hdr", property, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:5209:        property_get("persist.vendor.camera.is_type", is_type_value, "4");
+QCamera2/HAL3/QCamera3HWI.cpp:5212:        property_get("persist.vendor.camera.is_type_preview", is_type_value, "4");
+QCamera2/HAL3/QCamera3HWI.cpp:5222:            property_get("persist.vendor.camera.vfe1.reservedrdi", value, "-1");
+QCamera2/HAL3/QCamera3HWI.cpp:5318:            property_get("persist.vendor.camera.halpp", PP_prop, "");
+QCamera2/HAL3/QCamera3HWI.cpp:5347:        property_get("persist.vendor.camera.tintless.enable", prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:9070:    property_get("persist.vendor.camera.quadcfa.id", prop, "");
+QCamera2/HAL3/QCamera3HWI.cpp:9080:        property_get("persist.vendor.camera.quadcfa.pic_size", prop, "quarter");
+QCamera2/HAL3/QCamera3HWI.cpp:9650:    property_get("persist.vendor.camera.eis.enable", eis_prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:9686:    property_get("persist.vendor.camera.facedetect", prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:9747:    property_get("persist.vendor.camera.input.minsize", prop, "2592x1944");
+QCamera2/HAL3/QCamera3HWI.cpp:9937:    property_get("persist.vendor.camera.hal3hfr.enable", prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:11190:    property_get("persist.vendor.camera.ois.disable", ois_prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:11196:    property_get("persist.vendor.camera.ois.video", videoOisProp, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:11566:    property_get("persist.vendor.camera.CDS", prop, "Off");
+QCamera2/HAL3/QCamera3HWI.cpp:12240:    property_get("persist.vendor.camera.af.infinity", af_value, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:12285:                property_get("persist.vendor.camera.set.afd", prop, "5");
+QCamera2/HAL3/QCamera3HWI.cpp:13447:    property_get("persist.vendor.camera.fdleak.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13455:    property_get("persist.vendor.camera.memleak.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13480:    property_get("persist.vendor.denoise.process.plates", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13510:    property_get("persist.vendor.tnr.process.plates", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13650:        property_get("persist.vendor.camera.sensor.hdr", sensor_hdr_prop, "3");
+QCamera2/HAL3/QCamera3HWI.cpp:13652:        property_get("persist.vendor.camera.sensor.hdr", sensor_hdr_prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13784:    property_get("persist.vendor.camera.exif.rotation", exifRotation, "off");
+QCamera2/HAL3/QCamera3HWI.cpp:13790:    property_get("persist.vendor.camera.lib2d.rotation", exifRotation, "off");
+QCamera2/HAL3/QCamera3HWI.cpp:13933:    property_get("persist.vendor.camera.mobicat", value, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13971:    property_get("persist.vendor.camera.hal.debug", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13977:    property_get("persist.vendor.camera.kpi.debug", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:13980:    property_get("persist.vendor.camera.global.debug", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14555:        property_get("persist.vendor.camera.instant.aec", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14568:            property_get("persist.vendor.camera.ae.instant.bound", prop, "10");
+QCamera2/HAL3/QCamera3HWI.cpp:14719:        property_get("persist.vendor.camera.sat.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14734:        property_get("persist.vendor.camera.sac.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14750:        property_get("persist.vendor.camera.rtbdm.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14763:        property_get("persist.vendor.camera.rtb.enable", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14834:    property_get("persist.vendor.camera.stats.test.2outs", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14918:        property_get("persist.vendor.dualcam.lpm.main", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:14922:        property_get("persist.vendor.dualcam.lpm.aux", prop, "0");
+QCamera2/HAL3/QCamera3HWI.cpp:15329:    property_get("persist.vendor.dualcam.defer.enable", prop, "1");
+QCamera2/HAL3/QCamera3HWI.cpp:15371:    property_get("persist.vendor.dualcam.lpm.enable", prop, "1");
+QCamera2/HAL3/QCamera3PostProc.cpp:3979:    if (property_get("ro.product.manufacturer", value, "QCOM-AA") > 0) {
+QCamera2/HAL3/QCamera3PostProc.cpp:3986:    if (property_get("ro.product.model", value, "QCAM-AA") > 0) {
+QCamera2/HAL3/QCamera3PostProc.cpp:3993:    if (property_get("ro.build.description", value, "QCAM-AA") > 0) {
+QCamera2/stack/mm-camera-interface/src/mm_camera_interface.c:2482:    property_get("persist.vendor.camera.expose.aux", prop, "0");
+QCamera2/stack/mm-camera-interface/src/mm_camera_interface.c:2653:    property_get("vold.decrypt", prop, "0");
+QCamera2/stack/mm-camera-interface/src/mm_camera.c:2734:    property_get(cam_loginfo[i].prop, property_value, default_value);
+QCamera2/stack/mm-camera-interface/src/mm_camera.c:2770:    property_get("persist.vendor.camera.debug.assert", property_value, "0");
+QCamera2/stack/mm-camera-interface/src/mm_camera.c:2775:      property_get("persist.vendor.camera.debug.logfile", property_value, "0");
+QCamera2/stack/mm-jpeg-interface/src/mm_jpeg.c:2408:  property_get("persist.vendor.camera.lib2d.rotation", prop, "off");
+QCamera2/stack/mm-jpeg-interface/src/mm_jpeg_interface.c:334:  property_get("persist.vendor.camera.kpi.debug", prop, "0");
+QCamera2/stack/mm-camera-test/src/mm_qcamera_preview.c:350:    property_get("persist.vendor.camera.dumpimg", value, "0");
+QCamera2/util/QCameraBokeh.cpp:198:    property_get("persist.vendor.camera.bokeh.debug", prop, "0");
+QCamera2/util/QCameraBokeh.cpp:650:    property_get("persist.vendor.camera.ddm.config", prop, "");
+QCamera2/util/QCameraBokeh.cpp:661:    property_get("persist.vendor.camera.bokeh.ddmmode", prop, "");
+QCamera2/util/QCameraCommon.cpp:296:    if (property_get("vendor.video.disable.ubwc", prop, "") > 0) {
+QCamera2/util/QCameraCommon.cpp:300:    if (property_get("video.disable.ubwc", prop, "") > 0){
+QCamera2/util/QCameraCommon.cpp:409:    property_get("persist.vendor.camera.isp.analysis_en", prop, "1");
+QCamera2/util/QCameraDisplay.cpp:254:        property_get("persist.vendor.camera.disp.num_vsync", value, "4");
+QCamera2/util/QCameraDisplay.cpp:256:        property_get("persist.vendor.camera.disp.ms_to_vsync", value, "2");
+QCamera2/util/QCameraDisplay.cpp:258:        property_get("persist.vendor.camera.disp.filter_max", value, "2");
+QCamera2/util/QCameraDisplay.cpp:260:        property_get("persist.vendor.camera.disp.filter_min", value, "4");
+QCamera2/util/QCameraDisplay.cpp:262:        property_get("persist.vendor.camera.disp.fps", value, "60");
+QCamera2/util/QCameraDualFOVPP.cpp:301:    property_get("persist.vendor.camera.dualfov.dumpimg", prop, "0");
+QCamera2/util/QCameraClearSight.cpp:281:    property_get("persist.vendor.camera.dualfov.dumpimg", prop, "0");
+QCamera2/util/QCameraPerf.cpp:661:        property_get("persist.vendor.camera.perflock.enable", value, "1");
+QCamera2/util/QCameraPerf.cpp:677:                    if ((property_get("ro.vendor.extension_library", value, NULL) > 0) &&
+QCamera2/util/QCameraFOVControl.cpp:141:                property_get("persist.vendor.dualcam.lpm.enable", prop, "1");
+QCamera2/util/QCameraFOVControl.cpp:1943:        property_get("persist.vendor.camera.sac.enable", propSAC, "0");
+QCamera2/util/QCameraFOVControl.cpp:1944:        property_get("persist.vendor.camera.sat.enable", propSAT, "0");
+QCamera2/util/QCameraTrace.h:143:    property_get("persist.vendor.camera.kpi.camscope", prop, "0"); \
+QCamera2/util/QCameraTrace.h:149:    property_get("persist.vendor.camera.kpi.camscope_cnt", prop, "0"); \
+QCamera2/QCamera2Factory.cpp:87:    property_get("persist.vendor.camera.HAL3.enabled", prop, "1");
+QCamera2/QCamera2Factory.cpp:95:    property_get("persist.vendor.camera.dual.camera", prop, propDefault);
+QCamera2/HAL/QCameraParameters.cpp:933:    property_get("persist.vendor.camera.imglib.oemfeat1", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:1055:    property_get("persist.vendor.debug.sf.showfps", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:1061:    property_get("persist.vendor.camera.thermal.mode", value, "fps");
+QCamera2/HAL/QCameraParameters.cpp:1073:    property_get("persist.vendor.camera.ltmforseemore", value, "1");
+QCamera2/HAL/QCameraParameters.cpp:1627:        property_get("persist.vendor.camera.aux.preview.size", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:1714:        property_get("persist.vendor.camera.aux.picture.size", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:1901:    property_get("persist.vendor.camera.opt.livepic", value, "1");
+QCamera2/HAL/QCameraParameters.cpp:2012:    property_get("persist.vendor.camera.liveshot.size", value, "");
+QCamera2/HAL/QCameraParameters.cpp:2080:            property_get("persist.vendor.camera.preview.ubwc", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:2183:        property_get("persist.vendor.camera.led.on.period", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:2225:        property_get("persist.vendor.camera.retro.number", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:2583:    property_get("persist.vendor.camera.effect", prop, "none");
+QCamera2/HAL/QCameraParameters.cpp:3040:    property_get("persist.vendor.camera.stats.debug.mask", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:3069:    property_get("persist.vendor.camera.stats.af.paaf", value, "1");
+QCamera2/HAL/QCameraParameters.cpp:3315:        property_get("persist.vendor.camera.iso", iso_val, "");
+QCamera2/HAL/QCameraParameters.cpp:3349:    property_get("persist.vendor.camera.continuous.iso", iso, "");
+QCamera2/HAL/QCameraParameters.cpp:3398:        property_get("persist.vendor.camera.exposure.time", expTime, "");
+QCamera2/HAL/QCameraParameters.cpp:3572:    property_get("persist.vendor.camera.auto.hdr.enable", prop, VALUE_DISABLE);
+QCamera2/HAL/QCameraParameters.cpp:3883:        property_get("persist.vendor.capture.burst.exposures", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:4273:        property_get("persist.vendor.camera.rawzsl", raw_zsl_prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:4316:        property_get("persist.vendor.camera.rawzsl.capture", raw_capture_prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:4648:        property_get("persist.vendor.camera.dualfov.jpegnum", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:4765:        property_get("persist.vendor.camera.no-display", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:4947:    property_get("persist.vendor.camera.tnr_cds", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:4985:        property_get("persist.vendor.camera.tnr.video", video_value, VALUE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:4994:        property_get("persist.vendor.camera.tnr.preview", preview_value, VALUE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:5004:        property_get("persist.vendor.camera.tnr.preview", preview_value, VALUE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:5014:    property_get("persist.vendor.camera.tnr.snapshot", value, VALUE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:5190:    property_get("persist.vendor.camera.rdi.mode", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:5220:    property_get("persist.vendor.camera.secure.mode", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:5426:        property_get("persist.vendor.camera.zsl.interval", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:5436:        property_get("persist.vendor.camera.zsl.backlookcnt", prop, "2");
+QCamera2/HAL/QCameraParameters.cpp:5450:        property_get("persist.vendor.camera.zsl.queuedepth", prop, "2");
+QCamera2/HAL/QCameraParameters.cpp:5544:        property_get("persist.vendor.camera.snapshot.fd", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:5565:    property_get("persist.vendor.camera.mobicat", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:5920:    property_get("persist.vendor.camera.vfe1.reservedrdi", reserved_rdi, "-1");
+QCamera2/HAL/QCameraParameters.cpp:6417:    property_get("persist.vendor.capture.burst.exposures", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:6609:    property_get("persist.vendor.camera.hdr.outcrop", value, VALUE_DISABLE);
+QCamera2/HAL/QCameraParameters.cpp:6638:    property_get("persist.vendor.camera.zsl.mode", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:6984:    property_get("persist.vendor.camera.halpp", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:7227:    property_get("persist.vendor.debug.set.fixedfps", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:7668:            property_get("persist.vendor.camera.zzhdr.enable", zz_prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:7673:            property_get("persist.camera.3hdr.enable", exp3_hdr_prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:7718:            property_get("persist.vendor.camera.hdr.video", zz_prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:8615:    property_get("persist.vendor.camera.tintless", prop, VALUE_ENABLE);
+QCamera2/HAL/QCameraParameters.cpp:8725:            property_get("persist.vendor.camera.video.CDS", video_prop, CDS_MODE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:8765:            property_get("persist.vendor.camera.CDS", prop, CDS_MODE_OFF);
+QCamera2/HAL/QCameraParameters.cpp:8816:        property_get("persist.vendor.camera.initial.exp.val", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:8876:        property_get("persist.vendor.camera.instant.capture", prop, KEY_QC_INSTANT_CAPTURE_DISABLE);
+QCamera2/HAL/QCameraParameters.cpp:8910:        property_get("persist.vendor.camera.ae.capture.bound", prop, "7");
+QCamera2/HAL/QCameraParameters.cpp:8964:            property_get("persist.vendor.camera.instant.aec", prop, KEY_QC_INSTANT_AEC_DISABLE);
+QCamera2/HAL/QCameraParameters.cpp:8996:        property_get("persist.vendor.camera.ae.instant.bound", prop, "7");
+QCamera2/HAL/QCameraParameters.cpp:9069:    property_get("persist.vendor.camera.ois.mode", ois_prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:9418:    property_get("persist.vendor.camera.set.afd", prop, "3");
+QCamera2/HAL/QCameraParameters.cpp:9658:    property_get("persist.vendor.camera.zzhdr.enable", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:10420:        property_get("persist.vendor.camera.mem.usecache", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:10586:        property_get("persist.vendor.denoise.process.plates", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:10588:        property_get("persist.vendor.tnr.process.plates", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:10836:          property_get("persist.vendor.camera.raw.subformat", raw_sub_format, "1");
+QCamera2/HAL/QCameraParameters.cpp:10934:            property_get("persist.vendor.camera.snap.format", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:10982:            property_get("persist.vendor.camera.raw.format", raw_format, "17");
+QCamera2/HAL/QCameraParameters.cpp:11659:        property_get("persist.vendor.camera.is.buffer_delay", prop, "15");
+QCamera2/HAL/QCameraParameters.cpp:11774:    property_get("persist.vendor.camera.exif.rotation", exifRotation, "off");
+QCamera2/HAL/QCameraParameters.cpp:11780:    property_get("persist.vendor.camera.lib2d.rotation", exifRotation, "off");
+QCamera2/HAL/QCameraParameters.cpp:12923:        property_get("persist.vendor.camera.dcrf.enable", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:13029:    property_get("persist.vendor.camera.stats.test.2outs", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:13346:    property_get("persist.vendor.camera.syncDCParams.en", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:14175:    property_get("persist.vendor.camera.eztune.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:14250:        property_get("persist.vendor.camera.is_type", value, "4");
+QCamera2/HAL/QCameraParameters.cpp:14257:        property_get("persist.vendor.camera.is_type_preview", value, "4");
+QCamera2/HAL/QCameraParameters.cpp:14262:        property_get("persist.vendor.camera.is_type", value, "2");
+QCamera2/HAL/QCameraParameters.cpp:14269:        property_get("persist.vendor.camera.is_type_preview", value, "2");
+QCamera2/HAL/QCameraParameters.cpp:14546:    property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15163:   property_get("persist.vendor.camera.preview.seemore", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15234:    property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15236:    property_get("persist.vendor.camera.offlineraw", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15415:        property_get("persist.vendor.camera.sat.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15434:        property_get("persist.vendor.camera.sac.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15450:        property_get("persist.vendor.camera.rtbdm.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15463:        property_get("persist.vendor.camera.rtb.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15482:        property_get("persist.vendor.camera.fovc.enable", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:15563:    property_get("persist.vendor.camera.multi_pass", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15620:    property_get("debug.gralloc.gfx_ubwc_disable", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15635:    property_get("persist.vendor.camera.eztune.enable", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15671:    property_get("persist.vendor.camera.pp_scaling", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15698:    property_get("persist.vendor.camera.llnoise", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15722:    property_get("persist.vendor.camera.batchcount", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:15779:    property_get("persist.vendor.camera.video.batchsize", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:16070:    property_get("persist.vendor.camera.longshot.stages", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16129:    property_get("persist.vendor.camera.fb.enable", prop, 0);
+QCamera2/HAL/QCameraParameters.cpp:16157:    property_get("persist.vendor.camera.llc", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16182:    property_get("persist.vendor.camera.fdvideo", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:16203:    property_get("persist.vendor.camera.imglib.of1.skip", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:16228:    property_get("persist.vendor.camera.manual.capture", value, "0");
+QCamera2/HAL/QCameraParameters.cpp:16319:    property_get("persist.vendor.camera.dualled_calib", prop, "");
+QCamera2/HAL/QCameraParameters.cpp:16614:    property_get("persist.vendor.camera.dt", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16622:    property_get("persist.vendor.camera.vc", prop, "-1");
+QCamera2/HAL/QCameraParameters.cpp:16650:   property_get("persist.vendor.camera.linkpreview", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:16851:    property_get("persist.vendor.camera.raw_yuv", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16860:    property_get("persist.vendor.dualcam.defer.enable", prop, "1");
+QCamera2/HAL/QCameraParameters.cpp:16904:        property_get("persist.vendor.dualcam.lpm.main", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16908:        property_get("persist.vendor.dualcam.lpm.aux", prop, "0");
+QCamera2/HAL/QCameraParameters.cpp:16951:    property_get("persist.vendor.dualcam.lpm.enable", prop, "1");
+QCamera2/HAL/QCameraPostProc.cpp:332:    property_get("persist.vendor.camera.longshot.save", prop, "0");
+QCamera2/HAL/QCameraPostProc.cpp:530:    property_get("persist.vendor.camera.jpeg_burst", prop, "0");
+QCamera2/HAL/QCameraPostProc.cpp:574:    property_get("persist.vendor.camera.tn.disable", prop, "0");
+QCamera2/HAL/QCameraPostProc.cpp:1671:                property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCameraPostProc.cpp:4189:        property_get("persist.vendor.camera.dualfov.jpegnum", prop, "1");
+QCamera2/HAL/QCameraMuxer.cpp:157:    property_get("persist.vendor.camera.dual.camera.dump", prop, "0");
+QCamera2/HAL/QCameraMuxer.cpp:1111:    property_get("persist.vendor.camera.dual.camera.mpo", prop, "1");
+QCamera2/HAL/QCameraMuxer.cpp:1761:    property_get("persist.vendor.camera.aux.camera", prop, "0");
+QCamera2/HAL/QCameraMuxer.cpp:1765:    property_get("persist.vendor.camera.auxcamera.swap", prop, "0");
+QCamera2/HAL/QCameraMuxer.cpp:2115:    property_get("persist.vendor.camera.dc.frame.sync", prop, "1");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:170:    property_get("persist.vendor.camera.zsl_raw", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:237:    property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:260:    property_get("persist.vendor.camera.zsl_matching", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:442:    property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:1835:    property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:1971:    property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:2061:        property_get("persist.vendor.camera.preview_raw", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:2063:        property_get("persist.vendor.camera.video_raw", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:2111:    property_get("persist.vendor.camera.snapshot_raw", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:2920:    property_get("persist.vendor.camera.dumpimg", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:2984:    property_get("persist.vendor.camera.dumpmetadata", value, "0");
+QCamera2/HAL/QCamera2HWICallbacks.cpp:3097:    property_get("persist.vendor.camera.dumpimg", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:1530:    property_get("persist.vendor.camera.fdleak.enable", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:1538:    property_get("persist.vendor.camera.memleak.enable", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:1902:    property_get("persist.vendor.camera.fdleak.enable", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:1910:    property_get("persist.vendor.camera.memleak.enable", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2066:    property_get("service.bootanim.exit", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2077:    property_get("persist.vendor.camera.time.monotonic", value, "1");
+QCamera2/HAL/QCamera2HWI.cpp:2093:    property_get("persist.vendor.camera.depth.focus.cb", value, "1");
+QCamera2/HAL/QCamera2HWI.cpp:2097:    property_get("persist.vendor.camera.cache.optimize", value, "1");
+QCamera2/HAL/QCamera2HWI.cpp:2386:    property_get("service.bootanim.exit", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2772:            property_get("persist.vendor.camera.preview_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2827:        property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2856:        property_get("persist.vendor.camera.preview_raw", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2862:        property_get("persist.vendor.camera.video_raw", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:2893:                 property_get("vendor.vidc.enc.dcvs.extra-buff-count", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:3087:    property_get("persist.vendor.camera.mem.usepool", value, "1");
+QCamera2/HAL/QCamera2HWI.cpp:3482:            property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:4949:    property_get("persist.vendor.camera.imglib.stillmore", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:5185:            property_get("persist.vendor.camera.dualfov.jpegnum", prop, "1");
+QCamera2/HAL/QCamera2HWI.cpp:5989:        property_get("persist.vendor.camera.raw.format", raw_format, "17");
+QCamera2/HAL/QCamera2HWI.cpp:8168:    property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:8509:    property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:8624:    property_get("persist.vendor.camera.raw_yuv", value, "0");
+QCamera2/HAL/QCamera2HWI.cpp:10368:    property_get("persist.vendor.camera.feature.cac", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:10408:    property_get("persist.vendor.camera.feature.restart", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:10671:    if (property_get("persist.vendor.sys.exif.make", value, "") > 0 ||
+QCamera2/HAL/QCamera2HWI.cpp:10672:            property_get("ro.product.manufacturer", value, "QCOM-AA") > 0) {
+QCamera2/HAL/QCamera2HWI.cpp:10679:    if (property_get("persist.vendor.sys.exif.model", value, "") > 0 ||
+QCamera2/HAL/QCamera2HWI.cpp:10680:            property_get("ro.product.model", value, "QCAM-AA") > 0) {
+QCamera2/HAL/QCamera2HWI.cpp:10687:    if (property_get("ro.build.description", value, "QCAM-AA") > 0) {
+QCamera2/HAL/QCamera2HWI.cpp:10777:    property_get("persist.vendor.camera.feature.shutter", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:11720:    property_get("persist.vendor.camera.preview.sync_cb", value, "1");
+QCamera2/HAL/QCamera2HWI.cpp:11786:    property_get("persist.vendor.camera.kpi.debug", prop, "0");
+QCamera2/HAL/QCamera2HWI.cpp:11886:    property_get("vendor.camera.lowpower.record.enable", prop, "0");
+QCamera2/HAL/test/qcamera_test.cpp:1904:            property_get("persist.vendor.camera.rdimode", value, "0");
 
 
 
 
-
-
-
-
-
-
-
-
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
